@@ -1,5 +1,7 @@
 #include "global.h"
 #include "header.h"
+#include "interpret.h"
+
 extern sHeader*       HEAD;
 // interpret.c
 char src_buf[256]="";
@@ -127,6 +129,28 @@ printf("interpret_xxx: %d %s %p\n",h,&HEAD[h].name,p);
 printf("interpret_xxx: %08x %d\n",ret,ret);
  
     
+}
+
+void call_meow(){
+printf("call_meow: in\n");
+    meow_invoke(var);
+printf("call_meow: out\n");
+    
+}
+/* ==========================================================
+ * Initialize the register contexts...
+ */
+extern U32 inner_interpreter;
+void interpret_init(){
+    //Upon entry, the processor context must be on the stack...
+    sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
+    p->r0  = 0x9ABC;
+    p->r6  = 0;             //IP will be set for the call
+    p->r7  = (U32)var->dsp_top;  //DSP
+    p->r9  = 0;             //exception register
+    p->r11 = (U32)var;      //table
+    p->lr  = (U32)inner_interpreter; //defined in bindings
+    var->sp_meow = (U8*)p;
 }
 int interpret_one(){
     U32 cnt = src_one();

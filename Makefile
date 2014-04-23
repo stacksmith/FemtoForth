@@ -12,18 +12,18 @@ CFLAGS := -fno-short-enums -I$(INC)
 
 default: install
 
-$(APP): main.o hello.o header.o data.o table.o interpret.o
-	$(CPP) $(LDFLAGS) -o $(APP) main.o hello.o header.o data.o table.o interpret.o
+$(APP): main.o  header.o data.o table.o interpret.o bindings.o
+	$(CPP) $(LDFLAGS) -o $(APP) main.o  header.o data.o table.o interpret.o bindings.o
 
 kernel: kernel.asm
 	bin/fasmarm -s kernel.dat kernel.asm
 	bin/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp
 	
-hello.o: hello.asm
-	bin/fasmarm -s hello.dat hello.asm
-	bin/fasmlist hello.dat hello.lst
-	@rm -f hello.dat 
+bindings.o: bindings.asm
+	bin/fasmarm -s bindings.dat bindings.asm  bindings.o
+	bin/fasmlist bindings.dat bindings.lst
+	@rm -f bindings.dat 
 	
 main.o: main.c global.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) main.c -o main.o 

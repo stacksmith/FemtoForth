@@ -4,7 +4,6 @@
 ;
 ; format: described in macro below
 ;
-; Register usage:
 
 DATA_BASE  equ 0
 DATA_TOP   equ 4
@@ -16,7 +15,9 @@ DSP_TOP    equ 20
 DATA_PTR   equ 32
 TABLE_PTR  equ 36
 RUN_PTR    equ 40
-SAVE_C     equ 44
+SP_C       equ 44
+SP_MEOW    equ 48
+; Register usage:
 
 IP equ r6
 IP! equ r6!
@@ -48,7 +49,7 @@ macro DPOP reg {
 }
 T_NONE  equ 0
 T_U8    equ 1
-T_U16   equ 2
+T_U16   equ 2a
 T_U32   equ 3
 T_OFF   equ 4
 T_STR   equ 5
@@ -70,16 +71,13 @@ db 0,0,0
 dw name#.x - name
 name:
 }
-
-; Leave 64 bytes for system variable area
-;       rept 64 { db 0 }
-; call init with data in r0
-CODE "system'init",init,T_NONE
-;    mov         RDAT,r0               mov r   4,0
-  ;data segment
-;    str         DSP,[r0,DSP_TOP]        ;initialize DSP to top of dsp segment
-;    str         DSP,[r0,DSP_SAVE]
-    bx      lr
+; return to C
+CODE "system'leave",leave,T_NONE 
+        push    {r0,r6,r7,r9,r11,lr}
+        str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
+        ldr     sp,[RDAT,SP_C]
+        pop     {r4-r11,lr}
+        bx      lr
 .x:
 
 CODE "test'a",temit,T_NONE 
@@ -93,18 +91,8 @@ CODE "test'a",temit,T_NONE
         mov r0,DSP
         bx      lr
 .x:  
-CODE "system'enter",enter,T_NONE
-        push    {r4-r11,lr}             ;preserve C context on the stack
-        mov     RDAT,r0                 ;Data base is first parameter from C
-        str     sp,[RDAT,SAVE_C]        ;save entire context on the returnstack
-        ;
-        mov r0,$FEFE
-        ;
-        ldr     sp,[RDAT,SAVE_C]
-        pop     {r4-r11,lr}
-        bx      lr
         
-.x:
+
 CODE "system'irp1",irp1,T_NONE
 .1: ldrb    r12,[IP],1               ;2; fetch a token
         lsls    r12,2                    ;1; r3 = table index; set Z if code.
@@ -116,6 +104,12 @@ CODE "system'irp1",irp1,T_NONE
 ; Observations:
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
 .x:
+
+CODE "system';",return,T_NONE
+    RPOP        IP
+    bx          lr
+.x:
+
 ;
 CODE "io'emit",emit,T_NONE 
         push    {r0-r7,lr}

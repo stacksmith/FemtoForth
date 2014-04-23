@@ -10,7 +10,8 @@
 sVar*   var;                    //system variables
 
 sHeader*       HEAD;
-#define         DSP_SIZE 1024
+#define        DSP_SIZE 1024
+#define        RSP_SIZE 1024
 
 /*
  * Attach code to a header...
@@ -115,13 +116,21 @@ int main(int argc, char **argv)
         var->table_top = (U8*)var->table_base + CODE_SIZE/16*sizeof(void*);
         var->table_ptr = var->table_base;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
-        //DSP
-        var->dsp_base = (U32*)malloc(DSP_SIZE);
+//---------------------------------------------------------------------
+// DSP
+//
+// 
+        var->dsp_base = (U8*)malloc(DSP_SIZE);
         var->dsp_top = var->dsp_base + DSP_SIZE;
-        
  printf("DSP at %p ",var->dsp_base);
-        
-        //
+//---------------------------------------------------------------------
+// RSP
+        var->rsp_base = (U8*)malloc(RSP_SIZE);
+        var->rsp_top = var->rsp_base + RSP_SIZE;
+        var->sp_meow = var->rsp_top;
+ printf("RSP at %p ",var->rsp_base);
+//---------------------------------------------------------------------
+// HEAD
         HEAD = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
  printf("HEAD at %p \n",HEAD);
      
@@ -134,7 +143,13 @@ int main(int argc, char **argv)
 int i;
 for(i=0;i<20;i++)
   head_dump_one(i);
-//        interpret_ql(&HEAD[2]);
+       
+// U32 qqq = xxx(0x3456,0x1234);
+// printf("bindings returns %x\n",qqq);
+    interpret_init();
+  call_meow();
+  
+  
     while(1)
       interpret_one();
  // line();
