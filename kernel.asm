@@ -47,19 +47,32 @@ TYPE_PROC equ 3
 ; 1 parm  - tokenstream data 
 
 macro CODE str,name,parm {
-  db .2-.1
-.1: db str,0
+  db .z2-.z1
+.z1: db str,0
 align 4
-.2:
+.z2:
 ; 
 db parm
 db 0,0,0
 dw name#.x - name
 name:
 }
-      
+CODE "system'init",init,T_NONE
+        bx      lr
+.x:
+CODE "system'irp1",irp1,T_NONE
+.1: ldrb    r12,[IP],1               ;2; fetch a token
+        lsls    r12,2                    ;1; r3 = table index; set Z if code.
+        bxeq    IP                      ;2; 0=CODE! 
+        RPUSH   IP
+        lsr     IP,IP,4                 ;1; create a 16-byte range address
+        ldr     IP,[r12,IP,LSL 2]        ;2; r2 is return IP (dereference table)
+        b       .1                  ;1;
+; Observations:
+; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
+.x:
+
 CODE "io'emit",emit,T_NONE 
-db $12,$34,$56,$78
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout
         add     r1,RSP,4                        ;char is RSP[4]

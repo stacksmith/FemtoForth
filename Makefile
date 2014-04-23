@@ -13,7 +13,7 @@ CFLAGS := -fno-short-enums -I$(INC)
 $(APP): main.o hello.o header.o data.o table.o interpret.o
 	$(CPP) $(LDFLAGS) -o $(APP) main.o hello.o header.o data.o table.o interpret.o
 
-kernel.bin: kernel.asm
+kernel: kernel.asm
 	bin/fasmarm -s kernel.dat kernel.asm
 	bin/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp

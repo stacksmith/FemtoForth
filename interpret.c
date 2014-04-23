@@ -63,7 +63,9 @@ printf("ls in %d\n",dir);
     h=HEAD[h].next;
   } 
 }
-
+//
+// cd
+//
 int interpret_cd(){
   U32 cnt = src_one();
   char* ptr = src_ptr;
@@ -84,6 +86,37 @@ int interpret_cd(){
     return 0;
   }
 }
+//
+// q
+//
+U8* interpret_ql(U8*p){
+  printf("%08X ",p);
+  int i;
+  for(i=0;i<16;i++){
+    printf("%02X ",p[i]);
+  }
+  for(i=0;i<16;i++){
+    if(isprint(p[i]))
+      printf("%c",p[i]);
+    else
+      printf("%s","·");
+  }
+  printf("\n");
+  return p+16;
+}
+
+int interpret_q(){
+  U32 cnt = src_one();
+  char* ptr = src_ptr;
+  src_ptr += cnt;
+  U8* address = (U8*)strtol(ptr,NULL,16);
+  address = interpret_ql(address);
+  address = interpret_ql(address);
+  address = interpret_ql(address);
+  address = interpret_ql(address);
+  return 1;
+}
+
 
 int interpret_one(){
   U32 cnt = src_one();
@@ -94,6 +127,7 @@ int interpret_one(){
   if(0==strncmp(ptr,"cd",2)) { return interpret_cd();   };
   if(0==strncmp(ptr,"exit",4)) {exit(0);}
   if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
+  if(0==strncmp(ptr,"q",1)) { return interpret_q();}
    HINDEX x = head_find(ptr, cnt,icontext.list);
    if(x){
      printf("found %d\n",x);

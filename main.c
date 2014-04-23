@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 int i;
 for(i=0;i<10;i++)
   head_dump_one(i);
-        
+        interpret_ql(&HEAD[2]);
     while(1)
       interpret_one();
  // line();
