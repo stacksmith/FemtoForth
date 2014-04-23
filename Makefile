@@ -10,8 +10,8 @@ CC := $(BIN)/arm-linux-androideabi-gcc
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
 
-$(APP): main.o hello.o header.o data.o table.o 
-	$(CPP) $(LDFLAGS) -o $(APP) main.o hello.o header.o data.o table.o
+$(APP): main.o hello.o header.o data.o table.o interpret.o
+	$(CPP) $(LDFLAGS) -o $(APP) main.o hello.o header.o data.o table.o interpret.o
 
 kernel.bin: kernel.asm
 	bin/fasmarm -s kernel.dat kernel.asm
@@ -34,7 +34,8 @@ data.o: data.c data.h global.h
 
 table.o: table.c table.h global.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) table.c -o table.o 
-
+	
+interpret.o: interpret.c interpret.h global.h
 clean:
 	@rm -f $(APP).lst $(APP) *.o *.lst *.dat
 	
