@@ -26,6 +26,27 @@ typedef U8  PARM ;         //token stream parameter
 #define CODE_ADDRESS 0x04000000
 #define CODE_SIZE    0x01000000
 #define HEAD_MAX  10000
-
-
+//=======================================================
+//System variable structure.  It is placed at the bottom
+// of the data section, and used by both compiler and
+// system
+//=======================================================
+typedef struct sVar {
+  U8* data_base;
+  U8* data_top;
+  U8** table_base;
+  U8* table_top;
+  U8* dsp_base;
+  U8* dsp_top;
+  //
+  U8* data_ptr;
+  U8** table_ptr;
+  U8* run_ptr;
+  U8* unused0;
+  U8* unused1;
+  U8* unused2;
+  U8* unused3;
+  U8* unused4;
+  U8* unused5;
+} sVar;
 

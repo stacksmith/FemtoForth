@@ -7,23 +7,14 @@
 #include "header.h"
 #include "data.h"
 
-U8*     data_base;
-U8*     data_ptr;
-U32*    dsp_base;
+sVar*   var;                    //system variables
 
-U8**    table_base;
-U8**    table_ptr;
 sHeader*       HEAD;
 #define         DSP_SIZE 1024
 
 /*
  * Attach code to a header...
 */
-void head_code(HINDEX h,U8* start,U8* end){
-  //copy code into data area...
-  
-  U8* pcode = data_compile_blob(start,end-start);
-}
 HINDEX H_PROC;
 HINDEX H_DIR;
 
@@ -45,9 +36,14 @@ void head_build(){
    head_code(H_TTT,(U8*)ttt,(U8*)ttt_x);
 */  
 }
+#include "interpret.h"
 
 //void build_kernel(char* name,
-
+/*
+ * load kernel.
+ * - create names and directories as needed
+ * - create a table entry as well
+ */
 void kernel_load_record(U32 namelen,FILE* f){
   char buf[256];
   fread(buf,namelen,1,f);       //read string
@@ -58,7 +54,7 @@ void kernel_load_record(U32 namelen,FILE* f){
   // skip 3 bytes
   char notused[3];
   fread(&notused,3,1,f);
-  // Now read code into the data section...
+ // Now read code into the data section...
   U32 datalen;
   fread(&datalen,4,1,f);                        //read data length
   U8* data = data_compile_from_file(f,datalen);
@@ -68,13 +64,14 @@ void kernel_load_record(U32 namelen,FILE* f){
   HEAD[h].index = tin;
   HEAD[h].type = H_PROC;        //it was created as DIR originally...
   HEAD[h].parm = parm;          //from file...
+interpret_ql(data);
 
 }
 
 void kernel_load(){
   FILE* f;
   f=fopen("/data/tmp/kernel.bin","r");
-printf("file is %d\n",f);
+printf("kernel_load:file is %x\n",f);
   while(1){
     U8 namelen;
     fread(&namelen,1,1,f);
@@ -82,9 +79,9 @@ printf("file is %d\n",f);
     kernel_load_record(namelen,f);
   }
   fclose(f);
+printf("kernel_load done\n");
 }
 
-#include "interpret.h"
 
 
 
@@ -92,38 +89,47 @@ int main(int argc, char **argv)
 {
         printf("Hello.  size of header is %d\n",sizeof(sHeader));
 	
-        // memmap code segment
-        data_base = mmap((void*)0x04000000,
+        // memmap data segment
+        U8* data_base = mmap((void*)0x04000000,
                  CODE_SIZE,
                  PROT_READ+PROT_WRITE+PROT_EXEC,
                  MAP_ANONYMOUS|MAP_PRIVATE|MAP_FIXED,
                  0,0);
-        data_ptr = data_base;
-        printf("data_base at %p ",data_base);
+        // install system var structure at bottom
+        var = (sVar*)data_base;
+        var->data_base = data_base;
+        var->data_top = data_base + CODE_SIZE;
+        var->data_ptr = data_base + sizeof(sVar);
+        printf("data_base at %p ",var->data_base);
         //memmap table
-	table_base = mmap((U8**)(CODE_ADDRESS/4),
+	var->table_base = mmap((U8**)(CODE_ADDRESS/4),
 		 CODE_SIZE/16*sizeof(void*),
 		 PROT_READ+PROT_WRITE+PROT_EXEC,
 		 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
 		 0,0);
-	printf("TABLE at %p ",table_base);
-        table_ptr = table_base;
+	printf("TABLE at %p ",var->table_base);
+        var->table_top = var->table_base + CODE_SIZE/16*sizeof(void*);
+        var->table_ptr = var->table_base;
         //DSP
-        dsp_base = (U32*)malloc(DSP_SIZE);
- printf("DSP at %p ",dsp_base);
+        var->dsp_base = (U32*)malloc(DSP_SIZE);
+        var->dsp_top = var->dsp_base + DSP_SIZE;
+        
+ printf("DSP at %p ",var->dsp_base);
         
         //
         HEAD = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
  printf("HEAD at %p \n",HEAD);
-      
+     
         head_build();
+  printf("data pointer is now at %08p\n",var->data_ptr);
         kernel_load();
+  printf("data pointer is now at %08p\n",var->data_ptr);
         
 
 int i;
 for(i=0;i<10;i++)
   head_dump_one(i);
-        interpret_ql(&HEAD[2]);
+//        interpret_ql(&HEAD[2]);
     while(1)
       interpret_one();
  // line();

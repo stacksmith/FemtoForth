@@ -1,9 +1,10 @@
 #include "global.h"
-extern U8** table_base;
-extern U8** table_ptr;
+extern sVar* var;
 
 TINDEX table_add_ptr(U8* ptr){
-  *table_ptr++ = ptr;
-  U32 ret = (table_ptr - table_base);
+  
+  *var->table_ptr = ptr;
+  var->table_ptr++;
+  U32 ret = (var->table_ptr - var->table_base);
   return ret;
 }
