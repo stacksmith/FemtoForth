@@ -116,25 +116,31 @@ int interpret_q(){
   address = interpret_ql(address);
   return 1;
 }
+extern sVar* var;
 
-
+typedef void (*funcx)(void);
+U32 interpret_xxx(HINDEX h){
+    funcx p = var->table_base[HEAD[h].index];
+printf("interpret_xxx: %d %s %p\n",h,&HEAD[h].name,p);
+    
+}
 int interpret_one(){
-  U32 cnt = src_one();
-  char* ptr = src_ptr;
-  src_ptr += cnt;
-  
-  if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
-  if(0==strncmp(ptr,"cd",2)) { return interpret_cd();   };
-  if(0==strncmp(ptr,"exit",4)) {exit(0);}
-  if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
-  if(0==strncmp(ptr,"q",1)) { return interpret_q();}
-   HINDEX x = head_find(ptr, cnt,icontext.list);
-   if(x){
-     printf("found %d\n",x);
-     return 1;
-   } else {
-     printf("not found %s\n",src_ptr);     
-     return 0;
-   }
+    U32 cnt = src_one();
+    char* ptr = src_ptr;
+    src_ptr += cnt;
+
+    if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
+    if(0==strncmp(ptr,"cd",2)) { return interpret_cd();   };
+    if(0==strncmp(ptr,"exit",4)) {exit(0);}
+    if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
+    if(0==strncmp(ptr,"q",1)) { return interpret_q();}
+    HINDEX x = head_find(ptr, cnt,icontext.list);
+    if(!x) {
+        printf("not found %s\n",src_ptr);     
+        return 0;
+    }
+    interpret_xxx(x);
+    return 1;
+   
 }
 

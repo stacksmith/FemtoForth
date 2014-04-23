@@ -47,6 +47,10 @@ void head_build(){
 void kernel_load_record(U32 namelen,FILE* f){
   char buf[256];
   fread(buf,namelen,1,f);       //read string
+//*** DEBUG - insert name in data so we can see dumps
+data_compile_blob(buf,strlen(buf));
+data_align4();
+//*** DEBUG END
   HINDEX h = head_find_or_create(buf);
   // Read parameter code
   PARM parm;
@@ -108,8 +112,9 @@ int main(int argc, char **argv)
 		 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
 		 0,0);
 	printf("TABLE at %p ",var->table_base);
-        var->table_top = var->table_base + CODE_SIZE/16*sizeof(void*);
+        var->table_top = (U8*)var->table_base + CODE_SIZE/16*sizeof(void*);
         var->table_ptr = var->table_base;
+       // *var->table_ptr++ = 0 ; //first table entry is always 0 !
         //DSP
         var->dsp_base = (U32*)malloc(DSP_SIZE);
         var->dsp_top = var->dsp_base + DSP_SIZE;
@@ -127,7 +132,7 @@ int main(int argc, char **argv)
         
 
 int i;
-for(i=0;i<10;i++)
+for(i=0;i<20;i++)
   head_dump_one(i);
 //        interpret_ql(&HEAD[2]);
     while(1)

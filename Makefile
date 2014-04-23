@@ -10,6 +10,8 @@ CC := $(BIN)/arm-linux-androideabi-gcc
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
 
+default: install
+
 $(APP): main.o hello.o header.o data.o table.o interpret.o
 	$(CPP) $(LDFLAGS) -o $(APP) main.o hello.o header.o data.o table.o interpret.o
 
@@ -39,7 +41,7 @@ interpret.o: interpret.c interpret.h global.h
 clean:
 	@rm -f $(APP).lst $(APP) *.o *.lst *.dat
 	
-install: $(APP) 
+install: $(APP) kernel
 	adb push $(APP) /data/tmp	
 	
 run: $(APP) kernel.bin

@@ -84,6 +84,7 @@ HINDEX head_find(char* path,U32 len,HINDEX* searchlist){
 
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
-  printf("%d next:%4x dad:%4x child:%4x type:%4x table:%8x parm:%d [%s]\n",
+  // next dad child type table
+  printf("%4d %4x %4x %4x type:%4x t#:%8x parm:%d [%s]\n",
          h,p->next,p->dad,p->child,p->type,p->index,p->parm,p->name);
 }

@@ -2,10 +2,21 @@
 ;
 ; used do build the kernel for meow-meow.
 ;
-; format:
-; null-terminated fully-qualified name.  The path will be created
-; U16 code size
-; code...
+; format: described in macro below
+;
+; Register usage:
+
+DATA_BASE  equ 0
+DATA_TOP   equ 4
+TABLE_BASE equ 8
+TABLE_TOP  equ 12
+DSP_BASE   equ 16
+DSP_TOP    equ 20
+
+DATA_PTR   equ 32
+TABLE_PTR  equ 36
+RUN_PTR    equ 40
+DSP_SAVE   equ 44
 
 IP equ r6
 IP! equ r6!
@@ -15,6 +26,8 @@ DSP! equ r7!
 
 ER equ r9
 ER! equ r9!
+
+RDAT equ r11            ;data segment register...
 
 RSP equ sp
 RSP! equ sp!
@@ -57,9 +70,30 @@ db 0,0,0
 dw name#.x - name
 name:
 }
+
+; Leave 64 bytes for system variable area
+;       rept 64 { db 0 }
+; call init with data in r0
 CODE "system'init",init,T_NONE
-        bx      lr
+    mov         RDAT,r0                 ;data segment
+    str         DSP,[r0,DSP_TOP]        ;initialize DSP to top of dsp segment
+    str         DSP,[r0,DSP_SAVE]
+    bx      lr
 .x:
+
+CODE "test'a",temit,T_NONE 
+mov r0,'a' 
+        push    {r0-r7,r11,lr}
+        mov     r0,1                            ;stdout
+        add     r1,RSP,4                        ;char is RSP[4]
+        mov     r2,1
+        mov     r7,4                            ;write
+        swi     0
+        pop     {r0-r7,r11,lr}
+        mov r0,0x1234
+        bx      lr
+.x:  
+
 CODE "system'irp1",irp1,T_NONE
 .1: ldrb    r12,[IP],1               ;2; fetch a token
         lsls    r12,2                    ;1; r3 = table index; set Z if code.
@@ -71,7 +105,7 @@ CODE "system'irp1",irp1,T_NONE
 ; Observations:
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
 .x:
-
+;
 CODE "io'emit",emit,T_NONE 
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout

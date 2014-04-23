@@ -32,21 +32,23 @@ typedef U8  PARM ;         //token stream parameter
 // system
 //=======================================================
 typedef struct sVar {
-  U8* data_base;
-  U8* data_top;
-  U8** table_base;
-  U8* table_top;
-  U8* dsp_base;
-  U8* dsp_top;
-  //
-  U8* data_ptr;
-  U8** table_ptr;
-  U8* run_ptr;
-  U8* unused0;
-  U8* unused1;
-  U8* unused2;
-  U8* unused3;
-  U8* unused4;
-  U8* unused5;
+/* 0  */  U8* data_base;                /* 0 */
+/* 4  */  U8* data_top;
+/* 8  */  U8** table_base;
+/* 12 */  U8* table_top;
+/* 16 */  U32* dsp_base;
+/* 20 */  U8* dsp_top;
+/* 24 */  U8* unused0;
+/* 28 */  U8* unused10; 
+  
+
+/* 32 */  U8* data_ptr;
+/* 36 */  U8** table_ptr;
+/* 40 */  U8* run_ptr;
+/* 44 */  U8* dsp_save;
+/* 48 */  U8* unused1;
+/* 52 */  U8* unused2;
+/* 56 */  U8* unused3;
+/* 60 */  U8* unused4;
 } sVar;
 
