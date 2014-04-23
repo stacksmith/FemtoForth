@@ -132,13 +132,13 @@ int main(int argc, char **argv)
 // 
         var->dsp_base = (U8*)malloc(DSP_SIZE);
         var->dsp_top = var->dsp_base + DSP_SIZE;
- printf("DSP at %p ",var->dsp_base);
+ printf("DSP at %p ",var->dsp_top);
 //---------------------------------------------------------------------
 // RSP
         var->rsp_base = (U8*)malloc(RSP_SIZE);
         var->rsp_top = var->rsp_base + RSP_SIZE;
         var->sp_meow = var->rsp_top;
- printf("RSP at %p ",var->rsp_base);
+ printf("RSP at %p ",var->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
         HEAD = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));

@@ -144,6 +144,7 @@ extern U32 inner_interpreter;
 void interpret_init(){
     //Upon entry, the processor context must be on the stack...
     sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
+printf("interpret_init: sp_meow at %08x \n",p);
     p->r0  = 0x9ABC;
     p->r6  = 0;             //IP will be set for the call
     p->r7  = (U32)var->dsp_top;  //DSP
@@ -182,6 +183,14 @@ printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var
     
 }
 
+void call_meow(U8* addr){
+//printf("call_meow will run: %08X\n",addr);
+    sRegsMM* pregs = var->sp_meow;
+   pregs->r6 = addr;
+  U32 ret=    meow_invoke(var);
+printf("call_meow: %08X\n",ret);
+    
+}
 
 int interpret_one(){
     
@@ -203,6 +212,8 @@ int interpret_one(){
     interpret_comp(x);
     
 interpret_ql(var->run_ptr);
+    call_meow(var->run_ptr);
+
     return 1;
    
 }
