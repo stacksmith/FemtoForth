@@ -19,7 +19,26 @@ typedef U8  PARM ;         //token stream parameter
 #define T_STR   5
 
 
+typedef struct sRegsC {
+    U32 r4;
+    U32 r5;
+    U32 r6;
+    U32 r7;
+    U32 r8;
+    U32 r9;
+    U32 r10;
+    U32 r11;
+    U32 lr;
+}sRegsC;
 
+typedef struct sRegsMM {
+    U32 r0;     //TOS
+    U32 r6;     //IP
+    U32 r7;     //DSP
+    U32 r9;     //ER
+    U32 r11;    //DAT
+    U32 lr;      //interpreter pointer
+} sRegsMM;
 //=======================================================
 //GLOBAL SETTINGS
 //=======================================================
@@ -41,11 +60,10 @@ typedef struct sVar {
 /* 24 */  U8* unused0;
 /* 28 */  U8* unused10; 
   
-
 /* 32 */  U8* data_ptr;
 /* 36 */  U8** table_ptr;
 /* 40 */  U8* run_ptr;
-/* 44 */  U8* dsp_save;
+/* 44 */  U8* save_c;                   //c sp with context..
 /* 48 */  U8* unused1;
 /* 52 */  U8* unused2;
 /* 56 */  U8* unused3;

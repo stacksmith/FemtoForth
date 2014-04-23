@@ -16,7 +16,7 @@ DSP_TOP    equ 20
 DATA_PTR   equ 32
 TABLE_PTR  equ 36
 RUN_PTR    equ 40
-DSP_SAVE   equ 44
+SAVE_C     equ 44
 
 IP equ r6
 IP! equ r6!
@@ -75,25 +75,36 @@ name:
 ;       rept 64 { db 0 }
 ; call init with data in r0
 CODE "system'init",init,T_NONE
-    mov         RDAT,r0                 ;data segment
-    str         DSP,[r0,DSP_TOP]        ;initialize DSP to top of dsp segment
-    str         DSP,[r0,DSP_SAVE]
+;    mov         RDAT,r0               mov r   4,0
+  ;data segment
+;    str         DSP,[r0,DSP_TOP]        ;initialize DSP to top of dsp segment
+;    str         DSP,[r0,DSP_SAVE]
     bx      lr
 .x:
 
 CODE "test'a",temit,T_NONE 
-mov r0,'a' 
         push    {r0-r7,r11,lr}
         mov     r0,1                            ;stdout
-        add     r1,RSP,4                        ;char is RSP[4]
+        add     r1,RSP,0                        ;char is RSP[4]
         mov     r2,1
         mov     r7,4                            ;write
         swi     0
         pop     {r0-r7,r11,lr}
-        mov r0,0x1234
+        mov r0,DSP
         bx      lr
 .x:  
-
+CODE "system'enter",enter,T_NONE
+        push    {r4-r11,lr}             ;preserve C context on the stack
+        mov     RDAT,r0                 ;Data base is first parameter from C
+        str     sp,[RDAT,SAVE_C]        ;save entire context on the returnstack
+        ;
+        mov r0,$FEFE
+        ;
+        ldr     sp,[RDAT,SAVE_C]
+        pop     {r4-r11,lr}
+        bx      lr
+        
+.x:
 CODE "system'irp1",irp1,T_NONE
 .1: ldrb    r12,[IP],1               ;2; fetch a token
         lsls    r12,2                    ;1; r3 = table index; set Z if code.

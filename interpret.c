@@ -118,10 +118,14 @@ int interpret_q(){
 }
 extern sVar* var;
 
-typedef void (*funcx)(void);
+typedef U32 (*funcx)(sVar* v,U32 parm);
 U32 interpret_xxx(HINDEX h){
-    funcx p = var->table_base[HEAD[h].index];
+    funcx p = (funcx)var->table_base[HEAD[h].index];
 printf("interpret_xxx: %d %s %p\n",h,&HEAD[h].name,p);
+    interpret_ql((void*)p);
+    U32 ret = p(var,'q');
+printf("interpret_xxx: %08x %d\n",ret,ret);
+ 
     
 }
 int interpret_one(){
@@ -133,7 +137,7 @@ int interpret_one(){
     if(0==strncmp(ptr,"cd",2)) { return interpret_cd();   };
     if(0==strncmp(ptr,"exit",4)) {exit(0);}
     if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
-    if(0==strncmp(ptr,"q",1)) { return interpret_q();}
+    if(0==strncmp(ptr,"_q",2)) { return interpret_q();}
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
         printf("not found %s\n",src_ptr);     
