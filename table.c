@@ -2,10 +2,11 @@
 #include "global.h"
 extern sVar* var;
 
-TINDEX table_add_ptr(U8* ptr){
+TINDEX table_add_ptr(U8* ptr,HINDEX head){
   
   *var->table_ptr = ptr;
   U32 ret = (var->table_ptr - var->table_base); //will return table index
   var->table_ptr++;
+  
   return ret;
 }

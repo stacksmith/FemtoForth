@@ -12,6 +12,7 @@ sVar*   var;                    //system variables
 sHeader*       HEAD;
 #define        DSP_SIZE 1024
 #define        RSP_SIZE 1024
+#define TABLE_SIZE (CODE_SIZE/16)
 
 /*
  * Attach code to a header...
@@ -43,7 +44,7 @@ void head_build(){
 /*
  * load kernel.
  * - create names and directories as needed
- * - create a table entry as well
+ * - 
  */
 void kernel_load_record(U32 namelen,FILE* f){
   char buf[256];
@@ -52,7 +53,7 @@ void kernel_load_record(U32 namelen,FILE* f){
 data_compile_blob(buf,strlen(buf));
 data_align4();
 //*** DEBUG END
-  HINDEX h = head_find_or_create(buf);
+  HINDEX h = head_find_or_create(buf);          //create header
   // Read parameter code
   PARM parm;
   fread(&parm,1,1,f);
@@ -63,13 +64,11 @@ data_align4();
   U32 datalen;
   fread(&datalen,4,1,f);                        //read data length
   U8* data = data_compile_from_file(f,datalen);
-  // Add the pointer to the table
-  TINDEX tin = table_add_ptr(data);
   // And update the head
-  HEAD[h].index = tin;
   HEAD[h].type = H_PROC;        //it was created as DIR originally...
   HEAD[h].parm = parm;          //from file...
-interpret_ql(data);
+  HEAD[h].pcode = data;
+//interpret_ql(data);
 
 }
 
@@ -105,17 +104,28 @@ int main(int argc, char **argv)
         var->data_base = data_base;
         var->data_top = data_base + CODE_SIZE;
         var->data_ptr = data_base + sizeof(sVar);
-        printf("data_base at %p ",var->data_base);
-        //memmap table
+
+        printf("data at %p->%p ",var->data_base,var->data_top);
+//---------------------------------------------------------------------
+// Table - runtime 
+//
 	var->table_base = mmap((U8**)(CODE_ADDRESS/4),
-		 CODE_SIZE/16*sizeof(void*),
+		 sizeof(TINDEX)*TABLE_SIZE,
 		 PROT_READ+PROT_WRITE+PROT_EXEC,
 		 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
 		 0,0);
 	printf("TABLE at %p ",var->table_base);
-        var->table_top = (U8*)var->table_base + CODE_SIZE/16*sizeof(void*);
+        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
         var->table_ptr = var->table_base;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
+//---------------------------------------------------------------------
+// HTable - reverse table (matches table, points at header)
+//          each entry is the size of hindex..
+//
+        var->htable_base = (U8*)malloc(sizeof(HINDEX)*TABLE_SIZE);
+        var->htable_top = var->htable_base + TABLE_SIZE;
+        printf("HTABLE at %p ",var->htable_base);
+      
 //---------------------------------------------------------------------
 // DSP
 //
@@ -138,8 +148,7 @@ int main(int argc, char **argv)
   printf("data pointer is now at %08p\n",var->data_ptr);
         kernel_load();
   printf("data pointer is now at %08p\n",var->data_ptr);
-        
-
+ 
 int i;
 for(i=0;i<20;i++)
   head_dump_one(i);
@@ -147,9 +156,11 @@ for(i=0;i<20;i++)
 // U32 qqq = xxx(0x3456,0x1234);
 // printf("bindings returns %x\n",qqq);
     interpret_init();
-  call_meow();
+//  call_meow();
   
   
+    //prepare to run code we are about to compile!
+    var->run_ptr = var->data_ptr;
     while(1)
       interpret_one();
  // line();

@@ -1,1 +1,1 @@
-TINDEX table_add_ptr(U8* ptr);
+TINDEX table_add_ptr(U8* ptr,HINDEX h);

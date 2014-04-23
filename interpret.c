@@ -119,7 +119,7 @@ int interpret_q(){
   return 1;
 }
 extern sVar* var;
-
+/*
 typedef U32 (*funcx)(sVar* v,U32 parm);
 U32 interpret_xxx(HINDEX h){
     funcx p = (funcx)var->table_base[HEAD[h].index];
@@ -136,6 +136,7 @@ void call_meow(){
 printf("call_meow: %08X\n",ret);
     
 }
+*/
 /* ==========================================================
  * Initialize the register contexts...
  */
@@ -152,15 +153,39 @@ void interpret_init(){
     var->sp_meow = (U8*)p;
 }
 
-int interpret_comp(HINDEX h){
+void interpret_comp(HINDEX h){
 printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
     //get table base for this location+1
-    U8*base = ((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC;
-printf("compiling to: %08X, base %08X\n",var->data_ptr+1,base);
+    //+4 since index 0 is used for 'code'
+    U8**tbase = (U8**)(4+(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC));
+printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
+    //now, in the range of 1-255, try to find the entry represented by
+    //HINDEX h...  
+    U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
+    int tok;
+    for(tok=1;tok<=255;tok++){ //for every possible token value
+        if(target==tbase[tok]) { //does the table already have a reachable?
+          *var->data_ptr++ = tok; //compile token
+printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+           return;
+        } else {
+            if(NULL==tbase[tok]) { //empty slot?
+                tbase[tok] = target;    //create a slot entry
+                *var->data_ptr++ = tok; //compile token
+printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+                return;
+            }   
+        }
+    }
+    // There was not a single empty slot in the reachable part of the table...
+    printf("interpret_comp: ERROR - no empty space...\n");
+    
 }
 
 
 int interpret_one(){
+    
+
     U32 cnt = src_one();
     char* ptr = src_ptr;
     src_ptr += cnt;
@@ -176,6 +201,8 @@ int interpret_one(){
         return 0;
     }
     interpret_comp(x);
+    
+interpret_ql(var->run_ptr);
     return 1;
    
 }

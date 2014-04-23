@@ -39,15 +39,18 @@ typedef struct sVar {
 /* 20 */  U8* dsp_top;
 /* 24 */  U8* rsp_base;
 /* 28 */  U8* rsp_top; 
+/* 32 */  U8* htable_base;
+/* 36 */  U8* htable_top;
+
   
-/* 32 */  U8* data_ptr;
-/* 36 */  U8** table_ptr;
-/* 40 */  U8* run_ptr;
-/* 44 */  U8* sp_c;                   //c sp with context..
-/* 48 */  U8* sp_meow;
-/* 52 */  U8* unused2;
-/* 56 */  U8* unused3;
-/* 60 */  U8* unused4;
+/* 40 */  U8* data_ptr;
+/* 44 */  U8** table_ptr;
+/* 48 */  U8* run_ptr;
+/* 52 */  U8* sp_c;                   //c sp with context..
+/* 56 */  U8* sp_meow;
+/* 60 */  U8* unused2;
+/* 64 */  U8* unused3;
+/* 68 */  U8* unused4;
 } sVar;
 
 typedef struct sRegsC {

@@ -11,12 +11,16 @@ TABLE_BASE equ 8
 TABLE_TOP  equ 12
 DSP_BASE   equ 16
 DSP_TOP    equ 20
+RSP_BASE   equ 24
+RSP_TOP    equ 28
+HTABLE_PTR equ 32
+HTABLE_TOP equ 36
 
-DATA_PTR   equ 32
-TABLE_PTR  equ 36
-RUN_PTR    equ 40
-SP_C       equ 44
-SP_MEOW    equ 48
+DATA_PTR   equ 40
+TABLE_PTR  equ 44
+RUN_PTR    equ 48
+SP_C       equ 52
+SP_MEOW    equ 56
 ; Register usage:
 
 IP equ r6
@@ -68,8 +72,9 @@ align 4
 ; 
 db parm
 db 0,0,0
-dw name#.x - name
-name:
+dw __#name#.x - __#name
+__#name:
+    RPOP IP
 }
 ; return to C
 CODE "system'leave",leave,T_NONE 
@@ -139,9 +144,6 @@ CODE "io'key",key,T_NONE
 
 
 CODE "io'ttt",ttt,T_NONE
-      mov       r0,0x1234
-      bx        lr
-
 .x:
 
 db 0

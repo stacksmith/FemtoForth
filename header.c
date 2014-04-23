@@ -4,7 +4,7 @@
 extern sHeader*       HEAD;
 HINDEX hindex_last = 0;
 
-HINDEX head_new(char* name, TINDEX index,HINDEX type,PARM parm,HINDEX dad)
+HINDEX head_new(char* name, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
   HINDEX ret = hindex_last;
 //printf("head_new: working on %d. (%s)\n",ret,name);
@@ -12,7 +12,7 @@ HINDEX head_new(char* name, TINDEX index,HINDEX type,PARM parm,HINDEX dad)
   header->dad = dad;
   header->child = 0;
   header->type = type;
-  header->index = index;
+  header->pcode = pcode;
   header->parm = parm;
   strncpy(header->name,name,NAMELEN);
   if(ret){
@@ -85,6 +85,6 @@ HINDEX head_find(char* path,U32 len,HINDEX* searchlist){
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
   // next dad child type table
-  printf("%4d %4x %4x %4x type:%4x t#:%8x parm:%d [%s]\n",
-         h,p->next,p->dad,p->child,p->type,p->index,p->parm,p->name);
+  printf("%4d %4x %4x %4x type:%4x ->:%8x parm:%d [%s]\n",
+         h,p->next,p->dad,p->child,p->type,p->pcode,p->parm,p->name);
 }
