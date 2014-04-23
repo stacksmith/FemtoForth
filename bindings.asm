@@ -21,6 +21,7 @@ meow_invoke:
        str     sp,[r0,SP_C]             ;save C sp..
        ldr     sp,[r0,SP_MEOW]
        pop     {r0,r6,r7,r9,r11,lr}     ;restore meow registers...
+      
 ;       bx lr                            ;and jump into the interpreter
        
         push    {r0,r6,r7,r9,r11,lr}

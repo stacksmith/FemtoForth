@@ -132,9 +132,8 @@ printf("interpret_xxx: %08x %d\n",ret,ret);
 }
 
 void call_meow(){
-printf("call_meow: in\n");
-    meow_invoke(var);
-printf("call_meow: out\n");
+  U32 ret=    meow_invoke(var);
+printf("call_meow: %08X\n",ret);
     
 }
 /* ==========================================================
@@ -152,6 +151,15 @@ void interpret_init(){
     p->lr  = (U32)inner_interpreter; //defined in bindings
     var->sp_meow = (U8*)p;
 }
+
+int interpret_comp(HINDEX h){
+printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
+    //get table base for this location+1
+    U8*base = ((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC;
+printf("compiling to: %08X, base %08X\n",var->data_ptr+1,base);
+}
+
+
 int interpret_one(){
     U32 cnt = src_one();
     char* ptr = src_ptr;
@@ -167,7 +175,7 @@ int interpret_one(){
         printf("not found %s\n",src_ptr);     
         return 0;
     }
-    interpret_xxx(x);
+    interpret_comp(x);
     return 1;
    
 }
