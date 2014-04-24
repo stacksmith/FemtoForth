@@ -150,7 +150,7 @@ printf("interpret_init: sp_meow at %08x \n",p);
     p->r7  = (U32)var->dsp_top;  //DSP
     p->r9  = 0;             //exception register
     p->r11 = (U32)var;      //table
-    p->lr  = (U32)inner_interpreter; //defined in bindings
+    p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = (U8*)p;
 }
 
@@ -158,7 +158,7 @@ void interpret_comp(HINDEX h){
 printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
     //get table base for this location+1
     //+4 since index 0 is used for 'code'
-    U8**tbase = (U8**)(4+(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC));
+    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
 printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
@@ -204,6 +204,7 @@ int interpret_one(){
     if(0==strncmp(ptr,"exit",4)) {exit(0);}
     if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
     if(0==strncmp(ptr,"_q",2)) { return interpret_q();}
+    if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
         printf("not found %s\n",src_ptr);     
@@ -212,7 +213,7 @@ int interpret_one(){
     interpret_comp(x);
     
 interpret_ql(var->run_ptr);
-    call_meow(var->run_ptr);
+//    call_meow(var->run_ptr);
 
     return 1;
    

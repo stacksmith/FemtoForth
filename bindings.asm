@@ -21,14 +21,14 @@ meow_invoke:
        str     sp,[r0,SP_C]             ;save C sp in data area..
        ldr     sp,[r0,SP_MEOW]
        pop     {r0,r6,r7,r9,r11,lr}     ;restore meow registers...
-      
-;       bx lr                            ;and jump into the interpreter
-       mov r0,lr
-        push    {r0,r6,r7,r9,r11,lr}
-        str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
-        ldr     sp,[RDAT,SP_C]
-        pop     {r4-r11,lr}
-        bx      lr
+       bx lr                            ;and jump into the interpreter
+       ; 'system'leave will exit...
+       
+;        push    {r0,r6,r7,r9,r11,lr}
+;        str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
+;        ldr     sp,[RDAT,SP_C]
+;        pop     {r4-r11,lr}
+;        bx      lr
 .x:
 
 ;=================================================================================================

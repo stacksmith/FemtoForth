@@ -63,7 +63,8 @@ TYPE_PROC equ 3
 ; 1 cnt   count of string, including null-term and padding
 ; ? name
 ; 1 parm  - tokenstream data 
-
+;
+; The loader will prefix each code word with a 0, properly aligned!
 macro CODE str,name,parm {
   db .z2-.z1
 .z1: db str,0
@@ -82,10 +83,24 @@ CODE "system'leave",leave,T_NONE
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
         pop     {r4-r11,lr}
+        mov     r0,0x1234
         bx      lr
 .x:
 
-CODE "test'a",temit,T_NONE 
+CODE "test'a",testa,T_NONE 
+ mov r0,'a'
+        push    {r0-r7,r11,lr}
+        mov     r0,1                            ;stdout
+        add     r1,RSP,0                        ;char is RSP[4]
+        mov     r2,1
+        mov     r7,4                            ;write
+        swi     0
+        pop     {r0-r7,r11,lr}
+        mov r0,DSP
+        bx      lr
+.x:  
+CODE "test'b",testb,T_NONE 
+ mov r0,'b'
         push    {r0-r7,r11,lr}
         mov     r0,1                            ;stdout
         add     r1,RSP,0                        ;char is RSP[4]
@@ -119,13 +134,12 @@ CODE "system';",return,T_NONE
 CODE "io'emit",emit,T_NONE 
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout
-        add     r1,RSP,4                        ;char is RSP[4]
+        mov     r1,RSP                           ;char is RSP[0]
         mov     r2,1
         mov     r7,4                            ;write
         swi     0
-        add     DSP,4
         pop     {r0-r7,lr}
-        ldr     r1,[DSP],4                           ;drop
+        ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
 
@@ -133,12 +147,12 @@ CODE "io'key",key,T_NONE
         DPUSH   r1                              ;preserve TOS
         push    {r0-r7,lr}
         mov     r0,0                            ;stdin
-        add     r1,RSP,4                        ;char is RSP[4]
+        mov     r1,RSP                          ;char is RSP[4]
         mov     r2,1
         mov     r7,3                            ;read
         swi     0
         pop     {r0-r7,lr}                      ;TOS gets key buffer
-        and     r1,$FF
+        and     r0,$FF
         bx      lr
 .x:
 

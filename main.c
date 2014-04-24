@@ -51,7 +51,6 @@ void kernel_load_record(U32 namelen,FILE* f){
   fread(buf,namelen,1,f);       //read string
 //*** DEBUG - insert name in data so we can see dumps
 data_compile_blob(buf,strlen(buf));
-data_align4();
 //*** DEBUG END
   HINDEX h = head_find_or_create(buf);          //create header
   // Read parameter code
@@ -63,11 +62,13 @@ data_align4();
  // Now read code into the data section...
   U32 datalen;
   fread(&datalen,4,1,f);                        //read data length
+  data_align4_minus_1();
+  data_compile_U8(0);                           //code token
   U8* data = data_compile_from_file(f,datalen);
   // And update the head
   HEAD[h].type = H_PROC;        //it was created as DIR originally...
   HEAD[h].parm = parm;          //from file...
-  HEAD[h].pcode = data;
+  HEAD[h].pcode = data-1;       //point at 0 (code) token
 //interpret_ql(data);
 
 }
