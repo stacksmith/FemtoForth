@@ -57,6 +57,7 @@ U32 src_one(){
   src_ws();
   return src_cnt();
 }
+
 interpret_ls(HINDEX dir){
 printf("ls in %d\n",dir);
   HINDEX h = HEAD[dir].child;
@@ -211,24 +212,8 @@ void interpret_colon(){
   
 }
 
-int interpret_command(char* ptr,U32 cnt){
-    switch(cnt){
-        case 1:
-            if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
-        case 2:
-            if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
-            if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
-            if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
-        case 3:
-            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
-            if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
-        case 4:
-            if(0==strncmp(ptr,"exit",4)) {exit(0);}
-    }
-    return 0;
-}
-
 int interpret_compone(char* ptr,U32 cnt){
+printf("interpret_compone[%s] %d\n",ptr,cnt);
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
         printf("not found %s\n",ptr);     
@@ -248,6 +233,25 @@ int interpret_compuntil(char* delim, U32 delimcnt){
     }
     return 1;
 }
+int interpret_command(char* ptr,U32 cnt){
+    switch(cnt){
+        case 1:
+            if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
+            if(0==strncmp(ptr,"(",1)) { interpret_compuntil(")",1); return 1;}
+            
+        case 2:
+            if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
+            if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
+            if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
+        case 3:
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
+            if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
+        case 4:
+            if(0==strncmp(ptr,"exit",4)) {exit(0);}
+    }
+    return 0;
+}
+
 
 int interpret_one(){
 
