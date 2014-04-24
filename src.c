@@ -43,11 +43,14 @@ int src_is_ws(char c){
 void src_ws(){
   while(1){
     char c = *src_ptr++;
-    if(!src_is_ws(c)) {
-        src_ptr--;
-        return;
-    }
-    if(0==c) src_line();        //reload as necessary
+//printf("src_ws [%c] %d\n",c,c);
+    if(0==c) 
+        src_line();        //reload as necessary
+    else
+        if(!src_is_ws(c)) {
+            src_ptr--;
+            return;
+        }
   }
 }
 
@@ -65,8 +68,21 @@ U32 src_cnt(){
     cnt++;
   }
 }
+/*=============================================================================
+ * src_one
+ * 
+ * skip ws; return cnt...
+ * ==========================================================================*/
 
 U32 src_one(){
   src_ws();
   return src_cnt();
+}
+/*=============================================================================
+ * src_error_print
+ * 
+ * on error, print error line and position...
+ * ==========================================================================*/
+void src_error(char* msg){
+    printf("\33[0;31ERROR\n"); 
 }

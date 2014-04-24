@@ -158,10 +158,11 @@ for(i=0;i<20;i++)
 // printf("bindings returns %x\n",qqq);
     src_init();
     interpret_init();
+ //src_error("ass");
 //  call_meow();
   
   
-    while(1)
+   while(1)
       interpret_one();
  // line();
 //        int z = armFunction(99);
