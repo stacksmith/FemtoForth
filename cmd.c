@@ -15,13 +15,18 @@ extern sVar* var;
 
 
 
-interpret_ls(HINDEX dir){
-printf("ls in %d\n",dir);
+cmd_ls(HINDEX dir){
+  printf("\33[0;32m");
+//printf("ls in %d\n",dir);
   HINDEX h = HEAD[dir].child;
   while(h){
-    printf("%s\n",HEAD[h].name);
+    int dir = (HEAD[h].child != 0);        //TODO:
+    if(dir) printf("\33[1;32m");
+    printf("%s ",HEAD[h].name);
+    if(dir) printf("\33[0;37m");
     h=HEAD[h].next;
   } 
+  printf("\33[0;37m");
 }
 //
 // cd
@@ -66,6 +71,7 @@ U8* interpret_ql(U8*p){
 }
 
 int interpret_q(){
+  printf("\33[0;32m");
   U32 cnt = src_one();
   char* ptr = src_ptr;
   src_ptr += cnt;
@@ -74,6 +80,7 @@ int interpret_q(){
   address = interpret_ql(address);
   address = interpret_ql(address);
   address = interpret_ql(address);
+  printf("\33[0;37m");
   return 1;
 }
 
@@ -87,17 +94,23 @@ void interpret_colon(){
     head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, icontext.list[0]);
   
 }
-
+//TODO: check error conditions, return...
 int interpret_command(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
             if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
-            if(0==strncmp(ptr,"(",1)) { interpret_compuntil(")",1); return 1;}
-            if(0==strncmp(ptr,"{",1)) { interpret_compuntil("}",1);
-              var->run_ptr = var->data_ptr; return 1;}
+            if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
+            if(0==strncmp(ptr,"{",1)) {
+                int ret = interpret_compuntil("}",1);
+                if(ret){
+                    var->run_ptr = var->data_ptr;
+                    return 1;
+                } else
+                    return 0;
+            }
             
         case 2:
-            if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
+            if(0==strncmp(ptr,"ls",2)) { cmd_ls(icontext.list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
             if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
         case 3:

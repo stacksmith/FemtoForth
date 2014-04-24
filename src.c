@@ -88,7 +88,8 @@ void src_error(char* msg){
     int i = src_ptr - src_buf; //how far into the file are we in?
     if(i>=0){
         printf("%s\n",src_buf);         //print entire line
+        printf("\33[1;31m");
         while(i-- >0 ) printf("_");     //print error point
-        printf("|\n");
+        printf("|\33[0;37m\n");
     }
 }

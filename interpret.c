@@ -165,7 +165,11 @@ int interpret_compuntil(char* delim, U32 delimcnt){
         src_ptr += cnt;
         if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
             return 1;
-        interpret_compone(ptr,cnt);
+        if(!interpret_compone(ptr,cnt)) {
+            printf("ERROR [[%s]]\n",src_ptr);
+            return 0;
+        }
+         
     }
     return 1;
 }
@@ -184,13 +188,15 @@ int interpret_one(){
     if(!interpret_command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
             src_error("not found:");
+            *src_ptr=0;                         //abandon line!
             return 0;
          }
-    interpret_comp(hleave);                    //terminate with a return
-    
-interpret_ql(var->run_ptr);
-    call_meow(var->run_ptr);                    //run from run_ptr
-    
+    //execute
+    if(var->run_ptr != var->data_ptr) {
+        interpret_comp(hleave);                    //terminate with a return
+    interpret_ql(var->run_ptr);
+        call_meow(var->run_ptr);                    //run from run_ptr
+    }        
     var->data_ptr = var->run_ptr;               //and reset
     
     return 1;
