@@ -6,6 +6,7 @@
 #include "global.h"
 #include "header.h"
 #include "data.h"
+#include "src.h"
 
 sVar*   var;                    //system variables
 
@@ -155,6 +156,7 @@ for(i=0;i<20;i++)
        
 // U32 qqq = xxx(0x3456,0x1234);
 // printf("bindings returns %x\n",qqq);
+    src_init();
     interpret_init();
 //  call_meow();
   
