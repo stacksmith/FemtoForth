@@ -84,5 +84,11 @@ U32 src_one(){
  * on error, print error line and position...
  * ==========================================================================*/
 void src_error(char* msg){
-    printf("\33[0;31ERROR\n"); 
+    printf("\33[0;31mERROR %s\33[0;37m\n",msg);
+    int i = src_ptr - src_buf; //how far into the file are we in?
+    if(i>=0){
+        printf("%s\n",src_buf);         //print entire line
+        while(i-- >0 ) printf("_");     //print error point
+        printf("|\n");
+    }
 }
