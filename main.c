@@ -158,7 +158,7 @@ for(i=0;i<20;i++)
 // printf("bindings returns %x\n",qqq);
     src_init();
     interpret_init();
- src_error("ass");
+// src_error("ass");
 //  call_meow();
   
   
