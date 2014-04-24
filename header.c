@@ -59,9 +59,9 @@ HINDEX head_find_or_create(char* path){
   return dir;
 }
 
-HINDEX head_find_absolute(char* path,U32 len){
+HINDEX head_find_absolute(char* xpath,U32 len){
   HINDEX dir = 1;         //start at root
-  char* name = strtok(path,"'");
+  char* name = strtok(xpath,"'");
   while(name){
     HINDEX found = head_locate(dir,name,strlen(name));
     if(!found)

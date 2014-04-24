@@ -141,6 +141,10 @@ printf("call_meow: %08X\n",ret);
  * Initialize the register contexts...
  */
 extern U32 inner_interpreter;
+char irpstr1[]="system';";
+char irpstr2[]="system'leave";
+HINDEX hreturn;
+HINDEX hleave;
 void interpret_init(){
     //Upon entry, the processor context must be on the stack...
     sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
@@ -152,6 +156,10 @@ printf("interpret_init: sp_meow at %08x \n",p);
     p->r11 = (U32)var;      //table
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = (U8*)p;
+    // On another note, initialize the return hindex..
+    hreturn= head_find_absolute(irpstr1,8);
+    hleave = head_find_absolute(irpstr2,strlen(irpstr2));
+
 }
 
 void interpret_comp(HINDEX h){
@@ -202,31 +210,64 @@ void interpret_colon(){
     head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, icontext.list[0]);
   
 }
+
+int interpret_command(char* ptr,U32 cnt){
+    switch(cnt){
+        case 1:
+            if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
+        case 2:
+            if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
+            if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
+            if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
+        case 3:
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
+            if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
+        case 4:
+            if(0==strncmp(ptr,"exit",4)) {exit(0);}
+    }
+    return 0;
+}
+
+int interpret_compone(char* ptr,U32 cnt){
+    HINDEX x = head_find(ptr, cnt,icontext.list);
+    if(!x) {
+        printf("not found %s\n",ptr);     
+        return 0;
+    }
+    interpret_comp(x);                  //compile a token...
+    return 1;
+}
+int interpret_compuntil(char* delim, U32 delimcnt){
+    while(1){
+        U32 cnt = src_one();
+        char* ptr = src_ptr;
+        src_ptr += cnt;
+        if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
+            return 1;
+        interpret_compone(ptr,cnt);
+    }
+    return 1;
+}
+
 int interpret_one(){
-    
 
     U32 cnt = src_one();
     char* ptr = src_ptr;
     src_ptr += cnt;
 
-    if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }
-    if(0==strncmp(ptr,"cd",2)) { return interpret_cd();   };
-    if(0==strncmp(ptr,"exit",4)) {exit(0);}
-    if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
-    if(0==strncmp(ptr,"_q",2)) { return interpret_q();}
-    if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
-    if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
-    
-    HINDEX x = head_find(ptr, cnt,icontext.list);
-    if(!x) {
-        printf("not found %s\n",src_ptr);     
-        return 0;
-    }
-    interpret_comp(x);
+    //prepare to run code we are about to compile!
+    var->run_ptr = var->data_ptr;
+
+    //try to run as command
+    if(! interpret_command(ptr,cnt)) 
+        interpret_compone(ptr,cnt);             //otherwise, do the magic
+    interpret_comp(hleave);                    //terminate with a return
     
 interpret_ql(var->run_ptr);
-//    call_meow(var->run_ptr);
-
+    call_meow(var->run_ptr);                    //run from run_ptr
+    
+    var->data_ptr = var->run_ptr;               //and reset
+    
     return 1;
    
 }

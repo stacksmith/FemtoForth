@@ -148,7 +148,7 @@ int main(int argc, char **argv)
   printf("data pointer is now at %08p\n",var->data_ptr);
         kernel_load();
   printf("data pointer is now at %08p\n",var->data_ptr);
- 
+      
 int i;
 for(i=0;i<20;i++)
   head_dump_one(i);
@@ -159,8 +159,6 @@ for(i=0;i<20;i++)
 //  call_meow();
   
   
-    //prepare to run code we are about to compile!
-    var->run_ptr = var->data_ptr;
     while(1)
       interpret_one();
  // line();
