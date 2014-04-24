@@ -25,10 +25,10 @@ bindings.o: bindings.asm
 	bin/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	
-main.o: main.c global.h data.h
+main.o: main.c global.h header.h data.h src.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) main.c -o main.o 
 
-header.o: header.c header.h global.h 
+header.o: header.c global.h header.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) header.c -o header.o 
 
 data.o: data.c data.h global.h
