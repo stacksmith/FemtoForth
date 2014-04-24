@@ -130,7 +130,7 @@ CODE "system'irp1",irp1,T_NONE
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
 .x:
 
-CODE "system';",return,T_NONE
+CODE "core';",return,T_NONE
     RPOP        IP
 mov r0,0xDEAD
     bx          lr
@@ -152,7 +152,7 @@ CODE "io'emit",emit,T_NONE
 ;------------------------------------------------------------------------------
 ; U8  load a U8 from codestream.
 ;
-CODE "lit'U8",U8,T_U8
+CODE "core'U8",U8,T_U8
         DPUSH   r0
         ldrb    r0,[IP],1               ;fetch literal from [IP], increment
         RETURN
@@ -160,7 +160,7 @@ CODE "lit'U8",U8,T_U8
 ;------------------------------------------------------------------------------
 ; U8  load a U16 from codestream.
 ;
-CODE "lit'U16",U16,T_U16
+CODE "core'U16",U16,T_U16
         DPUSH   r0
         ldrh    r0,[IP],2               ;fetch literal from [IP], increment
         RETURN
@@ -168,7 +168,7 @@ CODE "lit'U16",U16,T_U16
 ;------------------------------------------------------------------------------
 ; U8  load a 32 from codestream.
 ;
-CODE "lit'U32",U32,T_U32
+CODE "core'U32",U32,T_U32
         DPUSH   r0
         ldr     r0,[IP],4               ;fetch literal from [IP], increment
         RETURN

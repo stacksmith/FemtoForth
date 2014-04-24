@@ -6,7 +6,7 @@ extern char* src_ptr;           //from src.cpp
 // interpret.c
 
 #include "cmd.h"
-sInterp icontext = {4,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
+HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
 
 /******************************************************************/
@@ -38,13 +38,13 @@ int interpret_cd(){
   HINDEX x=1; //root
   // handle cd '  as cd to root...
   if(  ((cnt==2)&&(*ptr=='.')&&(*(ptr+1)=='.') )){
-    x = HEAD[icontext.list[0]].dad;
+    x = HEAD[search_list[0]].dad;
   } else  
   if( ! ((cnt==1)&&(*ptr=='\'')) )
-     x = head_find(ptr,cnt,icontext.list);
+     x = head_find(ptr,cnt,search_list);
   // handle cd .. as cd up
   if(x) {
-    icontext.list[0]=x;
+    search_list[0]=x;
     return 1;
   } else{
     printf("ERROR: cd could not cd to [%s]\n",ptr);
@@ -115,7 +115,7 @@ void interpret_colon(){
   src_ptr += cnt;
 //printf("interpret_colon: will create %s\n",ptr);
     //TODO: check for duplication...of string and of datatptr...
-    head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, icontext.list[0]);
+    head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, search_list[0]);
   
 }
 //TODO: check error conditions, return...
@@ -134,11 +134,11 @@ int interpret_command(char* ptr,U32 cnt){
             }
             
         case 2:
-            if(0==strncmp(ptr,"ls",2)) { cmd_ls(icontext.list[0]);return 1; }
+            if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
             if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
         case 3:
-            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].name); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
         case 4:
@@ -147,3 +147,17 @@ int interpret_command(char* ptr,U32 cnt){
     return 0;
 }
 
+/* ============================================================================
+*  initialize
+* 
+*  Call this after the dictionary has been loaded
+*/
+void cmd_init(){
+    search_list[0] = head_find_absolute("test",4);    //wd
+    search_list[1] = head_find_absolute("core",4);    //
+    search_list[2] = head_find_absolute("io",2);    //
+    
+    
+    
+    
+}

@@ -8,7 +8,7 @@ extern char* src_ptr;           //from src.cpp
 // interpret.c
 
 #include "cmd.h"
-extern sInterp icontext;
+extern HINDEX search_list[];
 
  sVar* var;
 /*
@@ -154,7 +154,7 @@ int interpret_literal(char* ptr,U32 cnt){
 }
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
-    HINDEX x = head_find(ptr, cnt,icontext.list);
+    HINDEX x = head_find(ptr, cnt,search_list);
     if(x) return interpret_comp(x);                  //compile a token...
     return interpret_literal(ptr,cnt);        //finally try literal
 }

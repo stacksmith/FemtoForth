@@ -150,7 +150,7 @@ int main(int argc, char **argv)
         kernel_load();
   printf("data pointer is now at %08p\n",var->data_ptr);
   
-    
+        cmd_init();
     int i;
 for(i=0;i<20;i++)
   head_dump_one(i);
