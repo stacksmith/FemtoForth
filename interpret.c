@@ -42,7 +42,7 @@ HINDEX hU16;
 HINDEX hU32;
 void interpret_init(){
     //Upon entry, the processor context must be on the stack...
-    sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
+    sRegsMM* p = var->sp_meow-1;       
 //printf("interpret_init: sp_meow at %08x \n",p);
     p->r0  = 0x9ABC;
     p->r6  = 0;             //IP will be set for the call
@@ -50,7 +50,7 @@ void interpret_init(){
     p->r9  = 0;             //exception register
     p->r11 = (U32)var;      //table
     p->lr  = (U32)&inner_interpreter; //defined in bindings
-    var->sp_meow = (U8*)p;
+    var->sp_meow = p;
     // On another note, initialize the return hindex..
     hreturn= head_find_absolute("system';",8);
     hleave = head_find_absolute("system'leave",12);

@@ -138,7 +138,7 @@ int main(int argc, char **argv)
 // RSP
         var->rsp_base = (U8*)malloc(RSP_SIZE);
         var->rsp_top = var->rsp_base + RSP_SIZE;
-        var->sp_meow = var->rsp_top;
+        var->sp_meow = (sRegsMM*)var->rsp_top;
  printf("RSP at %p ",var->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
@@ -149,11 +149,13 @@ int main(int argc, char **argv)
   printf("data pointer is now at %08p\n",var->data_ptr);
         kernel_load();
   printf("data pointer is now at %08p\n",var->data_ptr);
-      
-int i;
+  
+    
+    int i;
 for(i=0;i<20;i++)
   head_dump_one(i);
-       
+
+      
 // U32 qqq = xxx(0x3456,0x1234);
 // printf("bindings returns %x\n",qqq);
     src_init();
@@ -161,7 +163,7 @@ for(i=0;i<20;i++)
 // src_error("ass");
 //  call_meow();
   
-  
+ 
    while(1)
       interpret_one();
  // line();

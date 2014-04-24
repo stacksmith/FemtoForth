@@ -69,17 +69,41 @@ U8* interpret_ql(U8*p){
   printf("\n");
   return p+16;
 }
+/*=============================================================================
+ * sys
+ * 
+ * display pointers and data
+ * ==========================================================================*/
+int cmd_sys(){
+    printf("\33[1;32m     TOS     NOS      DSP     RSP\33[0;32m\n");
+    U32* DSP = (U32*)(var->sp_meow->r7);
+    printf("%08X ",var->sp_meow->r0);   //TOS
+    printf("%08X ",*DSP);               //NOS
+    printf("%08X ",(U32)DSP);                //DSP
+    printf("%08X ",(U32)(var->sp_meow+1));       //RSP
+    
+    printf("\33[0;37m\n");
+}
 
+/*=============================================================================
+ * q
+ * 
+ * dump pointer on datastack...
+ * ==========================================================================*/
 int interpret_q(){
   printf("\33[0;32m");
-  U32 cnt = src_one();
+/*  U32 cnt = src_one();
   char* ptr = src_ptr;
   src_ptr += cnt;
   U8* address = (U8*)strtol(ptr,NULL,16);
+*/
+  U8* address = *(U8**)(var->sp_meow->r7);
+// printf("SP_MEOW ADDRESS %p\n",address);
   address = interpret_ql(address);
   address = interpret_ql(address);
   address = interpret_ql(address);
   address = interpret_ql(address);
+  *(U8**)(var->sp_meow->r7) = address;
   printf("\33[0;37m");
   return 1;
 }
@@ -116,6 +140,7 @@ int interpret_command(char* ptr,U32 cnt){
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
+            if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
     }

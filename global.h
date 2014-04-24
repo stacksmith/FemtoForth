@@ -25,6 +25,26 @@ typedef U8  PARM ;         //token stream parameter
 #define CODE_ADDRESS 0x04000000
 #define CODE_SIZE    0x01000000
 #define HEAD_MAX  10000
+typedef struct sRegsC {
+    U32 r4;
+    U32 r5;
+    U32 r6;
+    U32 r7;
+    U32 r8;
+    U32 r9;
+    U32 r10;
+    U32 r11;
+    U32 lr;
+}sRegsC;
+
+typedef struct sRegsMM {
+    U32 r0;     //TOS
+    U32 r6;     //IP
+    U32 r7;     //DSP
+    U32 r9;     //ER
+    U32 r11;    //DAT
+    U32 lr;      //interpreter pointer
+} sRegsMM;
 //=======================================================
 //System variable structure.  It is placed at the bottom
 // of the data section, and used by both compiler and
@@ -47,29 +67,9 @@ typedef struct sVar {
 /* 44 */  U8** table_ptr;
 /* 48 */  U8* run_ptr;
 /* 52 */  U8* sp_c;                   //c sp with context..
-/* 56 */  U8* sp_meow;
+/* 56 */  sRegsMM* sp_meow;
 /* 60 */  U8* unused2;
 /* 64 */  U8* unused3;
 /* 68 */  U8* unused4;
 } sVar;
 
-typedef struct sRegsC {
-    U32 r4;
-    U32 r5;
-    U32 r6;
-    U32 r7;
-    U32 r8;
-    U32 r9;
-    U32 r10;
-    U32 r11;
-    U32 lr;
-}sRegsC;
-
-typedef struct sRegsMM {
-    U32 r0;     //TOS
-    U32 r6;     //IP
-    U32 r7;     //DSP
-    U32 r9;     //ER
-    U32 r11;    //DAT
-    U32 lr;      //interpreter pointer
-} sRegsMM;

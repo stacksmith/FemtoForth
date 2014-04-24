@@ -19,7 +19,7 @@ U8* data_compile_U8(U8 val){
   return ret;
 }
 U8* data_compile_U16(U16 val){
-  U16* ret = var->data_ptr;
+  U16* ret = (U16*)var->data_ptr;
   *ret++ = val;
   var->data_ptr+=2;
   return (U8*)ret;
