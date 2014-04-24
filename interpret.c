@@ -125,14 +125,9 @@ int interpret_compuntil(char* delim, U32 delimcnt){
     }
     return 1;
 }
-int interpret_literal(char* ptr,U32 cnt){
+
+int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
     char* endptr;
-    U32 radix = 10;
-    if('$'==*ptr){
-        ptr++;cnt--;
-        radix=16;
-        
-    }
     U32 val = (U32)strtol(ptr,&endptr,radix);
     if(endptr != ptr+cnt){
 //        printf("ptr %x cnt %x endptr %x\n",ptr,cnt,endptr);
@@ -152,6 +147,27 @@ int interpret_literal(char* ptr,U32 cnt){
     }
     
     return 1;
+}
+int interpret_literal_c(char* ptr,U32 cnt){
+printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
+    if((cnt==3)&&('\''==*(ptr+2))){ //sanity check
+        interpret_comp(hU8);
+        data_compile_U8(*(ptr+1));
+        return 1;
+    }
+    return 0;
+}
+int interpret_literal(char* ptr,U32 cnt){
+printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);
+    U32 radix = 10;
+    char first = *ptr;
+    switch(first){
+        case '$': return interpret_literal_num(ptr+1,cnt-1,16);
+        case '\'': return interpret_literal_c(ptr,cnt);
+//        case '"': return interpret_literal_str(ptr,cnt);
+        default:  return interpret_literal_num(ptr,cnt,10);
+    }
+    return 0;
 }
 
 int interpret_command(char* ptr,U32 cnt);
