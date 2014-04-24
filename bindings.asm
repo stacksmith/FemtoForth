@@ -19,12 +19,11 @@ meow_invoke:
 
        push    {r4-r11,lr}              ;preserve C context on C stack...
        str     sp,[r0,SP_C]             ;save C sp in data area..
-mov r11,r0
        ldr     sp,[r0,SP_MEOW]
        pop     {r0,r6,r7,r9,r11,lr}     ;restore meow registers...
       
 ;       bx lr                            ;and jump into the interpreter
-       mov r0,0x1234
+       mov r0,lr
         push    {r0,r6,r7,r9,r11,lr}
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
