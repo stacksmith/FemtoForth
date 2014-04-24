@@ -37,6 +37,9 @@ char irpstr1[]="system';";
 char irpstr2[]="system'leave";
 HINDEX hreturn;
 HINDEX hleave;
+HINDEX hU8;
+HINDEX hU16;
+HINDEX hU32;
 void interpret_init(){
     //Upon entry, the processor context must be on the stack...
     sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
@@ -49,10 +52,20 @@ void interpret_init(){
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = (U8*)p;
     // On another note, initialize the return hindex..
-    hreturn= head_find_absolute(irpstr1,8);
-    hleave = head_find_absolute(irpstr2,strlen(irpstr2));
-
+    hreturn= head_find_absolute("system';",8);
+    hleave = head_find_absolute("system'leave",12);
+    hU8  = head_find_absolute("lit'U8",6);
+    hU16 = head_find_absolute("lit'U16",7);
+    hU32 = head_find_absolute("lit'U32",7);
 }
+/* ============================================================================
+ * comp  Compile a token representing header index.
+ * 
+ * This is hard.  Compile a token.  Its address is transformed into table base
+ * which is searched for the target. If target is found, a token is calculated
+ * from that table index.  If not, we attempt to insert a new target in this 
+ * range.
+ */
 
 void interpret_comp(HINDEX h){
 //printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
@@ -97,10 +110,7 @@ printf("call_meow: %08X\n",ret);
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     HINDEX x = head_find(ptr, cnt,icontext.list);
-    if(!x) {
-        src_error("compone: not found");
-        return 0;
-    }
+    if(!x) return 0;
     interpret_comp(x);                  //compile a token...
     return 1;
 }
@@ -115,6 +125,35 @@ int interpret_compuntil(char* delim, U32 delimcnt){
     }
     return 1;
 }
+int interpret_literal(char* ptr,U32 cnt){
+    char* endptr;
+    U32 radix = 10;
+    if('$'==*ptr){
+        ptr++;cnt--;
+        radix=16;
+        
+    }
+    U32 val = (U32)strtol(ptr,&endptr,radix);
+    if(endptr != ptr+cnt){
+//        printf("ptr %x cnt %x endptr %x\n",ptr,cnt,endptr);
+        return 0;
+    }
+//printf("interpret_literal %d %x\n",val,val);
+    //now compile U8,U16 or U32
+    if(!(val&0xFFFFFF00)){
+        interpret_comp(hU8);
+        data_compile_U8(val);
+    } else if(!(val&0xFFFF0000)){
+        interpret_comp(hU16);
+        data_compile_U16(val);
+    } else {
+        interpret_comp(hU32);
+        data_compile_U32(val);
+    }
+    
+    return 1;
+}
+
 int interpret_command(char* ptr,U32 cnt);
 int interpret_one(){
 
@@ -126,8 +165,12 @@ int interpret_one(){
     var->run_ptr = var->data_ptr;
 
     //try to run as command
-    if(! interpret_command(ptr,cnt)) 
-        interpret_compone(ptr,cnt);             //otherwise, do the magic
+    if(!interpret_command(ptr,cnt)) 
+        if(!interpret_compone(ptr,cnt))        //otherwise, do the magic
+            if(!interpret_literal(ptr,cnt)) {        //finally try literal
+                src_error("not found:");
+                return 0;
+            }
     interpret_comp(hleave);                    //terminate with a return
     
 interpret_ql(var->run_ptr);

@@ -51,9 +51,13 @@ macro DPUSH reg {
 macro DPOP reg {
   ldr reg,[DSP],4
 }
+
+macro RETURN {
+    bx lr
+}
 T_NONE  equ 0
 T_U8    equ 1
-T_U16   equ 2a
+T_U16   equ 2
 T_U32   equ 3
 T_OFF   equ 4
 T_STR   equ 5
@@ -130,7 +134,7 @@ mov r0,0xDEAD
     bx          lr
 .x:
 
-;
+;------------------------------------------------------------------------------
 CODE "io'emit",emit,T_NONE 
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout
@@ -142,22 +146,31 @@ CODE "io'emit",emit,T_NONE
         ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
-
-CODE "io'key",key,T_NONE
-        DPUSH   r1                              ;preserve TOS
-        push    {r0-r7,lr}
-        mov     r0,0                            ;stdin
-        mov     r1,RSP                          ;char is RSP[4]
-        mov     r2,1
-        mov     r7,3                            ;read
-        swi     0
-        pop     {r0-r7,lr}                      ;TOS gets key buffer
-        and     r0,$FF
-        bx      lr
+;------------------------------------------------------------------------------
+; U8  load a U8 from codestream.
+;
+CODE "lit'U8",U8,T_U8
+        DPUSH   r0
+        ldrb    r0,[IP],1               ;fetch literal from [IP], increment
+        RETURN
 .x:
-
-
-CODE "io'ttt",ttt,T_NONE
+;------------------------------------------------------------------------------
+; U8  load a U16 from codestream.
+;
+CODE "lit'U16",U16,T_U16
+        DPUSH   r0
+        ldrh    r0,[IP],2               ;fetch literal from [IP], increment
+        RETURN
 .x:
+;------------------------------------------------------------------------------
+; U8  load a 32 from codestream.
+;
+CODE "lit'U32",U32,T_U32
+        DPUSH   r0
+        ldr     r0,[IP],4               ;fetch literal from [IP], increment
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
 
-db 0
+db 0    ;an empty record to terminate load process
