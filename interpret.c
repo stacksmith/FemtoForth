@@ -176,7 +176,7 @@ int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
-        src_error("interpret_compone: not found");
+        src_error("compone: not found");
         return 0;
     }
     interpret_comp(x);                  //compile a token...
