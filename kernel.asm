@@ -83,7 +83,6 @@ CODE "system'leave",leave,T_NONE
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
         pop     {r4-r11,lr}
-        mov     r0,0x1234
         bx      lr
 .x:
 
@@ -127,6 +126,7 @@ CODE "system'irp1",irp1,T_NONE
 
 CODE "system';",return,T_NONE
     RPOP        IP
+mov r0,0xDEAD
     bx          lr
 .x:
 

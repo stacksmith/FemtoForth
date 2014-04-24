@@ -149,7 +149,7 @@ HINDEX hleave;
 void interpret_init(){
     //Upon entry, the processor context must be on the stack...
     sRegsMM* p = (((sRegsMM*)var->sp_meow)-1 );       
-printf("interpret_init: sp_meow at %08x \n",p);
+//printf("interpret_init: sp_meow at %08x \n",p);
     p->r0  = 0x9ABC;
     p->r6  = 0;             //IP will be set for the call
     p->r7  = (U32)var->dsp_top;  //DSP
@@ -164,11 +164,11 @@ printf("interpret_init: sp_meow at %08x \n",p);
 }
 
 void interpret_comp(HINDEX h){
-printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
+//printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
     //get table base for this location+1
     //+4 since index 0 is used for 'code'
     U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
-printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
+//printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
     U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
@@ -176,13 +176,13 @@ printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
     for(tok=1;tok<=255;tok++){ //for every possible token value
         if(target==tbase[tok]) { //does the table already have a reachable?
           *var->data_ptr++ = tok; //compile token
-printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+//printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
            return;
         } else {
             if(NULL==tbase[tok]) { //empty slot?
                 tbase[tok] = target;    //create a slot entry
                 *var->data_ptr++ = tok; //compile token
-printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+//printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
                 return;
             }   
         }
@@ -213,10 +213,10 @@ void interpret_colon(){
 }
 
 int interpret_compone(char* ptr,U32 cnt){
-printf("interpret_compone[%s] %d\n",ptr,cnt);
+//printf("interpret_compone[%s] %d\n",ptr,cnt);
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
-        printf("not found %s\n",ptr);     
+        printf("interpret_compone:not found %s %d\n",ptr,cnt);     
         return 0;
     }
     interpret_comp(x);                  //compile a token...
@@ -238,6 +238,8 @@ int interpret_command(char* ptr,U32 cnt){
         case 1:
             if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
             if(0==strncmp(ptr,"(",1)) { interpret_compuntil(")",1); return 1;}
+            if(0==strncmp(ptr,"{",1)) { interpret_compuntil("}",1);
+              var->run_ptr = var->data_ptr; return 1;}
             
         case 2:
             if(0==strncmp(ptr,"ls",2)) { interpret_ls(icontext.list[0]);return 1; }

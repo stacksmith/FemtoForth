@@ -59,25 +59,46 @@ HINDEX head_find_or_create(char* path){
   return dir;
 }
 
-HINDEX head_find_absolute(char* xpath,U32 len){
+U32 substr_cnt(char* str){
+    U32 cnt = 0;
+    while(1){
+        switch(*str++){
+            case 0: 
+            case '\'':
+            case ' ':
+              return cnt;
+            default:
+              cnt++;
+        }
+    }
+}
+
+
+HINDEX head_find_absolute(char* ptr,U32 ulen){
+//printf("head_find_absolute[%s] %d\n",ptr,ulen);
   HINDEX dir = 1;         //start at root
-  char* name = strtok(xpath,"'");
-  while(name){
-    HINDEX found = head_locate(dir,name,strlen(name));
+  U32 cnt=0;
+  int len=ulen;
+  while(len>0){
+      cnt=substr_cnt(ptr);
+      len=len-cnt-1;
+//printf("head_find_absolute 1: [%s] %d\n",ptr,cnt);
+    HINDEX found = head_locate(dir,ptr,cnt);
     if(!found)
       return 0;
     dir = found;
-    name = strtok(NULL,"'");
+    ptr=ptr+cnt+1;
   }
   return dir;
 }
-HINDEX head_find(char* path,U32 len,HINDEX* searchlist){
-  if('\''==*path)
-    return head_find_absolute(path,len);
+HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
+//printf("head_find[%s] %d\n",ptr,len);
+    if('\''==*ptr)
+    return head_find_absolute(ptr+1,len);
   HINDEX dir;
   while(dir=*searchlist++){
     HINDEX ret;
-    if(ret=head_locate(dir,path,len))
+    if(ret=head_locate(dir,ptr,len))
       return ret;
   }
   return 0;
