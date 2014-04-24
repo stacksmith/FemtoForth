@@ -4,7 +4,7 @@
 extern sHeader*       HEAD;
 HINDEX hindex_last = 0;
 
-HINDEX head_new(char* name, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
+HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
   HINDEX ret = hindex_last;
 //printf("head_new: working on %d. (%s)\n",ret,name);
@@ -14,7 +14,9 @@ HINDEX head_new(char* name, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   header->type = type;
   header->pcode = pcode;
   header->parm = parm;
-  strncpy(header->name,name,NAMELEN);
+  
+  if(cnt>NAMELEN) cnt=NAMELEN; //truncate name...
+  strncpy(header->name,name,cnt);
   if(ret){
     header->next = HEAD[dad].child;      //dad's first child is our sib
  //printf("head_new: %s's next is %d:%s\n",HEAD[ret].name,header->next,HEAD[header->next].name);
@@ -48,7 +50,7 @@ HINDEX head_find_or_create(char* path){
   while(name){
     HINDEX found = head_locate(dir,name,strlen(name));
     if(!found) {
-      dir = head_new(name,0,H_PROC,T_NA,dir);
+      dir = head_new(name,strlen(name),  0,H_PROC,T_NA,dir);
     } else {
       dir = found;
     }

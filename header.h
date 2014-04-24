@@ -10,7 +10,7 @@ typedef struct sHeader {
         char name[NAMELEN];
 } sHeader;
 
-HINDEX  head_new(char* name, U8* pcode,HINDEX type,PARM parm, HINDEX dad);
+HINDEX  head_new(char* name,U32 cnt, U8* pcode,HINDEX type,PARM parm, HINDEX dad);
 void    head_build();
 HINDEX head_locate(HINDEX dir,char* name,U32 len);
 HINDEX head_find_or_create(char* path);

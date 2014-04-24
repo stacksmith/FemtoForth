@@ -21,14 +21,13 @@ HINDEX H_PROC;
 HINDEX H_DIR;
 
 void head_build(){
-  head_new("",0,0,0,0);
-  HINDEX H_ROOT =       head_new("",            0,2,      T_NA,         0); //type is DIR           
-  HINDEX H_TYPE =       head_new("TYPE",        0,3,      T_NA,         H_ROOT);
-         H_DIR =        head_new("DIR",         0,H_TYPE, T_NA,         H_TYPE); //dad is TYPE  
-         H_PROC =       head_new("PROC",        0,H_TYPE, T_NA,         H_TYPE);
-  HINDEX H_IO =         head_new("io",          0,H_DIR,  T_NA,         H_ROOT);
+  head_new("",0, 0,0,0,0);
+  HINDEX H_ROOT =       head_new("",0,          0,2,      T_NA,         0); //type is DIR           
+  HINDEX H_TYPE =       head_new("TYPE",4,      0,3,      T_NA,         H_ROOT);
+         H_DIR =        head_new("DIR",3,       0,H_TYPE, T_NA,         H_TYPE); //dad is TYPE  
+         H_PROC =       head_new("PROC",4,      0,H_TYPE, T_NA,         H_TYPE);
+//  HINDEX H_IO =         head_new("io",2,        0,H_DIR,  T_NA,         H_ROOT);
   
-      head_new("CRAP",        0,2,      T_NA,         H_TYPE);
   
 /*  HINDEX H_EMIT =       head_new("emit",        0,H_PROC, T_NONE,       H_IO);
    head_code(H_EMIT,(U8*)emit,(U8*)emit_x);

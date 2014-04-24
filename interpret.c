@@ -192,6 +192,16 @@ printf("call_meow: %08X\n",ret);
     
 }
 
+extern HINDEX H_PROC;           //initilization code set this...
+void interpret_colon(){
+  U32 cnt = src_one();
+  char* ptr = src_ptr;
+  src_ptr += cnt;
+//printf("interpret_colon: will create %s\n",ptr);
+    //TODO: check for duplication...of string and of datatptr...
+    head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, icontext.list[0]);
+  
+}
 int interpret_one(){
     
 
@@ -205,6 +215,8 @@ int interpret_one(){
     if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[icontext.list[0]].name); return 1;}
     if(0==strncmp(ptr,"_q",2)) { return interpret_q();}
     if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
+    if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
+    
     HINDEX x = head_find(ptr, cnt,icontext.list);
     if(!x) {
         printf("not found %s\n",src_ptr);     
