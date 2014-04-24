@@ -67,7 +67,7 @@ void interpret_init(){
  * range.
  */
 
-void interpret_comp(HINDEX h){
+int interpret_comp(HINDEX h){
 //printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
     //get table base for this location+1
     //+4 since index 0 is used for 'code'
@@ -81,19 +81,20 @@ void interpret_comp(HINDEX h){
         if(target==tbase[tok]) { //does the table already have a reachable?
           *var->data_ptr++ = tok; //compile token
 //printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-           return;
+           return 1;
         } else {
             if(NULL==tbase[tok]) { //empty slot?
              extern HINDEX H_PROC;           //initilization code set this...
    tbase[tok] = target;    //create a slot entry
                 *var->data_ptr++ = tok; //compile token
 //printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-                return;
+                return 1;
             }   
         }
     }
     // There was not a single empty slot in the reachable part of the table...
     printf("interpret_comp: ERROR - no empty space...\n");
+    return 0;
     
 }
 
@@ -107,24 +108,6 @@ printf("call_meow: %08X\n",ret);
 }
 
 
-int interpret_compone(char* ptr,U32 cnt){
-//printf("interpret_compone[%s] %d\n",ptr,cnt);
-    HINDEX x = head_find(ptr, cnt,icontext.list);
-    if(!x) return 0;
-    interpret_comp(x);                  //compile a token...
-    return 1;
-}
-int interpret_compuntil(char* delim, U32 delimcnt){
-    while(1){
-        U32 cnt = src_one();
-        char* ptr = src_ptr;
-        src_ptr += cnt;
-        if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
-            return 1;
-        interpret_compone(ptr,cnt);
-    }
-    return 1;
-}
 
 int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
     char* endptr;
@@ -158,7 +141,7 @@ printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
     return 0;
 }
 int interpret_literal(char* ptr,U32 cnt){
-printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);
+//printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);
     U32 radix = 10;
     char first = *ptr;
     switch(first){
@@ -168,6 +151,23 @@ printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);
         default:  return interpret_literal_num(ptr,cnt,10);
     }
     return 0;
+}
+int interpret_compone(char* ptr,U32 cnt){
+//printf("interpret_compone[%s] %d\n",ptr,cnt);
+    HINDEX x = head_find(ptr, cnt,icontext.list);
+    if(x) return interpret_comp(x);                  //compile a token...
+    return interpret_literal(ptr,cnt);        //finally try literal
+}
+int interpret_compuntil(char* delim, U32 delimcnt){
+    while(1){
+        U32 cnt = src_one();
+        char* ptr = src_ptr;
+        src_ptr += cnt;
+        if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
+            return 1;
+        interpret_compone(ptr,cnt);
+    }
+    return 1;
 }
 
 int interpret_command(char* ptr,U32 cnt);
@@ -182,11 +182,10 @@ int interpret_one(){
 
     //try to run as command
     if(!interpret_command(ptr,cnt)) 
-        if(!interpret_compone(ptr,cnt))        //otherwise, do the magic
-            if(!interpret_literal(ptr,cnt)) {        //finally try literal
-                src_error("not found:");
-                return 0;
-            }
+        if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
+            src_error("not found:");
+            return 0;
+         }
     interpret_comp(hleave);                    //terminate with a return
     
 interpret_ql(var->run_ptr);
