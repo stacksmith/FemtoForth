@@ -53,12 +53,14 @@ void interpret_init(){
     p->DAT = (U32)var;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = p;
-    // On another note, initialize the return hindex..
+    // On another note, initialize some useful tokens
+    //TODO: error-check that these are found!
     hreturn= head_find_absolute("core';",6);
     hleave = head_find_absolute("core'leave",10);
     hU8  = head_find_absolute("core'U8",7);
     hU16 = head_find_absolute("core'U16",8);
     hU32 = head_find_absolute("core'U32",8);
+    
 }
 /* ============================================================================
  * comp  Compile a token representing header index.
@@ -173,9 +175,10 @@ int interpret_outer(){
     U32 cnt = src_one();
     char* ptr = src_ptr;
     src_ptr += cnt;
-    //keep track of where we started...
+    //---------------------------------------
+    //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;
-    var->run_table = var->table_ptr;
+    var->run_table = table_end(var->data_ptr);
     //try to run as command
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
@@ -190,12 +193,12 @@ printf("--%p\n",var->data_ptr);
 cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }      
-    // reset run space
+    //---------------------------------------
+    // reset after run
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
     var->data_ptr = var->run_ptr;               //and reset
-    memset(var->run_table,0x00,sizeof(U8*) * (var->table_ptr - var->run_table));
-//cmd_ql(var->run_table);
-    var->table_ptr = var->run_table;
+    table_wipe(var->run_table);
+//    var->table_ptr = var->run_table;
     return 1;
    
 }

@@ -63,6 +63,11 @@ U8* data_compile_from_file(FILE* f,U32 cnt){
   
   return ret;
 }
+/* ============================================================================
+ * compile_token...
+ * 
+ * 
+ */
 
 int data_compile_token(HINDEX h){
 //printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
@@ -70,25 +75,14 @@ int data_compile_token(HINDEX h){
     //+4 since index 0 is used for 'code'
 //    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
     U8**tbase = table_base(var->data_ptr);
-printf("data_compile_token to: %08X, base %08X\n",var->data_ptr+1,tbase);
+//printf("data_compile_token to: %08X, base %08X\n",var->data_ptr+1,tbase);
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
     U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
-    int tok;
-    for(tok=1;tok<=255;tok++){ //for every possible token value
-        if(target==tbase[tok]) { //does the table already have a reachable?
-          *var->data_ptr++ = tok; //compile token
-printf("data_compile_token: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-           return 1;
-        } else {
-            if(NULL==tbase[tok]) { //empty slot?
-             extern HINDEX H_PROC;           //initilization code set this...
-   tbase[tok] = target;    //create a slot entry
-                *var->data_ptr++ = tok; //compile token
-printf("data_compile_token: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-                return 1;
-            }   
-        }
+    TOKEN tok = table_find_or_create(var->data_ptr,target);
+    if(tok){
+        *var->data_ptr++ = tok; //compile token
+        return 1;
     }
     // There was not a single empty slot in the reachable part of the table...
     printf("data_compile_token: ERROR - no empty space...\n");

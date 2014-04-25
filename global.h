@@ -11,6 +11,9 @@ typedef U16 HINDEX;        //header index
 typedef U32 TINDEX;        //table index
 typedef U8  PARM ;         //token stream parameter
 
+typedef unsigned char TOKEN;
+typedef TOKEN* PTOKEN;
+
 #define T_NA    0     
 #define T_U8    1
 #define T_U16   2
@@ -63,12 +66,12 @@ typedef struct sVar {
 /* 36 */  U8* htable_top;
 
   
-/* 40 */  U8* data_ptr;
-/* 44 */  U8** table_ptr;
-/* 48 */  U8* run_ptr;
+/* 40 */  TOKEN* data_ptr;
+/* 44 */  U8*  unused2;
+/* 48 */  TOKEN* run_ptr;
 /* 52 */  U8* sp_c;                   //c sp with context..
 /* 56 */  sRegsMM* sp_meow;
-/* 60 */  U8** run_table;
+/* 60 */  PTOKEN* run_table;          //preserving table during run
 /* 64 */  U8* unused3;
 /* 68 */  U8* unused4;
 } sVar;
