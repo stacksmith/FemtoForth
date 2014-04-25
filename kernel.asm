@@ -154,8 +154,21 @@ CODE "io'emit",emit,T_NONE                      ;(c -- )
 ;------------------------------------------------------------------------------
 ; else # (--)   unconditional jump to offset
 ;
+CODE "core'DSP",DSP,T_NONE
+        DPUSH   r0
+        mov     r0,DSP
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+;
 CODE "core'dup",dup,T_NONE
         DPUSH   r0
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'drop",drop,T_NONE
+        DPOP    r0
         RETURN
 .x:
 ;------------------------------------------------------------------------------
@@ -186,7 +199,7 @@ CODE "core'U16",U16,T_U16
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
 ;
-CODE "core'U32",U32,T_U32
+CODE "core'U32colo",U32,T_U32
         DPUSH   r0
         ldr     r0,[IP],4               ;fetch literal from [IP], increment
         RETURN
@@ -222,6 +235,9 @@ CODE "core'else",else,T_OFF
 .x:
 
 ;------------------------------------------------------------------------------
+; times
+;
+; count on return stack.  Loop to offset. Clean up RSP at the end...
 CODE "core'times",times,T_OFF
         ldr       r2,[RSP]              ;r2 is count
         ldrsb     r1,[IP],1             ;r1 is offset, IP++

@@ -38,11 +38,11 @@ typedef struct sRegsC {
 }sRegsC;
 
 typedef struct sRegsMM {
-    U32 r0;     //TOS
-    U32 r6;     //IP
-    U32 r7;     //DSP
-    U32 r9;     //ER
-    U32 r11;    //DAT
+    U32 TOS; //r0;     //TOS
+    U32 IP;  //r6;     //IP
+    U32 DSP; //r7;     //DSP
+    U32 ER;  //r9;     //ER
+    U32 DAT; //r11;    //DAT
     U32 lr;      //interpreter pointer
 } sRegsMM;
 //=======================================================
@@ -53,7 +53,7 @@ typedef struct sRegsMM {
 typedef struct sVar {
 /* 0  */  U8* data_base;                /* 0 */
 /* 4  */  U8* data_top;
-/* 8  */  U8** table_base;
+/* 8  */  U8* table_base;
 /* 12 */  U8* table_top;
 /* 16 */  U8* dsp_base;
 /* 20 */  U8* dsp_top;

@@ -44,11 +44,11 @@ void interpret_init(){
     //Upon entry, the processor context must be on the stack...
     sRegsMM* p = var->sp_meow-1;       
 //printf("interpret_init: sp_meow at %08x \n",p);
-    p->r0  = 0x9ABC;
-    p->r6  = 0;             //IP will be set for the call
-    p->r7  = (U32)var->dsp_top;  //DSP
-    p->r9  = 0;             //exception register
-    p->r11 = (U32)var;      //table
+    p->TOS  = 0x9ABC;
+    p->IP  = 0;             //IP will be set for the call
+    p->DSP  = (U32)var->dsp_top;  //DSP
+    p->ER  = 0;             //exception register
+    p->DAT = (U32)var;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = p;
     // On another note, initialize the return hindex..
@@ -101,7 +101,7 @@ int interpret_comp(HINDEX h){
 void call_meow(U8* addr){
 //printf("call_meow will run: %08X\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
-   pregs->r6 = (U32)addr;
+   pregs->IP = (U32)addr;
   U32 ret=    meow_invoke(var);
 //printf("call_meow: %08X\n",ret);
     

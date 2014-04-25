@@ -76,42 +76,15 @@ U8* interpret_ql(U8*p){
  * ==========================================================================*/
 int cmd_sys(){
     printf("\33[1;32m     TOS      NOS      DSP      RSP\33[0;32m\n");
-    U32* DSP = (U32*)(var->sp_meow->r7);
-    printf("%08X ",var->sp_meow->r0);   //TOS
+    U32* DSP = (U32*)(var->sp_meow->DSP);
+    printf("%08X ",var->sp_meow->TOS);   //TOS
     printf("%08X ",*DSP);               //NOS
     printf("%08X ",(U32)DSP);                //DSP
     printf("%08X ",(U32)(var->sp_meow+1));       //RSP
     
     printf("\33[0;37m\n");
 }
-int verify_ptr(void* ptr){
-    if ((ptr >= var->data_base) && (ptr <data_top))     return 1;
-    if ((ptr >= var->table_base) && (ptr <table_top))   return 1;
-    if ((ptr >= var->dsp_base) && (ptr <dsp_top))       return 1;
-//    if ((ptr >= var->data_base) && (ptr <data_top))     return 1;
-}
-/*=============================================================================
- * q
- * 
- * dump pointer on datastack...
- * ==========================================================================*/
-int interpret_q(){
-  printf("\33[0;32m");
-/*  U32 cnt = src_one();
-  char* ptr = src_ptr;
-  src_ptr += cnt;
-  U8* address = (U8*)strtol(ptr,NULL,16);
-*/
-  U8* address = (U8*)(var->sp_meow->r0);
-// printf("SP_MEOW ADDRESS %p\n",address);
-  address = interpret_ql(address);
-  address = interpret_ql(address);
-  address = interpret_ql(address);
-  address = interpret_ql(address);
-  var->sp_meow->r0 = (U32)address;
-  printf("\33[0;37m");
-  return 1;
-}
+
 
 //TODO: check error conditions, return...
 int interpret_command(char* ptr,U32 cnt){
@@ -130,7 +103,6 @@ int interpret_command(char* ptr,U32 cnt){
         case 2:
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
-            if(0==strncmp(ptr,"_q",2)) { interpret_q(); return 1;}
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].name); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
