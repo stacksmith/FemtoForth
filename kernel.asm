@@ -93,15 +93,15 @@ CODE "core'leave",leave,T_NONE
 .x:
 
 CODE "test'a",testa,T_NONE 
- mov r0,'a'
+
+ mov r1,'a'
         push    {r0-r7,r11,lr}
         mov     r0,1                            ;stdout
-        add     r1,RSP,0                        ;char is RSP[4]
+        add     r1,RSP,4                        ;char is RSP[4]
         mov     r2,1
         mov     r7,4                            ;write
         swi     0
         pop     {r0-r7,r11,lr}
-        mov r0,DSP
         bx      lr
 .x:  
 CODE "test'b",testb,T_NONE 
@@ -133,7 +133,7 @@ CODE "system'irp1",irp1,T_NONE
 ;------------------------------------------------------------------------------
 CODE "core';",return,T_NONE
     RPOP        IP
-mov r0,0xDEAD
+;mov r0,0xDEAD
     bx          lr
 .x:
 ;------------------------------------------------------------------------------
