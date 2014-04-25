@@ -44,21 +44,36 @@ printf("table_find_or_create: created an entry, token %02x at %08x\n",tok,addres
  * given a compile address, find the top 
  */
 PTOKEN* table_end(PTOKEN address){
-    PTOKEN* ptr = table_base(address);          // 0 is ok, just 
+    PTOKEN* ptr = table_base(address)+255;          
     U32 i;
-    for(i=0;i<=255;i++){                        //for every possible token
-        if(NULL==*ptr++) return ptr-1;              //if address 0, we are done
+    if(*ptr) {//TODO: handle this
+printf("table_end ERROR: no room intable!\n");
     }
-    return 0;
+    for(i=255;i>=1;i--,ptr--){  
+        if(NULL!=*ptr) return ptr+1;              //if address 0, we are done
+    }
+    return ptr+1;
 }
 /* ============================================================================
  * table_wipe
  * 
- * clear the table from table address on
- */
-void table_wipe(PTOKEN* address){
+ * When a block of code is deleted, we can't just wipe the table (for a number
+ * of reasons - entries may be used by previous code, etc). 
+ * 
+ * The solution is to scan the reachable range for a code range erased, and
+ * eliminate unused entries...
+ 
+void table_wipe(TOKEN* start,TOKEN* end){
+    //find lowest and highest reachable table slots.
+    PTOKEN* lowest = table_base(start)+1;       //0 is not a usable token
+    PTOKEN* highest = table_base(end)+255;
     memset(address,0,((U32)var->table_top - (U32)address));
 }
+*/
+void table_wipe(TOKEN* address){
+   memset(address,0,((U32)var->table_top - (U32)address));
+}
+
 
 void table_dump(PTOKEN* p){
  printf("ok\n");

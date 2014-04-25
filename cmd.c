@@ -84,12 +84,11 @@ int cmd_sys(){
     printf("%08X ",(U32)(var->sp_meow+1));      //RSP (not counting struct)
     printf("%08X ",(U32)(var->data_ptr));       //compiling here
     printf("%08X ",(U32)(table_base(var->data_ptr)));  //table base
-    printf("%8d ",(table_end(var->data_ptr) - table_base(var->data_ptr)));  //table base
+    printf("%8d ",(table_end(var->data_ptr) - (1+table_base(var->data_ptr))));  //table base
     
     printf("\33[0;37m\n");
 
-printf("%08x %08x %08x\n",table_end(var->data_ptr),table_base(var->data_ptr),
-           *(table_base(var->data_ptr)) );  //table base
+printf("%08x %08x\n",table_end(var->data_ptr),table_base(var->data_ptr)+1);  //table base
     
 }
 
@@ -104,6 +103,7 @@ int command(char* ptr,U32 cnt){
                 if(ret){
                     //don't let interpreter erase us!
                     var->run_ptr = var->data_ptr;
+//printf("update: run_table is at %08p\n",var->run_table);
                     var->run_table = table_end(var->data_ptr);
                     return 1;
                 } else
