@@ -194,7 +194,7 @@ int interpret_one(){
     var->run_ptr = var->data_ptr;
 
     //try to run as command
-    if(!interpret_command(ptr,cnt)) 
+    if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
             src_error("not found:");
             *src_ptr=0;                         //abandon line!

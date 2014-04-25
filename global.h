@@ -40,7 +40,7 @@ typedef struct sRegsC {
 typedef struct sRegsMM {
     U32 TOS; //r0;     //TOS
     U32 IP;  //r6;     //IP
-    U32 DSP; //r7;     //DSP
+    U32* DSP; //r7;     //DSP
     U32 ER;  //r9;     //ER
     U32 DAT; //ar11;    //DAT
     U32 lr;      //interpreter pointer

@@ -87,7 +87,7 @@ int cmd_sys(){
 
 
 //TODO: check error conditions, return...
-int interpret_command(char* ptr,U32 cnt){
+int command(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
              if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
