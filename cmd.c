@@ -84,7 +84,12 @@ int cmd_sys(){
     
     printf("\33[0;37m\n");
 }
-
+int verify_ptr(void* ptr){
+    if ((ptr >= var->data_base) && (ptr <data_top))     return 1;
+    if ((ptr >= var->table_base) && (ptr <table_top))   return 1;
+    if ((ptr >= var->dsp_base) && (ptr <dsp_top))       return 1;
+//    if ((ptr >= var->data_base) && (ptr <data_top))     return 1;
+}
 /*=============================================================================
  * q
  * 

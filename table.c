@@ -10,3 +10,4 @@ TINDEX table_add_ptr(U8* ptr,HINDEX head){
   
   return ret;
 }
+
