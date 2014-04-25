@@ -54,7 +54,7 @@ int interpret_cd(){
 //
 // q
 //
-U8* interpret_ql(U8*p){
+U8* cmd_ql(U8*p){
   printf("%08X ",p);
   int i;
   for(i=0;i<16;i++){

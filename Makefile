@@ -37,7 +37,7 @@ data.o: data.c data.h global.h
 table.o: table.c table.h global.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) table.c -o table.o 
 	
-interpret.o: interpret.c interpret.h global.h
+interpret.o: interpret.c interpret.h global.h header.h src.h cmd.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) interpret.c -o interpret.o 
 
 src.o: src.c src.h global.h
@@ -46,7 +46,7 @@ src.o: src.c src.h global.h
 cmd.o: cmd.c global.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) cmd.c -o cmd.o 
 
-lang.o: lang.c global.h
+lang.o: lang.c global.h header.h src.h interpret.h cmd.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) lang.c -o lang.o 
 	
 clean:

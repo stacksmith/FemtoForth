@@ -2,6 +2,7 @@
 #include "header.h"
 #include "src.h"
 #include "interpret.h"
+#include "cmd.h"
 
 extern sHeader*       HEAD;
 extern char* src_ptr;           //from src.cpp
@@ -46,7 +47,7 @@ void interpret_init(){
 //printf("interpret_init: sp_meow at %08x \n",p);
     p->TOS  = 0x9ABC;
     p->IP  = 0;             //IP will be set for the call
-    p->DSP  = (U32)var->dsp_top;  //DSP
+    p->DSP  = (U32*)var->dsp_top;  //DSP
     p->ER  = 0;             //exception register
     p->DAT = (U32)var;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
@@ -153,6 +154,9 @@ int interpret_literal(char* ptr,U32 cnt){
     return 0;
 }
 extern int lang(char*ptr,U32 cnt);
+/*
+ * compile a single unit - lang, native or literal...
+ */
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //check for 'x' literals, they will break head_find!
@@ -164,6 +168,13 @@ int interpret_compone(char* ptr,U32 cnt){
     return interpret_literal(ptr,cnt);        //finally try literal
 }
 
+int interpret_one(){
+    //next
+    U32 cnt = src_one();
+    char* ptr = src_ptr;
+    src_ptr += cnt;
+    return interpret_compone(ptr,cnt);
+}
 
 
 int interpret_compuntil(char* delim, U32 delimcnt){
@@ -182,17 +193,18 @@ int interpret_compuntil(char* delim, U32 delimcnt){
     return 1;
 }
 
-int interpret_command(char* ptr,U32 cnt);
+int command(char* ptr,U32 cnt);
 
-int interpret_one(){
+
+
+int interpret_outer(){
 
     U32 cnt = src_one();
     char* ptr = src_ptr;
     src_ptr += cnt;
-
-    //prepare to run code we are about to compile!
+    //keep track of where we started...
     var->run_ptr = var->data_ptr;
-
+    var->run_table = var->table_ptr;
     //try to run as command
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
@@ -203,11 +215,14 @@ int interpret_one(){
     //execute
     if(var->run_ptr != var->data_ptr) {
         interpret_comp(hleave);                    //terminate with a return
-interpret_ql(var->run_ptr);
+cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
-    }        
+    }      
+    // reset run space
+    memset(var->run_ptr,0xFF,(var->data_ptr-var->run_ptr));
     var->data_ptr = var->run_ptr;               //and reset
-    
+    memset(var->run_table,0x00,sizeof(U8*) * (var->table_ptr - var->run_table));
+    var->table_ptr = var->run_table;
     return 1;
    
 }

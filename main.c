@@ -117,7 +117,7 @@ int main(int argc, char **argv)
 		 0,0);
 	printf("TABLE at %p ",var->table_base);
         var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
-        var->table_ptr = var->table_base;
+        var->table_ptr = (U8**)var->table_base;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
 //---------------------------------------------------------------------
 // HTable - reverse table (matches table, points at header)
@@ -165,7 +165,7 @@ for(i=0;i<20;i++)
   
  
    while(1)
-      interpret_one();
+      interpret_outer();
  // line();
 //        int z = armFunction(99);
 //        printf("assembly returnst %d\n",z);       

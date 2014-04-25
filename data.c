@@ -39,6 +39,16 @@ U8* data_compile_blob(U8*blob,U32 cnt){
     *var->data_ptr++ = *blob++;
   return ret;
 }
+//TODO: error protect...
+U8* data_compile_off_S8(U32 val){
+  U8* ptr = var->data_ptr;
+  int off = val - (1+(U32)ptr);
+  if((off < -126) || (off > 127)) {
+      printf("ERROR: data_compile_off_s8 RANGE PROBLEM: ptr %p target %08x\n",ptr,val);
+  }
+  *var->data_ptr++ = (off & 0xFF);
+  return ptr;
+}
 
 U8* data_compile_from_file(FILE* f,U32 cnt){
   U8* ret = var->data_ptr;

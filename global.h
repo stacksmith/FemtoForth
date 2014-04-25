@@ -68,7 +68,7 @@ typedef struct sVar {
 /* 48 */  U8* run_ptr;
 /* 52 */  U8* sp_c;                   //c sp with context..
 /* 56 */  sRegsMM* sp_meow;
-/* 60 */  U8* unused2;
+/* 60 */  U8** run_table;
 /* 64 */  U8* unused3;
 /* 68 */  U8* unused4;
 } sVar;
