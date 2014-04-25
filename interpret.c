@@ -69,37 +69,6 @@ void interpret_init(){
  * range.
  */
 
-int interpret_comp(HINDEX h){
-//printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
-    //get table base for this location+1
-    //+4 since index 0 is used for 'code'
-//    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
-    U8**tbase = table_base(var->data_ptr);
-printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
-    //now, in the range of 1-255, try to find the entry represented by
-    //HINDEX h...  
-    U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
-    int tok;
-    for(tok=1;tok<=255;tok++){ //for every possible token value
-        if(target==tbase[tok]) { //does the table already have a reachable?
-          *var->data_ptr++ = tok; //compile token
-printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-           return 1;
-        } else {
-            if(NULL==tbase[tok]) { //empty slot?
-             extern HINDEX H_PROC;           //initilization code set this...
-   tbase[tok] = target;    //create a slot entry
-                *var->data_ptr++ = tok; //compile token
-printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
-                return 1;
-            }   
-        }
-    }
-    // There was not a single empty slot in the reachable part of the table...
-    printf("interpret_comp: ERROR - no empty space...\n");
-    return 0;
-    
-}
 
 void call_meow(U8* addr){
 //printf("call_meow will run: %08X\n",addr);
@@ -122,13 +91,13 @@ int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
 //printf("interpret_literal %d %x\n",val,val);
     //now compile U8,U16 or U32
     if(!(val&0xFFFFFF00)){
-        interpret_comp(hU8);
+        data_compile_token(hU8);
         data_compile_U8(val);
     } else if(!(val&0xFFFF0000)){
-        interpret_comp(hU16);
+        data_compile_token(hU16);
         data_compile_U16(val);
     } else {
-        interpret_comp(hU32);
+        data_compile_token(hU32);
         data_compile_U32(val);
     }
     
@@ -137,7 +106,7 @@ int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
 int interpret_literal_c(char* ptr,U32 cnt){
 //printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
     if((cnt==3)&&('\''==*(ptr+2))){ //sanity check
-        interpret_comp(hU8);
+        data_compile_token(hU8);
         data_compile_U8(*(ptr+1));
         return 1;
     }
@@ -166,7 +135,7 @@ int interpret_compone(char* ptr,U32 cnt){
     if(lang(ptr,cnt)) return 1;
 
     HINDEX x = head_find(ptr, cnt,search_list);
-    if(x) return interpret_comp(x);                  //compile a token...
+    if(x) return data_compile_token(x);                  //compile a token...
     return interpret_literal(ptr,cnt);        //finally try literal
 }
 
@@ -216,7 +185,7 @@ int interpret_outer(){
          }
     //execute
     if(var->run_ptr != var->data_ptr) {
-        interpret_comp(hleave);                    //terminate with a return
+        data_compile_token(hleave);                    //terminate with a return
 printf("--%p\n",var->data_ptr);
 cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
@@ -225,7 +194,7 @@ cmd_ql(var->run_ptr);
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
     var->data_ptr = var->run_ptr;               //and reset
     memset(var->run_table,0x00,sizeof(U8*) * (var->table_ptr - var->run_table));
-cmd_ql(var->run_table);
+//cmd_ql(var->run_table);
     var->table_ptr = var->run_table;
     return 1;
    

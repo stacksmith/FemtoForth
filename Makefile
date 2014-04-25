@@ -31,13 +31,13 @@ main.o: main.c global.h header.h data.h src.h
 header.o: header.c global.h header.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) header.c -o header.o 
 
-data.o: data.c data.h global.h
+data.o: data.c data.h global.h table.h header.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) data.c -o data.o 
 
 table.o: table.c table.h global.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) table.c -o table.o 
 	
-interpret.o: global.h header.h src.h interpret.h cmd.h table.h
+interpret.o: interpret.c global.h header.h src.h interpret.h cmd.h table.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) interpret.c -o interpret.o 
 
 src.o: src.c src.h global.h
