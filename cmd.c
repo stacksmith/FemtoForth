@@ -88,7 +88,6 @@ int cmd_sys(){
     
     printf("\33[0;37m\n");
 
-printf("%08x %08x\n",table_end(var->data_ptr),table_base(var->data_ptr)+1);  //table base
     
 }
 

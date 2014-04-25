@@ -179,7 +179,7 @@ int interpret_outer(){
     //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;
     var->run_table = table_end(var->data_ptr);
-printf("in: run_table is at %08p\n",var->run_table);
+//printf("in: run_table is at %08p\n",var->run_table);
     //try to run as command
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
@@ -190,14 +190,14 @@ printf("in: run_table is at %08p\n",var->run_table);
     //execute
     if(var->run_ptr != var->data_ptr) {
         data_compile_token(hleave);                    //terminate with a return
-printf("--%p\n",var->data_ptr);
+//printf("--%p\n",var->data_ptr);
 cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }      
     //---------------------------------------
     // reset after run
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
-printf("out: run_table is at %08p\n",var->run_table);
+//printf("out: run_table is at %08p\n",var->run_table);
     var->data_ptr = var->run_ptr;               //and reset
     table_wipe(var->run_table);
     return 1;
