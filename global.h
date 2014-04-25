@@ -42,7 +42,7 @@ typedef struct sRegsMM {
     U32 IP;  //r6;     //IP
     U32 DSP; //r7;     //DSP
     U32 ER;  //r9;     //ER
-    U32 DAT; //r11;    //DAT
+    U32 DAT; //ar11;    //DAT
     U32 lr;      //interpreter pointer
 } sRegsMM;
 //=======================================================
