@@ -43,7 +43,7 @@ interpret.o: interpret.c global.h header.h src.h interpret.h cmd.h table.h
 src.o: src.c src.h global.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) src.c -o src.o 
 	
-cmd.o: cmd.c global.h
+cmd.o: cmd.c global.h src.h cmd.h table.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) cmd.c -o cmd.o 
 
 lang.o: lang.c global.h header.h src.h interpret.h cmd.h

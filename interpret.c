@@ -179,6 +179,7 @@ int interpret_outer(){
     //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;
     var->run_table = table_end(var->data_ptr);
+printf("in: run_table is at %08p\n",var->run_table);
     //try to run as command
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
@@ -196,9 +197,10 @@ cmd_ql(var->run_ptr);
     //---------------------------------------
     // reset after run
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
+table_dump(0x010000A0);
     var->data_ptr = var->run_ptr;               //and reset
     table_wipe(var->run_table);
-//    var->table_ptr = var->run_table;
+printf("out: run_table is at %08p\n",var->run_table);
     return 1;
    
 }

@@ -44,10 +44,10 @@ printf("table_find_or_create: created an entry, token %02x at %08x\n",tok,addres
  * given a compile address, find the top 
  */
 PTOKEN* table_end(PTOKEN address){
-    PTOKEN* ptr = table_base(address)+1;        //since 0 is not legal
+    PTOKEN* ptr = table_base(address);          // 0 is ok, just 
     U32 i;
-    for(i=1;i<=255;i++){                        //for every possible token
-        if(NULL==*ptr) return ptr;              //if address 0, we are done
+    for(i=0;i<=255;i++){                        //for every possible token
+        if(NULL==*ptr++) return ptr-1;              //if address 0, we are done
     }
     return 0;
 }
@@ -58,6 +58,14 @@ PTOKEN* table_end(PTOKEN address){
  */
 void table_wipe(PTOKEN* address){
     memset(address,0,((U32)var->table_top - (U32)address));
+}
+
+void table_dump(PTOKEN* p){
+ printf("ok\n");
+    int i; for(i=0;i<16;i++){
+        printf("%2d %p: %p \n",i,p,*p);
+        p++;
+    }
 }
 
 

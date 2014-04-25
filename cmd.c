@@ -8,6 +8,7 @@ extern char* src_ptr;           //from src.cpp
 #include "cmd.h"
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
+#include "table.h"
 
 /******************************************************************/
 
@@ -75,14 +76,21 @@ U8* cmd_ql(U8*p){
  * display pointers and data
  * ==========================================================================*/
 int cmd_sys(){
-    printf("\33[1;32m     TOS      NOS      DSP      RSP\33[0;32m\n");
+    printf("\33[1;32m     TOS      NOS      DSP      RSP      CPL     BASE  ENTRIES\33[0;32m\n");
     U32* DSP = (U32*)(var->sp_meow->DSP);
-    printf("%08X ",var->sp_meow->TOS);   //TOS
-    printf("%08X ",*DSP);               //NOS
-    printf("%08X ",(U32)DSP);                //DSP
-    printf("%08X ",(U32)(var->sp_meow+1));       //RSP
+    printf("%08X ",var->sp_meow->TOS);          //TOS
+    printf("%08X ",*DSP);                       //NOS
+    printf("%08X ",(U32)DSP);                   //DSP
+    printf("%08X ",(U32)(var->sp_meow+1));      //RSP (not counting struct)
+    printf("%08X ",(U32)(var->data_ptr));       //compiling here
+    printf("%08X ",(U32)(table_base(var->data_ptr)));  //table base
+    printf("%8d ",(table_end(var->data_ptr) - table_base(var->data_ptr)));  //table base
     
     printf("\33[0;37m\n");
+
+printf("%08x %08x %08x\n",table_end(var->data_ptr),table_base(var->data_ptr),
+           *(table_base(var->data_ptr)) );  //table base
+    
 }
 
 
@@ -94,7 +102,9 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"{",1)) {
                 int ret = interpret_compuntil("}",1);
                 if(ret){
+                    //don't let interpreter erase us!
                     var->run_ptr = var->data_ptr;
+                    var->run_table = table_end(var->data_ptr);
                     return 1;
                 } else
                     return 0;
