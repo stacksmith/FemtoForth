@@ -152,15 +152,20 @@ int interpret_literal(char* ptr,U32 cnt){
     }
     return 0;
 }
+extern int lang(char*ptr,U32 cnt);
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //check for 'x' literals, they will break head_find!
     if(('\''==*ptr)&&('\'')==*ptr+2) return  interpret_literal_c(ptr,cnt);
+    if(lang(ptr,cnt)) return 1;
 
     HINDEX x = head_find(ptr, cnt,search_list);
     if(x) return interpret_comp(x);                  //compile a token...
     return interpret_literal(ptr,cnt);        //finally try literal
 }
+
+
+
 int interpret_compuntil(char* delim, U32 delimcnt){
     while(1){
         U32 cnt = src_one();
@@ -178,6 +183,7 @@ int interpret_compuntil(char* delim, U32 delimcnt){
 }
 
 int interpret_command(char* ptr,U32 cnt);
+
 int interpret_one(){
 
     U32 cnt = src_one();
@@ -197,7 +203,7 @@ int interpret_one(){
     //execute
     if(var->run_ptr != var->data_ptr) {
         interpret_comp(hleave);                    //terminate with a return
-//interpret_ql(var->run_ptr);
+interpret_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }        
     var->data_ptr = var->run_ptr;               //and reset

@@ -154,8 +154,14 @@ CODE "io'emit",emit,T_NONE                      ;(c -- )
 ;------------------------------------------------------------------------------
 ; else # (--)   unconditional jump to offset
 ;
-CODE "core'DUP",DUP,T_NONE
+CODE "core'dup",dup,T_NONE
         DPUSH   r0
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "core'push",push,T_NONE
+        RPUSH   r0
+        DPOP    r0
         RETURN
 .x:
     
@@ -215,6 +221,18 @@ CODE "core'else",else,T_OFF
         RETURN
 .x:
 
+;------------------------------------------------------------------------------
+CODE "core'times",times,T_OFF
+        ldr       r2,[RSP]              ;r2 is count
+        ldrsb     r1,[IP],1             ;r1 is offset, IP++
+        subs      r2,1                  ;decrement count
+        addne     IP,r1                 ;if nz, loop
+        strne     r2,[RSP]              ;if nz, update count on RSP
+        bxne      lr 
+        add       RSP,4                 ;if
+        RETURN
+.x:   
+    
 
 
 

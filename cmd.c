@@ -75,7 +75,7 @@ U8* interpret_ql(U8*p){
  * display pointers and data
  * ==========================================================================*/
 int cmd_sys(){
-    printf("\33[1;32m     TOS      NOS      DSP           RSP\33[0;32m\n");
+    printf("\33[1;32m     TOS      NOS      DSP      RSP\33[0;32m\n");
     U32* DSP = (U32*)(var->sp_meow->r7);
     printf("%08X ",var->sp_meow->r0);   //TOS
     printf("%08X ",*DSP);               //NOS
@@ -97,33 +97,22 @@ int interpret_q(){
   src_ptr += cnt;
   U8* address = (U8*)strtol(ptr,NULL,16);
 */
-  U8* address = *(U8**)(var->sp_meow->r7);
+  U8* address = (U8*)(var->sp_meow->r0);
 // printf("SP_MEOW ADDRESS %p\n",address);
   address = interpret_ql(address);
   address = interpret_ql(address);
   address = interpret_ql(address);
   address = interpret_ql(address);
-  *(U8**)(var->sp_meow->r7) = address;
+  var->sp_meow->r0 = (U32)address;
   printf("\33[0;37m");
   return 1;
 }
 
-extern HINDEX H_PROC;           //initilization code set this...
-void interpret_colon(){
-  U32 cnt = src_one();
-  char* ptr = src_ptr;
-  src_ptr += cnt;
-//printf("interpret_colon: will create %s\n",ptr);
-    //TODO: check for duplication...of string and of datatptr...
-    head_new(ptr,cnt, var->data_ptr,  H_PROC,T_NA, search_list[0]);
-  
-}
 //TODO: check error conditions, return...
 int interpret_command(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
-            if(0==strncmp(ptr,":",1)) { interpret_colon(); return 1;}
-            if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
+             if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
             if(0==strncmp(ptr,"{",1)) {
                 int ret = interpret_compuntil("}",1);
                 if(ret){
@@ -156,8 +145,4 @@ void cmd_init(){
     search_list[0] = head_find_absolute("test",4);    //wd
     search_list[1] = head_find_absolute("core",4);    //
     search_list[2] = head_find_absolute("io",2);    //
-    
-    
-    
-    
 }
