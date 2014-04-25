@@ -3,6 +3,7 @@
 #include "src.h"
 #include "interpret.h"
 #include "cmd.h"
+#include "table.h"
 
 extern sHeader*       HEAD;
 extern char* src_ptr;           //from src.cpp
@@ -72,8 +73,9 @@ int interpret_comp(HINDEX h){
 //printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
     //get table base for this location+1
     //+4 since index 0 is used for 'code'
-    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
-//printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
+//    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
+    U8**tbase = table_base(var->data_ptr);
+printf("interpret_comp to: %08X, base %08X\n",var->data_ptr+1,tbase);
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
     U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
@@ -81,14 +83,14 @@ int interpret_comp(HINDEX h){
     for(tok=1;tok<=255;tok++){ //for every possible token value
         if(target==tbase[tok]) { //does the table already have a reachable?
           *var->data_ptr++ = tok; //compile token
-//printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+printf("interpret_comp: found an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
            return 1;
         } else {
             if(NULL==tbase[tok]) { //empty slot?
              extern HINDEX H_PROC;           //initilization code set this...
    tbase[tok] = target;    //create a slot entry
                 *var->data_ptr++ = tok; //compile token
-//printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
+printf("interpret_comp: created an entry, compiled token %02x at %08x\n",tok,var->data_ptr-1);
                 return 1;
             }   
         }
@@ -220,9 +222,10 @@ cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }      
     // reset run space
-    memset(var->run_ptr,0xFF,(var->data_ptr-var->run_ptr));
+    memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
     var->data_ptr = var->run_ptr;               //and reset
     memset(var->run_table,0x00,sizeof(U8*) * (var->table_ptr - var->run_table));
+cmd_ql(var->run_table);
     var->table_ptr = var->run_table;
     return 1;
    

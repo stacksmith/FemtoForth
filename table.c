@@ -10,4 +10,12 @@ TINDEX table_add_ptr(U8* ptr,HINDEX head){
   
   return ret;
 }
+/* ============================================================================
+ * table_base
+ * 
+ * Determine the accessible base for a pointer
+ */
 
+U8** table_base(U8* p){
+    U8**tbase = (U8**)(((U32)(p+1) >>2) & 0xFFFFFFFC);
+}
