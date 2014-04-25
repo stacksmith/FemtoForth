@@ -215,6 +215,7 @@ int interpret_outer(){
     //execute
     if(var->run_ptr != var->data_ptr) {
         interpret_comp(hleave);                    //terminate with a return
+printf("--%p\n",var->data_ptr);
 cmd_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }      
