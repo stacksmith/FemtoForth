@@ -52,11 +52,11 @@ void interpret_init(){
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     var->sp_meow = p;
     // On another note, initialize the return hindex..
-    hreturn= head_find_absolute("system';",8);
-    hleave = head_find_absolute("system'leave",12);
-    hU8  = head_find_absolute("lit'U8",6);
-    hU16 = head_find_absolute("lit'U16",7);
-    hU32 = head_find_absolute("lit'U32",7);
+    hreturn= head_find_absolute("core';",6);
+    hleave = head_find_absolute("core'leave",10);
+    hU8  = head_find_absolute("core'U8",7);
+    hU16 = head_find_absolute("core'U16",8);
+    hU32 = head_find_absolute("core'U32",8);
 }
 /* ============================================================================
  * comp  Compile a token representing header index.
@@ -103,7 +103,7 @@ void call_meow(U8* addr){
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->r6 = (U32)addr;
   U32 ret=    meow_invoke(var);
-printf("call_meow: %08X\n",ret);
+//printf("call_meow: %08X\n",ret);
     
 }
 
@@ -132,7 +132,7 @@ int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
     return 1;
 }
 int interpret_literal_c(char* ptr,U32 cnt){
-printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
+//printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
     if((cnt==3)&&('\''==*(ptr+2))){ //sanity check
         interpret_comp(hU8);
         data_compile_U8(*(ptr+1));
@@ -154,6 +154,9 @@ int interpret_literal(char* ptr,U32 cnt){
 }
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
+    //check for 'x' literals, they will break head_find!
+    if(('\''==*ptr)&&('\'')==*ptr+2) return  interpret_literal_c(ptr,cnt);
+
     HINDEX x = head_find(ptr, cnt,search_list);
     if(x) return interpret_comp(x);                  //compile a token...
     return interpret_literal(ptr,cnt);        //finally try literal
@@ -194,7 +197,7 @@ int interpret_one(){
     //execute
     if(var->run_ptr != var->data_ptr) {
         interpret_comp(hleave);                    //terminate with a return
-    interpret_ql(var->run_ptr);
+//interpret_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }        
     var->data_ptr = var->run_ptr;               //and reset

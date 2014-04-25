@@ -86,8 +86,11 @@ HINDEX head_find_absolute(char* ptr,U32 ulen){
       len=len-cnt-1;
 //printf("head_find_absolute 1: [%s] %d\n",ptr,cnt);
     HINDEX found = head_locate(dir,ptr,cnt);
-    if(!found)
+    if(!found) {
+//printf("head_find_absolute: COULD NOT FIND [%s] %d\n",ptr,cnt);
+    
       return 0;
+    }
     dir = found;
     ptr=ptr+cnt+1;
   }
@@ -104,6 +107,7 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
   while(dir=*searchlist++){
     HINDEX ret;
     if(ret=head_locate(dir,ptr,len))
+//printf("head_find found [%s] %d\n",ptr,len);
       return ret;
   }
   return 0;

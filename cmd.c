@@ -75,7 +75,7 @@ U8* interpret_ql(U8*p){
  * display pointers and data
  * ==========================================================================*/
 int cmd_sys(){
-    printf("\33[1;32m     TOS     NOS      DSP     RSP\33[0;32m\n");
+    printf("\33[1;32m     TOS      NOS      DSP           RSP\33[0;32m\n");
     U32* DSP = (U32*)(var->sp_meow->r7);
     printf("%08X ",var->sp_meow->r0);   //TOS
     printf("%08X ",*DSP);               //NOS

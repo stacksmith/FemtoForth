@@ -84,7 +84,7 @@ __#name:
     RPOP IP
 }
 ; return to C
-CODE "system'leave",leave,T_NONE 
+CODE "core'leave",leave,T_NONE 
         push    {r0,r6,r7,r9,r11,lr}
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
@@ -130,14 +130,14 @@ CODE "system'irp1",irp1,T_NONE
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
 .x:
 
+;------------------------------------------------------------------------------
 CODE "core';",return,T_NONE
     RPOP        IP
 mov r0,0xDEAD
     bx          lr
 .x:
-
 ;------------------------------------------------------------------------------
-CODE "io'emit",emit,T_NONE 
+CODE "io'emit",emit,T_NONE                      ;(c -- )
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout
         mov     r1,RSP                           ;char is RSP[0]
@@ -148,9 +148,21 @@ CODE "io'emit",emit,T_NONE
         ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
+
+;==============================================================================
+; FORTH basics
+;------------------------------------------------------------------------------
+; else # (--)   unconditional jump to offset
+;
+CODE "core'DUP",DUP,T_NONE
+        DPUSH   r0
+        RETURN
+.x:
+    
+
 ;==============================================================================
 ;------------------------------------------------------------------------------
-; U8  load a U8 from codestream.
+; U8  (--U8)   load a U8 from codestream.
 ;
 CODE "core'U8",U8,T_U8
         DPUSH   r0
@@ -158,7 +170,7 @@ CODE "core'U8",U8,T_U8
         RETURN
 .x:
 ;------------------------------------------------------------------------------
-; U8  load a U16 from codestream.
+; U16 (--U16)  load a U16 from codestream.
 ;
 CODE "core'U16",U16,T_U16
         DPUSH   r0
@@ -166,7 +178,7 @@ CODE "core'U16",U16,T_U16
         RETURN
 .x:
 ;------------------------------------------------------------------------------
-; U8  load a 32 from codestream.
+; U32 (--U32)   load a 32 from codestream.
 ;
 CODE "core'U32",U32,T_U32
         DPUSH   r0
@@ -192,6 +204,20 @@ CODE "core'>_",gt_,T_OFF
         movgt   r0,0
         RETURN
 .x:
+;==============================================================================
+; BRANCH
+;------------------------------------------------------------------------------
+; else # (--)   unconditional jump to offset
+;
+CODE "core'else",else,T_OFF
+        ldrsb   r1,[IP],1       ;load offset, increment IP
+        add     IP,r1
+        RETURN
+.x:
+
+
+
+
 
 ;------------------------------------------------------------------------------
 
