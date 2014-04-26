@@ -68,7 +68,7 @@ lang.o: lang.c global.h header.h src.h interpret.h cmd.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) lang.c -o lang.o 
 	
 clean:
-	@rm -f $(APP).lst $(APP) *.o *.lst *.dat
+	@rm -f $(APP).lst $(APP) *.o *.lst *.dat *.bin	
 	
 #===============================================
 ifeq ($(PLATFORM),android_arm)
