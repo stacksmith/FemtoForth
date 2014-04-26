@@ -104,6 +104,7 @@ int main(int argc, char **argv)
                  0,0);
         //var structure is placed into TABLE!
         var = (sVar*)table_base;
+        var->table_base = table_base;
         printf("TABLE at %p ",var->table_base);
         var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
        // var->table_ptr = (U8**)var->table_base;
