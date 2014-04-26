@@ -1,3 +1,6 @@
+PLATFORM := android_arm
+
+ifeq ($(PLATFORM),android_arm)
 # A simple makefile to build an android linux binary
 # using FASMARM. 
 APP := main
@@ -9,19 +12,21 @@ CC := $(BIN)/arm-linux-androideabi-gcc
 
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
+endif
+
 
 default: install
 
 $(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 	$(CPP) $(LDFLAGS) -o $(APP) main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
-kernel: kernel.asm
-	bin/fasmarm -s kernel.dat kernel.asm
+kernel: $(PLATFORM)/kernel.asm
+	bin/fasmarm -s kernel.dat $(PLATFORM)/kernel.asm
 	bin/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp
 	
-bindings.o: bindings.asm
-	bin/fasmarm -s bindings.dat bindings.asm  bindings.o
+bindings.o: $(PLATFORM)/bindings.asm
+	bin/fasmarm -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o
 	bin/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	
