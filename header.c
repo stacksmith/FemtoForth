@@ -15,8 +15,7 @@ HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   header->pcode = pcode;
   header->parm = parm;
   
-  if(cnt>NAMELEN) cnt=NAMELEN; //truncate name...
-  strncpy(header->name,name,cnt);
+  header->pname = strndup(name,cnt);
   if(ret){
     header->next = HEAD[dad].child;      //dad's first child is our sib
  //printf("head_new: %s's next is %d:%s\n",HEAD[ret].name,header->next,HEAD[header->next].name);
@@ -32,10 +31,10 @@ HINDEX head_locate(HINDEX dir,char* name,U32 len){
 //printf("head_locate: dir is %d,child is %d[%s]\n",dir,h,HEAD[h].name);      
   while(h){
 //printf("h=%d [%s]\n",h,HEAD[h].name);      
-    if(0==strncmp(name,HEAD[h].name,len))
+    if(0==strncmp(name,HEAD[h].pname,len))
       return h;
 if(HEAD[h].next==h){
-  printf("ERROR: %s's next is itself!\n",HEAD[dir].name);
+  printf("ERROR: %s's next is itself!\n",HEAD[dir].pname);
   exit(0);
 }
     h = HEAD[h].next;
@@ -153,11 +152,11 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     return best_hindex;
 }
 
-char* head_get_name(HINDEX h){ return HEAD[h].name; }
+char* head_get_name(HINDEX h){ return HEAD[h].pname; }
 
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
   // next dad child type table
   printf("%4d %4x %4x %4x type:%4x ->:%8x parm:%d [%s]\n",
-         h,p->next,p->dad,p->child,p->type,p->pcode,p->parm,p->name);
+         h,p->next,p->dad,p->child,p->type,p->pcode,p->parm,p->pname);
 }

@@ -7,7 +7,7 @@ typedef struct sHeader {
         HINDEX type;               //points at type directory
         TOKEN* pcode;              //headers refer to actual code
         PARM  parm;            //decompilation data
-        char name[NAMELEN];
+        char *pname;               //malloc'd name
 } sHeader;
 
 HINDEX  head_new(char* name,U32 cnt, U8* pcode,HINDEX type,PARM parm, HINDEX dad);
