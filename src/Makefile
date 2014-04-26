@@ -1,5 +1,5 @@
-#PLATFORM := android_arm
-PLATFORM := linux_x86
+PLATFORM := android_arm
+#PLATFORM := linux_x86
 #===============================================
 ifeq ($(PLATFORM),android_arm)
 APP := main
@@ -8,7 +8,7 @@ LIB := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/lib
 INC := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/include
 CPP := $(BIN)/arm-linux-androideabi-g++
 CC := $(BIN)/arm-linux-androideabi-gcc
-FASM := bin/fasmarm
+FASM := ../tools/fasmarm
 
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
@@ -21,7 +21,7 @@ CPP := g++
 CC := gcc
 INC := 
 LIB := 
-FASM := bin/fasm
+FASM := ../tools/fasm
 #
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
@@ -34,13 +34,13 @@ $(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.
 	$(CPP) $(LDFLAGS) -o $(APP) main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
 kernel: $(PLATFORM)/kernel.asm
-	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm
-	bin/fasmlist kernel.dat kernel.lst
+	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm kernel.bin
+	../tools/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp
 	
 bindings.o: $(PLATFORM)/bindings.asm
 	$(FASM) -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o
-	bin/fasmlist bindings.dat bindings.lst
+	../tools/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	
 main.o: main.c global.h header.h data.h src.h
