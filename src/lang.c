@@ -106,8 +106,8 @@ int lang_times(){
 
 }
 int lang_t(){
-    //PTOKEN* p = (PTOKEN*) dstack_pop();
-    table_dump((PTOKEN*)0x01000084);
+    PTOKEN* p = (PTOKEN*) dstack_pop();
+    table_dump(p);
 }
 int lang(char* ptr,U32 cnt){
 //printf("lang [%s] %x %d\n",ptr,ptr,cnt);
