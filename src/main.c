@@ -10,7 +10,6 @@
 
 sVar*   var;                    //system variables
 
-sHeader*       HEAD;
 #define        DSP_SIZE 1024
 #define        RSP_SIZE 1024
 #define TABLE_SIZE (CODE_SIZE/16)
@@ -66,9 +65,9 @@ void kernel_load_record(U32 namelen,FILE* f){
   data_compile_U8(0);                           //code token
   U8* data = data_compile_from_file(f,datalen);
   // And update the head
-  HEAD[h].type = H_PROC;        //it was created as DIR originally...
-  HEAD[h].parm = parm;          //from file...
-  HEAD[h].pcode = data-1;       //point at 0 (code) token
+  head_set_type(h,H_PROC);        //it was created as DIR originally...
+  head_set_parm(h,parm);          //from file...
+  head_set_code(h,data-1);       //point at 0 (code) token
 //interpret_ql(data);
 
 }
@@ -140,8 +139,9 @@ int main(int argc, char **argv)
  printf("RSP at %p ",var->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
-        HEAD = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
- printf("HEAD at %p \n",HEAD);
+        void* phead = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
+        head_set_segment(phead);
+ printf("HEAD at %p \n",phead);
 //---------------------------------------------------------------------
      
         head_build();

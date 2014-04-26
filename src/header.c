@@ -3,7 +3,7 @@
 #include "global.h"
 #include "header.h"
 #include "data.h"
-extern sHeader*       HEAD;
+sHeader*       HEAD;
 HINDEX hindex_last = 0;
 //TODO: error-check allocation
 HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
@@ -174,6 +174,21 @@ HINDEX head_get_next(HINDEX h){
 }
 HINDEX head_get_dad(HINDEX h){
     return HEAD[h].dad;
+}
+TOKEN* head_get_code(HINDEX h){
+    return HEAD[h].pcode;
+}
+void    head_set_type(HINDEX h,HINDEX type){
+    HEAD[h].type = type;
+};
+void    head_set_parm(HINDEX h,PARM parm){
+    HEAD[h].parm = parm;
+}
+void    head_set_code(HINDEX h,TOKEN* code){
+    HEAD[h].pcode = code;
+}
+void    head_set_segment(void* ptr){
+    HEAD = ptr;
 }
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];

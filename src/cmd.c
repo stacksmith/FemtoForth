@@ -1,6 +1,5 @@
 #include "global.h"
 #include "header.h"
-extern sHeader*       HEAD;
 #include "src.h"
 extern char* src_ptr;           //from src.cpp
 // interpret.c

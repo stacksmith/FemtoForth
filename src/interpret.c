@@ -6,7 +6,6 @@
 #include "table.h"
 #include "lang.h"
 
-extern sHeader*       HEAD;
 extern char* src_ptr;           //from src.cpp
 // interpret.c
 
@@ -14,24 +13,7 @@ extern char* src_ptr;           //from src.cpp
 extern HINDEX search_list[];
 
  sVar* var;
-/*
-typedef U32 (*funcx)(sVar* v,U32 parm);
-U32 interpret_xxx(HINDEX h){
-    funcx p = (funcx)var->table_base[HEAD[h].index];
-printf("interpret_xxx: %d %s %p\n",h,&HEAD[h].name,p);
-    interpret_ql((void*)p);
-    U32 ret = p(var,'q');
-printf("interpret_xxx: %08x %d\n",ret,ret);
- 
-    
-}
 
-void call_meow(){
-  U32 ret=    meow_invoke(var);
-printf("call_meow: %08X\n",ret);
-    
-}
-*/
 /* ==========================================================
  * Initialize the register contexts...
  */

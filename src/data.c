@@ -1,7 +1,6 @@
 #include "global.h"
 #include "table.h"
 #include "header.h"
-extern sHeader*       HEAD;
 
 extern sVar* var;
 void data_align4(void){
@@ -70,7 +69,7 @@ U8* data_compile_from_file(FILE* f,U32 cnt){
  */
 
 int data_compile_token(HINDEX h){
-//printf("interpret_comp: %d %s \n",h,&HEAD[h].name);
+//printf("interpret_comp: %d %s \n",h,head_get_name(h))
     //get table base for this location+1
     //+4 since index 0 is used for 'code'
 //    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
@@ -78,7 +77,7 @@ int data_compile_token(HINDEX h){
 //printf("data_compile_token to: %08X, base %08X\n",var->data_ptr+1,tbase);
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
-    U8* target = HEAD[h].pcode; //that's what HINDEX h targets...
+    U8* target = head_get_code(h); //that's what HINDEX h targets...
     TOKEN tok = table_find_or_create(var->data_ptr,target);
     if(tok){
         *var->data_ptr++ = tok; //compile token
