@@ -19,8 +19,8 @@ ifeq ($(PLATFORM),linux_x86)
 # using FASMARM. 
 CPP := g++
 CC := gcc
-INC := 
-LIB := 
+INC :=  /usr/lib/gcc/x86_64-linux-gnu/4.8.1/include
+LIB :=  /usr/lib/gcc/x86_64-linux-gnu/4.8.1/
 FASM := ../tools/fasm
 #
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
@@ -37,6 +37,7 @@ kernel: $(PLATFORM)/kernel.asm
 	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm kernel.bin
 	../tools/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp
+	@rm -f kernel.dat 
 	
 bindings.o: $(PLATFORM)/bindings.asm
 	$(FASM) -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o

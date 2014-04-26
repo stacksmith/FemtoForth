@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "global.h"
 #include "header.h"
 #include "data.h"
