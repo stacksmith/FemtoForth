@@ -13,14 +13,12 @@ DSP_BASE   equ 16
 DSP_TOP    equ 20
 RSP_BASE   equ 24
 RSP_TOP    equ 28
-HTABLE_PTR equ 32
-HTABLE_TOP equ 36
 
-DATA_PTR   equ 40
-TABLE_PTR  equ 44
-RUN_PTR    equ 48
-SP_C       equ 52
-SP_MEOW    equ 56
+DATA_PTR   equ 32
+TABLE_PTR  equ 36
+RUN_PTR    equ 40
+SP_C       equ 44
+SP_MEOW    equ 48
 ; Register usage:
 
 IP equ r6

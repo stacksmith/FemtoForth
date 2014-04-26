@@ -7,8 +7,10 @@ macro RPUSH reg {
   str reg,[RSP,-4]!
 }
 RDAT equ r11
-SP_C       equ 52
-SP_MEOW    equ 56
+
+;UPDATE THESE WHEN sVar changes!
+SP_C       equ 44
+SP_MEOW    equ 48
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter

@@ -74,7 +74,18 @@ int cmd_sys(){
 
     
 }
-
+/*=============================================================================
+ * save
+ * 
+ * save the current system.
+ * 
+ * Data Section
+ * ------------
+ * The contents are bytecode or pure data.  There are no pointers to be fixed.
+ * Exception: the crappy pointers at the bottom!...
+ * ==========================================================================*/
+int cmd_save(){
+}
 
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
@@ -91,16 +102,22 @@ int command(char* ptr,U32 cnt){
                 } else
                     return 0;
             }
-            
+            break;
+           
         case 2:
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
+            break;
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].pname); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
+            break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
+            if(0==strncmp(ptr,"save",4)) {return cmd_save();}
+            break;
+            
     }
     return 0;
 }

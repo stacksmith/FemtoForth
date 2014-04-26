@@ -119,13 +119,6 @@ int main(int argc, char **argv)
         var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
        // var->table_ptr = (U8**)var->table_base;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
-//---------------------------------------------------------------------
-// HTable - reverse table (matches table, points at header)
-//          each entry is the size of hindex..
-//
-        var->htable_base = (U8*)malloc(sizeof(HINDEX)*TABLE_SIZE);
-        var->htable_top = var->htable_base + TABLE_SIZE;
-        printf("HTABLE at %p ",var->htable_base);
       
 //---------------------------------------------------------------------
 // DSP
