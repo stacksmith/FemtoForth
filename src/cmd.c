@@ -72,6 +72,7 @@ int cmd_sys(){
     
     printf("\33[0;37m\n");
 
+//printf("%8d %8d\n",(table_end(var->data_ptr),(1+table_base(var->data_ptr))));  //table base
     
 }
 /*=============================================================================

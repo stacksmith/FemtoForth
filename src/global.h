@@ -65,15 +65,11 @@ typedef struct sVar {
 /* 20 */  U8* dsp_top;
 /* 24 */  U8* rsp_base;
 /* 28 */  U8* rsp_top; 
-///* 32 */  U8* htable_base;
-///* 36 */  U8* htable_top;
-
 //U8* shit;  
 /* 32 */  TOKEN* data_ptr;
-/* 36 */  U8*  unused2;
-/* 40 */  TOKEN* run_ptr;
-/* 44 */  U8* sp_c;                   //c sp with context..
-/* 48 */  sRegsMM* sp_meow;
-/* 52 */  PTOKEN* run_table;          //preserving table during run
+/* 36 */  TOKEN* run_ptr;
+/* 40 */  U8* sp_c;                   //c sp with context..
+/* 44 */  sRegsMM* sp_meow;
+/* 48 */  PTOKEN* run_table;          //preserving table during run
 } sVar;
 

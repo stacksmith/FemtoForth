@@ -9,8 +9,8 @@ macro RPUSH reg {
 RDAT equ r11
 
 ;UPDATE THESE WHEN sVar changes!
-SP_C       equ 44
-SP_MEOW    equ 48
+SP_C       equ 40
+SP_MEOW    equ 44
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter

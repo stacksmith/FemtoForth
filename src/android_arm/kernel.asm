@@ -15,10 +15,10 @@ RSP_BASE   equ 24
 RSP_TOP    equ 28
 
 DATA_PTR   equ 32
-TABLE_PTR  equ 36
+RUN_PTR  equ 36
 RUN_PTR    equ 40
-SP_C       equ 44
-SP_MEOW    equ 48
+SP_C       equ 40
+SP_MEOW    equ 44
 ; Register usage:
 
 IP equ r6
