@@ -1,15 +1,28 @@
-PLATFORM := android_arm
-
+#PLATFORM := android_arm
+PLATFORM := linux_x86
+#===============================================
 ifeq ($(PLATFORM),android_arm)
-# A simple makefile to build an android linux binary
-# using FASMARM. 
 APP := main
 BIN := /home/miner/android-ndk-r9d/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86_64/bin
 LIB := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/lib
 INC := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/include
 CPP := $(BIN)/arm-linux-androideabi-g++
 CC := $(BIN)/arm-linux-androideabi-gcc
+FASM := bin/fasmarm
 
+LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
+CFLAGS := -fno-short-enums -I$(INC)
+endif
+#===============================================
+ifeq ($(PLATFORM),linux_x86)
+# A simple makefile to build an android linux binary
+# using FASMARM. 
+CPP := g++
+CC := gcc
+INC := 
+LIB := 
+FASM := bin/fasm
+#
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
 endif
@@ -21,12 +34,12 @@ $(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.
 	$(CPP) $(LDFLAGS) -o $(APP) main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
 kernel: $(PLATFORM)/kernel.asm
-	bin/fasmarm -s kernel.dat $(PLATFORM)/kernel.asm
+	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm
 	bin/fasmlist kernel.dat kernel.lst
 	adb push kernel.bin /data/tmp
 	
 bindings.o: $(PLATFORM)/bindings.asm
-	bin/fasmarm -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o
+	$(FASM) -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o
 	bin/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	
@@ -57,9 +70,21 @@ lang.o: lang.c global.h header.h src.h interpret.h cmd.h
 clean:
 	@rm -f $(APP).lst $(APP) *.o *.lst *.dat
 	
+#===============================================
+ifeq ($(PLATFORM),android_arm)
 install: $(APP) kernel
 	adb push $(APP) /data/tmp	
 	
 run: $(APP) kernel.bin
 	make install
 	adb shell /data/tmp/$(APP)
+endif
+#===============================================
+ifeq ($(PLATFORM),linux_x86)
+install: $(APP) kernel
+	
+	
+run: $(APP) kernel.bin
+	make install
+	
+endif
