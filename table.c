@@ -78,7 +78,14 @@ void table_wipe(TOKEN* address){
 void table_dump(PTOKEN* p){
  printf("ok\n");
     int i; for(i=0;i<16;i++){
-        printf("%2d %p: %p \n",i,p,*p);
+        // output hindex,address, target and name
+        U32 offset=0;
+        HINDEX h = head_resolve(*p,&offset);
+        printf("%2d %p: ",i,p);
+        if(*p){
+          printf("%.08X %. 0d %s",(U32)*p,offset,head_get_name(h));
+        }
+        printf("\n");
         p++;
     }
 }

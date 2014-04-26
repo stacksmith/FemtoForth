@@ -4,6 +4,7 @@
 #include "interpret.h"
 #include "cmd.h"
 #include "table.h"
+#include "lang.h"
 
 extern sHeader*       HEAD;
 extern char* src_ptr;           //from src.cpp
@@ -191,7 +192,7 @@ int interpret_outer(){
     if(var->run_ptr != var->data_ptr) {
         data_compile_token(hleave);                    //terminate with a return
 //printf("--%p\n",var->data_ptr);
-cmd_ql(var->run_ptr);
+lang_ql(var->run_ptr);
         call_meow(var->run_ptr);                    //run from run_ptr
     }      
     //---------------------------------------

@@ -52,24 +52,6 @@ int interpret_cd(){
     return 0;
   }
 }
-//
-// q
-//
-U8* cmd_ql(U8*p){
-  printf("%08X ",p);
-  int i;
-  for(i=0;i<16;i++){
-    printf("%02X ",p[i]);
-  }
-  for(i=0;i<16;i++){
-    if(isprint(p[i]))
-      printf("%c",p[i]);
-    else
-      printf("%s","·");
-  }
-  printf("\n");
-  return p+16;
-}
 /*=============================================================================
  * sys
  * 
@@ -96,8 +78,7 @@ int cmd_sys(){
 int command(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
-             if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
-            if(0==strncmp(ptr,"{",1)) {
+             if(0==strncmp(ptr,"{",1)) {
                 int ret = interpret_compuntil("}",1);
                 if(ret){
                     //don't let interpreter erase us!

@@ -3,7 +3,7 @@
 #include "data.h"
 extern sHeader*       HEAD;
 HINDEX hindex_last = 0;
-
+//TODO: error-check allocation
 HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
   HINDEX ret = hindex_last;
@@ -112,7 +112,48 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
   }
   return 0;
 }
+/* ============================================================================
+*  Resolve   given a pointer, find header
+* 
+*  We will find the header pointing at the pointer, or the nearest one below,
+*  in case we are pointing inside a routine.  The highest one wins, to allow
+*  for overloading.
+* 
+*/
+HINDEX head_resolve(TOKEN* ptr,U32* poffset){
+//printf("\n%p :",ptr);
+//printf("head_resolve %p %p\n",ptr,poffset);
+    if(!ptr){
+        if(poffset) *poffset=0;
+        return 0;
+    }
+    HINDEX h;
+    HINDEX best_hindex=0;
+    U32    best_offset = 0xFFFFFFFF;
+    //search from the top for overdefining (for now)
+    for(h = hindex_last;h >= 1; h--){
+        TOKEN* p = HEAD[h].pcode;       //header points here.
+        //since we are scanning down, it is always safe to
+        //return the topmost matching one.
+        if(!p) continue;
+        if(p == ptr) {
+            if(poffset) *poffset = 0;   //if offset requested, 0 it is.
+            return h;
+        }
+        //if head points below the pointer, track offset (if it's better)
+        if(p < ptr) {
+            if((ptr-p)<best_offset){
+                best_offset = (ptr-p);
+                best_hindex=h;
+            }
+        }
+    }
+    //finally, return the best match
+    if(poffset) *poffset = best_offset;
+    return best_hindex;
+}
 
+char* head_get_name(HINDEX h){ return HEAD[h].name; }
 
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
