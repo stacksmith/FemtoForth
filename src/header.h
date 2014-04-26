@@ -6,9 +6,13 @@ typedef struct sHeader {
         HINDEX child;
         HINDEX type;               //points at type directory
         TOKEN* pcode;              //headers refer to actual code
+        //
         PARM  parm;                //decompilation data
+        U8 namelen;                //actual name part of string
+        U8 unused_a;
+        U8 unused_c;
+        //
         const char *pname;               //malloc'd name
-        U8 namelen;
         
 } sHeader;
 
@@ -21,3 +25,4 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset);
 const char*  head_get_name(HINDEX h);
 
 void head_dump_one(HINDEX h);
+int head_save(FILE* f);

@@ -168,3 +168,40 @@ void head_dump_one(HINDEX h){
   printf("%4d %4x %4x %4x type:%4x ->:%8x parm:%d [%s]\n",
          h,p->next,p->dad,p->child,p->type,p->pcode,p->parm,p->pname);
 }
+
+/* ============================================================================
+ * save
+ * 
+ * format:
+ * -32-bit count
+ * 
+ * -sheader
+ * -32-bit text length
+ * -text
+ * ...
+ */
+
+int head_save_one(FILE* f,HINDEX h){
+    U32 ret = 0;
+    ret+=fwrite(&HEAD[h], sizeof(sHeader)-4, 1, f );
+    U32 textlen = strlen(HEAD[h].pname)+1;
+    ret+=fwrite(&textlen,4,1,f);
+    ret+=fwrite(HEAD[h].pname,textlen,1,f);
+    return (ret==3)?1:0;
+}
+
+
+int head_load_one(FILE* f,HINDEX h){
+   
+    
+}
+int head_save(FILE* f){
+    U32 cnt = hindex_last;
+    if(1 != fwrite(&cnt,4,1,f)) return 0;
+    int i;
+    for(i=0;i<cnt;i++){
+        if(1 != head_save_one(f,i)) return 0;
+    }
+    return 1;
+    
+}

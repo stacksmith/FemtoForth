@@ -121,7 +121,7 @@ int main(int argc, char **argv)
         // install system var structure at bottom
         var->data_base = data_base;
         var->data_top = data_base + CODE_SIZE;
-        var->data_ptr = data_base + sizeof(sVar);
+        var->data_ptr = data_base;
 
         printf("data at %p->%p ",var->data_base,var->data_top);
       
@@ -142,6 +142,7 @@ int main(int argc, char **argv)
 // HEAD
         HEAD = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
  printf("HEAD at %p \n",HEAD);
+//---------------------------------------------------------------------
      
         head_build();
   printf("data pointer is now at %08p\n",var->data_ptr);

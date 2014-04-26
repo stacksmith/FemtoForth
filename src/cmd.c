@@ -83,9 +83,30 @@ int cmd_sys(){
  * Data Section
  * ------------
  * The contents are bytecode or pure data.  There are no pointers to be fixed.
- * Exception: the crappy pointers at the bottom!...
+ * 
+ * Headers
+ * -------
+ * Internal header structural references are all indices, no fixup.
+ * References into data section are actual pointers...
+ * 
+ * Table
+ * -----
+ * A list of pure pointers.  
+ * -The low 8 pointers are filled out by loader...
+ * -5 pointers follow, that require special care.
+ * 
+ * CONTEXT
  * ==========================================================================*/
 int cmd_save(){
+    FILE* f = fopen("femto_image.data","w");
+    data_save(f);
+    fclose(f);
+    
+    f = fopen("femto_image.head","w");
+    head_save(f);
+    fclose(f);
+    
+    return 1;
 }
 
 //TODO: check error conditions, return...

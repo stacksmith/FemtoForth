@@ -89,3 +89,15 @@ int data_compile_token(HINDEX h){
     return 0;
     
 }
+/* ============================================================================
+ * save
+ * 
+ * Data is pure, and has no pointers (right?)
+ */
+int data_save(FILE* f){
+    if(1 != fwrite(var->data_base,var->data_ptr-var->data_base,1,f))
+        return 0;
+    return 1;
+}
+    
+
