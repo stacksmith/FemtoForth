@@ -94,6 +94,23 @@ int main(int argc, char **argv)
 {
         printf("Hello.  size of header is %d\n",sizeof(sHeader));
 	
+//---------------------------------------------------------------------
+// Table - runtime 
+//
+        U8*table_base = mmap((U8**)(CODE_ADDRESS/4),
+                 sizeof(TINDEX)*TABLE_SIZE,
+                 PROT_READ+PROT_WRITE+PROT_EXEC,
+                 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
+                 0,0);
+        //var structure is placed into TABLE!
+        var = (sVar*)table_base;
+        printf("TABLE at %p ",var->table_base);
+        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
+       // var->table_ptr = (U8**)var->table_base;
+       // *var->table_ptr++ = 0 ; //first table entry is always 0 !
+ //---------------------------------------------------------------------
+// data -  
+//
         // memmap data segment
         U8* data_base = mmap((void*)0x04000000,
                  CODE_SIZE,
@@ -101,24 +118,11 @@ int main(int argc, char **argv)
                  MAP_ANONYMOUS|MAP_PRIVATE|MAP_FIXED,
                  0,0);
         // install system var structure at bottom
-        var = (sVar*)data_base;
         var->data_base = data_base;
         var->data_top = data_base + CODE_SIZE;
         var->data_ptr = data_base + sizeof(sVar);
 
         printf("data at %p->%p ",var->data_base,var->data_top);
-//---------------------------------------------------------------------
-// Table - runtime 
-//
-	var->table_base = mmap((U8**)(CODE_ADDRESS/4),
-		 sizeof(TINDEX)*TABLE_SIZE,
-		 PROT_READ+PROT_WRITE+PROT_EXEC,
-		 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
-		 0,0);
-	printf("TABLE at %p ",var->table_base);
-        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
-       // var->table_ptr = (U8**)var->table_base;
-       // *var->table_ptr++ = 0 ; //first table entry is always 0 !
       
 //---------------------------------------------------------------------
 // DSP
