@@ -17,14 +17,16 @@ extern sVar* var;
 
 
 cmd_ls(HINDEX dir){
-  printf("\33[0;32m");
 //printf("ls in %d\n",dir);
   HINDEX h = HEAD[dir].child;
   while(h){
+    printf("\33[0;32m");
     int dir = (HEAD[h].child != 0);        //TODO:
     if(dir) printf("\33[1;32m");
-    printf("%s ",HEAD[h].name);
+    printf("%.*s ",HEAD[h].namelen,HEAD[h].pname);
     if(dir) printf("\33[0;37m");
+    //now the comment part
+    printf("\t\33[0;33m %s\n",HEAD[h].pname+HEAD[h].namelen);
     h=HEAD[h].next;
   } 
   printf("\33[0;37m");
@@ -94,7 +96,7 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
         case 3:
-            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].name); return 1;}
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].pname); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
         case 4:

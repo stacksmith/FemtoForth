@@ -50,7 +50,7 @@ void kernel_load_record(U32 namelen,FILE* f){
   char buf[256];
   fread(buf,namelen,1,f);       //read string
 //*** DEBUG - insert name in data so we can see dumps
-data_compile_blob(buf,strlen(buf));
+//data_compile_blob(buf,strlen(buf));
 //*** DEBUG END
   HINDEX h = head_find_or_create(buf);          //create header
   // Read parameter code

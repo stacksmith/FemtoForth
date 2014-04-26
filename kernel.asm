@@ -84,7 +84,7 @@ __#name:
     RPOP IP
 }
 ; return to C
-CODE "core'leave",leave,T_NONE 
+CODE "core'leave exit to outer host ",leave,T_NONE 
         push    {r0,r6,r7,r9,r11,lr}
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
@@ -131,7 +131,7 @@ CODE "system'irp1",irp1,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "core';",return,T_NONE
+CODE "core'; (--) return",return,T_NONE
     RPOP        IP
 ;mov r0,0xDEAD
     bx          lr
@@ -154,25 +154,25 @@ CODE "io'emit",emit,T_NONE                      ;(c -- )
 ;------------------------------------------------------------------------------
 ; else # (--)   unconditional jump to offset
 ;
-CODE "core'DSP",DSP,T_NONE
+CODE "core'DSP (--DSP) get DataStack pointer",DSP,T_NONE
         DPUSH   r0
         mov     r0,DSP
         RETURN
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'dup",dup,T_NONE
+CODE "core'dup (n--n,n)",dup,T_NONE
         DPUSH   r0
         RETURN
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'drop",drop,T_NONE
+CODE "core'drop (n--)",drop,T_NONE
         DPOP    r0
         RETURN
 .x:
 ;------------------------------------------------------------------------------
-CODE "core'push",push,T_NONE
+CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
         RPUSH   r0
         DPOP    r0
         RETURN
@@ -183,7 +183,7 @@ CODE "core'push",push,T_NONE
 ;------------------------------------------------------------------------------
 ; U8  (--U8)   load a U8 from codestream.
 ;
-CODE "core'U8",U8,T_U8
+CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
         DPUSH   r0
         ldrb    r0,[IP],1               ;fetch literal from [IP], increment
         RETURN
@@ -191,7 +191,7 @@ CODE "core'U8",U8,T_U8
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
 ;
-CODE "core'U16",U16,T_U16
+CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
         DPUSH   r0
         ldrh    r0,[IP],2               ;fetch literal from [IP], increment
         RETURN
@@ -199,7 +199,7 @@ CODE "core'U16",U16,T_U16
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
 ;
-CODE "core'U32colo",U32,T_U32
+CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
         DPUSH   r0
         ldr     r0,[IP],4               ;fetch literal from [IP], increment
         RETURN
@@ -208,7 +208,7 @@ CODE "core'U32colo",U32,T_U32
 
 ;==============================================================================
 ;------------------------------------------------------------------------------
-CODE "core'+",add,T_NONE
+CODE "core'+ (a,b--sum)",add,T_NONE
         DPOP    r1
         add     r0,r1
         RETURN
@@ -238,7 +238,7 @@ CODE "core'else",else,T_OFF
 ; times
 ;
 ; count on return stack.  Loop to offset. Clean up RSP at the end...
-CODE "core'times",times,T_OFF
+CODE "core'times (cnt--) execute expression that follows cnt times",times,T_OFF
         ldr       r2,[RSP]              ;r2 is count
         ldrsb     r1,[IP],1             ;r1 is offset, IP++
         subs      r2,1                  ;decrement count

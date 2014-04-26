@@ -14,8 +14,13 @@ HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   header->type = type;
   header->pcode = pcode;
   header->parm = parm;
-  
+  //name and comment
   header->pname = strndup(name,cnt);
+  char*pcomment = strpbrk(name," \t\r\n");
+  header->namelen = pcomment?pcomment-name:cnt;
+printf("head_new: (%s) %d\n",name,header->namelen);
+  
+  //now actually count up the 
   if(ret){
     header->next = HEAD[dad].child;      //dad's first child is our sib
  //printf("head_new: %s's next is %d:%s\n",HEAD[ret].name,header->next,HEAD[header->next].name);
@@ -27,17 +32,18 @@ HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 }
 
 HINDEX head_locate(HINDEX dir,char* name,U32 len){
-  HINDEX h = HEAD[dir].child;
+    HINDEX h = HEAD[dir].child;
 //printf("head_locate: dir is %d,child is %d[%s]\n",dir,h,HEAD[h].name);      
-  while(h){
-//printf("h=%d [%s]\n",h,HEAD[h].name);      
-    if(0==strncmp(name,HEAD[h].pname,len))
-      return h;
+    while(h){
+//printf("h=%d [%s]\n",h,HEAD[h].name);     
+        if(len == HEAD[h].namelen)
+            if(0==strncmp(name,HEAD[h].pname,len))
+                return h;
 if(HEAD[h].next==h){
   printf("ERROR: %s's next is itself!\n",HEAD[dir].pname);
   exit(0);
 }
-    h = HEAD[h].next;
+        h = HEAD[h].next;
     
   }
   return h;
@@ -152,7 +158,7 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     return best_hindex;
 }
 
-char* head_get_name(HINDEX h){ return HEAD[h].pname; }
+const char* head_get_name(HINDEX h){ return HEAD[h].pname; }
 
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
