@@ -160,8 +160,21 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     return best_hindex;
 }
 
-const char* head_get_name(HINDEX h){ return HEAD[h].pname; }
-
+const char* head_get_name(HINDEX h){
+    return HEAD[h].pname; 
+}
+U32 head_get_namelen(HINDEX h){
+    return HEAD[h].namelen;
+}
+HINDEX head_get_child(HINDEX h){
+    return HEAD[h].child;
+}
+HINDEX head_get_next(HINDEX h){
+    return HEAD[h].next;
+}
+HINDEX head_get_dad(HINDEX h){
+    return HEAD[h].dad;
+}
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
   // next dad child type table

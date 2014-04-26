@@ -18,16 +18,16 @@ extern sVar* var;
 
 cmd_ls(HINDEX dir){
 //printf("ls in %d\n",dir);
-  HINDEX h = HEAD[dir].child;
+  HINDEX h = head_get_child(dir);
   while(h){
     printf("\33[0;32m");
-    int dir = (HEAD[h].child != 0);        //TODO:
+    int dir = (head_get_child(h) != 0);        //TODO:
     if(dir) printf("\33[1;32m");
-    printf("%.*s ",HEAD[h].namelen,HEAD[h].pname);
+    printf("%.*s ",head_get_namelen(h),head_get_name(h));
     if(dir) printf("\33[0;37m");
     //now the comment part
-    printf("\t\33[0;33m %s\n",HEAD[h].pname+HEAD[h].namelen);
-    h=HEAD[h].next;
+    printf("\t\33[0;33m %s\n",head_get_name(h)+head_get_namelen(h));
+    h=head_get_next(h);
   } 
   printf("\33[0;37m");
 }
@@ -41,7 +41,7 @@ int interpret_cd(){
   HINDEX x=1; //root
   // handle cd '  as cd to root...
   if(  ((cnt==2)&&(*ptr=='.')&&(*(ptr+1)=='.') )){
-    x = HEAD[search_list[0]].dad;
+    x = head_get_dad(search_list[0]);
   } else  
   if( ! ((cnt==1)&&(*ptr=='\'')) )
      x = head_find(ptr,cnt,search_list);
@@ -131,7 +131,7 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
             break;
         case 3:
-            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",HEAD[search_list[0]].pname); return 1;}
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(search_list[0])); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
             break;

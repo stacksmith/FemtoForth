@@ -23,6 +23,10 @@ HINDEX head_find_or_create(char* path);
 HINDEX head_find_absolute(char* path,U32 len);
 HINDEX head_resolve(TOKEN* ptr,U32* poffset);
 const char*  head_get_name(HINDEX h);
+U32 head_get_namelen(HINDEX h);
+HINDEX head_get_child(HINDEX h);
+HINDEX head_get_next(HINDEX h);
+HINDEX head_get_dad(HINDEX h);
 
 void head_dump_one(HINDEX h);
 int head_save(FILE* f);
