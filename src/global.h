@@ -48,18 +48,6 @@ typedef struct sRegsMM {
     U32 DAT; //ar11;    //DAT
     U32 lr;      //interpreter pointer
 } sRegsMM;
-//=======================================================
-// Some memory metrics allocated by the loader
-typedef struct sMemBounds {
-/* 0  */  U8* data_base;                /* 0 */
-/* 4  */  U8* data_top;
-/* 8  */  U8* table_base;
-/* 12 */  U8* table_top;
-/* 16 */  U8* dsp_base;
-/* 20 */  U8* dsp_top;
-/* 24 */  U8* rsp_base;
-/* 28 */  U8* rsp_top; 
-} sMemBounds;
 
 
 //=======================================================
