@@ -1,20 +1,3 @@
-//=======================================================
-#define NAMELEN 16
-typedef struct sHeader {
-        HINDEX next;               //header index
-        HINDEX dad;
-        HINDEX child;
-        HINDEX type;               //points at type directory
-        TOKEN* pcode;              //headers refer to actual code
-        //
-        PARM  parm;                //decompilation data
-        U8 namelen;                //actual name part of string
-        U8 unused_a;
-        U8 unused_c;
-        //
-        const char *pname;               //malloc'd name
-        
-} sHeader;
 
 void    head_set_segment(void* ptr);
 

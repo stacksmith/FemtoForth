@@ -91,7 +91,6 @@ printf("kernel_load done\n");
 
 int main(int argc, char **argv)
 {
-        printf("Hello.  size of header is %d\n",sizeof(sHeader));
 	
 //---------------------------------------------------------------------
 // Table - runtime 
@@ -139,7 +138,7 @@ int main(int argc, char **argv)
  printf("RSP at %p ",var->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
-        void* phead = (sHeader*)malloc(HEAD_MAX*sizeof(sHeader));
+        void* phead = malloc(HEAD_SIZE);
         head_set_segment(phead);
  printf("HEAD at %p \n",phead);
 //---------------------------------------------------------------------

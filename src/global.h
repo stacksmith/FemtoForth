@@ -27,7 +27,7 @@ typedef TOKEN* PTOKEN;
 //=======================================================
 #define CODE_ADDRESS 0x04000000
 #define CODE_SIZE    0x01000000
-#define HEAD_MAX  10000
+#define HEAD_SIZE    0x00100000
 typedef struct sRegsC {
     U32 r4;
     U32 r5;

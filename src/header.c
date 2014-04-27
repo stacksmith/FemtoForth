@@ -3,6 +3,23 @@
 #include "global.h"
 #include "header.h"
 #include "data.h"
+//=======================================================
+// sHeader structure is private.  Headers can be reworked
+// at a later time.
+typedef struct sHeader {
+        HINDEX next;               //header index
+        HINDEX dad;
+        HINDEX child;
+        HINDEX type;               //points at type directory
+        TOKEN* pcode;              //headers refer to actual code
+        //
+        PARM  parm;                //decompilation data
+        U8 namelen;                //actual name part of string
+        U16 unused_a;              //padding                   
+        //
+        const char *pname;               //malloc'd name
+        
+} sHeader;
 sHeader*       HEAD;
 HINDEX hindex_last = 0;
 //TODO: error-check allocation
@@ -190,6 +207,8 @@ void    head_set_code(HINDEX h,TOKEN* code){
 void    head_set_segment(void* ptr){
     HEAD = ptr;
 }
+
+
 void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
   // next dad child type table
