@@ -1,3 +1,4 @@
+#include <string.h>
 #include "global.h"
 #include "header.h"
 #include "src.h"

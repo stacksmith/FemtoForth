@@ -55,7 +55,7 @@ U8* data_compile_off_S8(U32 val){
 
 U8* data_compile_from_file(FILE* f,U32 cnt){
   U8* ret = var->data_ptr;
-//printf("data_compile_from_file: %d bytes at %x\n",cnt,ret);
+printf("data_compile_from_file: %d bytes at %x\n",cnt,ret);
   if(cnt != fread(ret,1,cnt,f))
     printf("ERROR: data_compile_from_file could not read %x bytes of code\n",cnt);
   var->data_ptr += cnt;

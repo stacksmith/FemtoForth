@@ -217,7 +217,7 @@ void head_dump_one(HINDEX h){
   sHeader*p = &HEAD[h];
   // next dad child type table
   printf("%4d %4x %4x %4x type:%4x ->:%8x parm:%d [%s]\n",
-         h,p->next,p->dad,p->child,p->type,p->pcode,p->parm,p->pname);
+         h,p->next,p->dad,p->child,p->type,(U32)p->pcode,p->parm,p->pname);
 }
 
 /* ============================================================================

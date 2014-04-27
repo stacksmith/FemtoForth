@@ -1,8 +1,7 @@
-PLATFORM := android_arm
-#PLATFORM := linux_x86
+#PLATFORM := android_arm
+PLATFORM := linux_x86
 #===============================================
 ifeq ($(PLATFORM),android_arm)
-APP := main
 BIN := /home/miner/android-ndk-r9d/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86_64/bin
 LIB := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/lib
 INC := /home/miner/android-ndk-r9d/platforms/android-19/arch-arm/usr/include
@@ -12,31 +11,35 @@ FASM := ../tools/fasmarm
 
 LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
 CFLAGS := -fno-short-enums -I$(INC)
+default: install
 endif
 #===============================================
 ifeq ($(PLATFORM),linux_x86)
 # A simple makefile to build an android linux binary
 # using FASMARM. 
-CPP := g++
+CPP := gcc
 CC := gcc
-INC :=  /usr/lib/gcc/x86_64-linux-gnu/4.8.1/include
-LIB :=  /usr/lib/gcc/x86_64-linux-gnu/4.8.1/
+INC :=  /usr/include
+LIB :=  /usr/lib32
 FASM := ../tools/fasm
 #
-LDFLAGS := -Wl,--entry=main,-rpath-link=$(LIB) -L$(LIB) -nostdlib -lc 
-CFLAGS := -fno-short-enums -I$(INC)
+LDFLAGS := -m32 -L$(LIB)  -lc 
+CFLAGS := -m32 -fno-short-enums -I$(INC)
+default: main
 endif
 
+APP := main
 
-default: install
 
-$(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
-	$(CPP) $(LDFLAGS) -o $(APP) main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
+$(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o kernel.bin
+	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
-kernel: $(PLATFORM)/kernel.asm
+kernel.bin: $(PLATFORM)/kernel.asm
 	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm kernel.bin
 	../tools/fasmlist kernel.dat kernel.lst
+ifeq ($(PLATFORM),android_arm)
 	adb push kernel.bin /data/tmp
+endif
 	@rm -f kernel.dat 
 	
 bindings.o: $(PLATFORM)/bindings.asm
@@ -53,7 +56,7 @@ header.o: header.c global.h header.h data.h
 data.o: data.c data.h global.h table.h header.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) data.c -o data.o 
 
-table.o: table.c table.h global.h
+table.o: table.c table.h global.h header.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) table.c -o table.o 
 	
 interpret.o: interpret.c global.h header.h src.h interpret.h cmd.h table.h lang.h
@@ -82,10 +85,11 @@ run: $(APP) kernel.bin
 endif
 #===============================================
 ifeq ($(PLATFORM),linux_x86)
-install: $(APP) kernel
+install: $(APP) kernel.bin
+	
 	
 	
 run: $(APP) kernel.bin
-	make install
+	./$(APP)
 	
 endif

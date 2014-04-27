@@ -1,5 +1,7 @@
+#include <string.h>
 // Note: index 0 is not used (so not found = 0).  Index 1 is root
 #include "global.h"
+#include "header.h"
 extern sVar* var;
 /* ============================================================================
  * table_base
@@ -25,12 +27,12 @@ TOKEN table_find_or_create(TOKEN* address,TOKEN* target){
     TOKEN tok;
     for(tok=1;tok<=255;tok++){ //for every possible token value
         if(target==base[tok]) { //does the table already have a reachable?
-printf("table_find_or_create: found an entry, token %02x at %08x\n",tok,address);
+printf("table_find_or_create: found an entry, token %02x at %08x\n",tok,(U32)address);
            return tok;
         } else {
             if(NULL == base[tok]) { //empty slot?
                 base[tok] = target;    //create a slot entry
-printf("table_find_or_create: created an entry, token %02x at %08x\n",tok,address);
+printf("table_find_or_create: created an entry, token %02x at %08x\n",tok,(U32)address);
                 return tok;
             }   
         }

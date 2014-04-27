@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "global.h"
 #include "header.h"
 #include "src.h"
@@ -39,7 +42,7 @@ int verify_ptr(U8* ptr){
 // q
 //
 U8* lang_ql(U8*p){
-  printf("%08X ",p);
+  printf("%p ",p);
   int i;
   for(i=0;i<16;i++){
     printf("%02X ",p[i]);

@@ -1,6 +1,7 @@
 //
 // Source
 //
+#include <string.h>
 #include "global.h"
 
 char* src_buf;

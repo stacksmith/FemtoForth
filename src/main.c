@@ -45,19 +45,26 @@ void head_build(){
  * - create names and directories as needed
  * - 
  */
-void kernel_load_record(U32 namelen,FILE* f){
-  char buf[256];
-  fread(buf,namelen,1,f);       //read string
+int kernel_load_record(FILE* f){
+    // Read the byte-long name length... 0 terminates
+    U8 namelen;
+    fread(&namelen,1,1,f);
+    if(!namelen) return 0;
+    // Read name into a buffer...
+    char buf[256];
+    fread(buf,namelen,1,f);       //read string
 //*** DEBUG - insert name in data so we can see dumps
 //data_compile_blob(buf,strlen(buf));
 //*** DEBUG END
-  HINDEX h = head_find_or_create(buf);          //create header
-  // Read parameter code
-  PARM parm;
-  fread(&parm,1,1,f);
-  // skip 3 bytes
-  char notused[3];
-  fread(&notused,3,1,f);
+    //create a header...
+    HINDEX h = head_find_or_create(buf);          //create header
+    // Read parameter code
+    PARM parm;
+    fread(&parm,1,1,f);
+printf("kernel_load_record 1 Type %d\n",parm);
+    // skip 3 bytes
+    char notused[3];
+    fread(&notused,3,1,f);
  // Now read code into the data section...
   U32 datalen;
   fread(&datalen,4,1,f);                        //read data length
@@ -69,19 +76,18 @@ void kernel_load_record(U32 namelen,FILE* f){
   head_set_parm(h,parm);          //from file...
   head_set_code(h,data-1);       //point at 0 (code) token
 //interpret_ql(data);
-
+    return 1;
 }
 
 void kernel_load(){
   FILE* f;
-  f=fopen("/data/tmp/kernel.bin","r");
-printf("kernel_load:file is %x\n",f);
-  while(1){
-    U8 namelen;
-    fread(&namelen,1,1,f);
-    if(!namelen) break;
-    kernel_load_record(namelen,f);
+  f=fopen("kernel.bin","r");
+  if(!f) {
+    printf("kernel_load:file is %p\n",f);
+    exit(0);
   }
+printf("kernel_load 1\n");
+  while(kernel_load_record(f)) {};
   fclose(f);
 printf("kernel_load done\n");
 }
@@ -144,9 +150,9 @@ int main(int argc, char **argv)
 //---------------------------------------------------------------------
      
         head_build();
-  printf("data pointer is now at %08p\n",var->data_ptr);
+  printf("data pointer is now at %p\n",var->data_ptr);
         kernel_load();
-  printf("data pointer is now at %08p\n",var->data_ptr);
+  printf("data pointer is now at %p\n",var->data_ptr);
   
         cmd_init();
     int i;
