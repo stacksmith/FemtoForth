@@ -6,6 +6,7 @@ HINDEX  head_get_child(HINDEX h);
 HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
 TOKEN* head_get_code(HINDEX h);
+PARM head_get_parm(HINDEX h);
 
 void    head_set_type(HINDEX h,HINDEX type);
 void    head_set_parm(HINDEX h,PARM parm);

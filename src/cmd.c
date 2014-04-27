@@ -107,7 +107,34 @@ int cmd_save(){
     
     return 1;
 }
-
+TOKEN* deco_one(TOKEN*p){
+    PTOKEN* base = table_base(p);
+    PTOKEN target = base[*p];
+    U32 off;
+    HINDEX head = head_resolve(target,&off);
+    printf("%p %.*s",p,head_get_namelen(head),head_get_name(head));
+    p++;
+    switch(head_get_parm(head)){
+        case T_U8: 
+            printf(" %02X",*(U8*)p);
+            p++;
+            break;
+    }
+    
+    printf("\n");
+    return p;
+}
+int cmd_deco(){
+    TOKEN* ptr = (TOKEN*)(var->sp_meow->TOS);
+    if ((ptr < var->data_base) || (ptr > var->data_top)){
+        src_error("deco: illegal address\n");
+        return 0;
+    }
+    int i;
+    for(i=0;i<15;i++){
+        ptr = deco_one(ptr);
+    }
+}
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
     switch(cnt){
@@ -137,6 +164,7 @@ int command(char* ptr,U32 cnt){
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
+            if(0==strncmp(ptr,"deco",4)) {return cmd_deco();}
             break;
             
     }

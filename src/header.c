@@ -195,6 +195,10 @@ HINDEX head_get_dad(HINDEX h){
 TOKEN* head_get_code(HINDEX h){
     return HEAD[h].pcode;
 }
+PARM head_get_parm(HINDEX h){
+    return HEAD[h].parm;
+}
+
 void    head_set_type(HINDEX h,HINDEX type){
     HEAD[h].type = type;
 };
