@@ -80,7 +80,7 @@ db parm
 db 0,0,0
 dw __#name#.x - __#name
 __#name:
-    RPOP IP
+;    RPOP IP
 }
 ; return to C
 CODE "core'leave exit to outer host ",leave,T_NONE 
@@ -88,6 +88,10 @@ CODE "core'leave exit to outer host ",leave,T_NONE
         str     sp,[RDAT,SP_MEOW]                  ;consider not storing for reentrancy
         ldr     sp,[RDAT,SP_C]
         pop     {r4-r11,lr}
+        bx      lr
+.x:
+CODE "core'nop ",nop,T_NONE 
+mov r0,0xDEAD
         bx      lr
 .x:
 
@@ -130,11 +134,11 @@ CODE "system'irp1",irp1,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "core'; (--) return",return,T_NONE
-    RPOP        IP
-;mov r0,0xDEAD
-    bx          lr
-.x:
+;CODE "core'; (--) return",return,T_NONE
+;    RPOP        IP
+;;mov r0,0xDEAD
+;    bx          lr
+;.x:
 ;------------------------------------------------------------------------------
 CODE "io'emit",emit,T_NONE                      ;(c -- )
         push    {r0-r7,lr}

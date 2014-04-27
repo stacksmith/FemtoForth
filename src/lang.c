@@ -123,6 +123,10 @@ int lang_ref(char* ptr,U32 cnt){
     data_compile_token(htarget);
     return 1;
 }
+int lang_return(void){
+    data_compile_U8(0);
+    return 1;
+}
 int lang(char* ptr,U32 cnt){
 //printf("lang [%s] %x %d\n",ptr,ptr,cnt);
     // If a word starts with a &, get the address of it...
@@ -132,6 +136,7 @@ int lang(char* ptr,U32 cnt){
     }
     switch(cnt){
         case 1:
+            if(0==strncmp(ptr,";",1)) { return lang_return(); }
             if(0==strncmp(ptr,":",1)) { return lang_colon(); }
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }
             if(0==strncmp(ptr,"t",1)) { return lang_t(); }
