@@ -109,20 +109,23 @@ int lang_t(){
     PTOKEN* p = (PTOKEN*) dstack_pop();
     table_dump(p);
 }
+
+int lang_ref(char* ptr,U32 cnt){
+    //find the identifier following the &
+    HINDEX htarget = head_find(ptr,cnt,search_list);
+    if(!htarget) return 0; //TODO: error
+    HINDEX href = head_find_absolute("core'REF",8);
+    if(!href) return 0;
+    data_compile_token(href);
+    data_compile_token(htarget);
+    return 1;
+}
 int lang(char* ptr,U32 cnt){
 //printf("lang [%s] %x %d\n",ptr,ptr,cnt);
     // If a word starts with a &, get the address of it...
     // and compile it 
     if((cnt>1)&&('&'==*ptr)){
-        //find the identifier following the &
-        HINDEX htarget = head_find(ptr+1,cnt-1,search_list);
-        if(!htarget) return 0; //TODO: error
-        HINDEX href = head_find_absolute("core'REF",8);
-        if(!href) return 0;
-        data_compile_token(href);
-        data_compile_token(htarget);
-        return 1;
-        
+        return lang_ref(ptr+1,cnt-1);
     }
     switch(cnt){
         case 1:
