@@ -61,6 +61,7 @@ T_U16   equ 2
 T_U32   equ 3
 T_OFF   equ 4
 T_STR   equ 5
+T_REF   equ 6
 
 TYPE_PROC equ 3
 ; Format:
@@ -203,6 +204,16 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
         RETURN
 .x:
 ;------------------------------------------------------------------------------
+; REF (--REF)   load a reference via table.
+;
+CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
+        ldrb    r1,[IP],1               ;r1 is tok used to fetch reference
+        lsr     r2,IP,4                 ;r2 is base
+        lsls    r1,2                    ;r1 is tok*4, table offset
+        DPUSH   r0
+        ldr     r0,[r1,r2,LSL 2]        ;just like the interpreter
+        RETURN
+.x:
 
 ;==============================================================================
 ;------------------------------------------------------------------------------
