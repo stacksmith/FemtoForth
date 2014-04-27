@@ -76,7 +76,7 @@ clean:
 	
 #===============================================
 ifeq ($(PLATFORM),android_arm)
-install: $(APP) kernel
+install: $(APP) kernel.bin
 	adb push $(APP) /data/tmp	
 	
 run: $(APP) kernel.bin

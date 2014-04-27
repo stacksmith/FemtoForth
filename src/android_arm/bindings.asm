@@ -1,3 +1,5 @@
+;ARM7
+;
 format elf
 
 section '.text' executable
