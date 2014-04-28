@@ -41,11 +41,10 @@ void interpret_init(){
     var->sp_meow = p;
     // On another note, initialize some useful tokens
     //TODO: error-check that these are found!
-    hreturn= head_find_absolute("core';",6);
-    hleave = head_find_absolute("core'leave",10);
-    hU8  = head_find_absolute("core'U8",7);
-    hU16 = head_find_absolute("core'U16",8);
-    hU32 = head_find_absolute("core'U32",8);
+    hleave = head_find_abs_or_die("core'leave");
+    hU8  = head_find_abs_or_die("core'U8");
+    hU16 = head_find_abs_or_die("core'U16");
+    hU32 = head_find_abs_or_die("core'U32");
     
 }
 /* ============================================================================

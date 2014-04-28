@@ -208,7 +208,7 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
         RETURN
 .x:
 ;------------------------------------------------------------------------------
-; REF (--REF)   load a reference via table.
+; REF (--REF)   load a reference via table. ***TABLE
 ;
 CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
         ldrb    r1,[IP],1               ;r1 is tok used to fetch reference

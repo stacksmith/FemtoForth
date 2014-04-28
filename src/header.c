@@ -100,7 +100,7 @@ U32 substr_cnt(char* str){
 /* ============================================================================
 *  Find an absolute path
 */
-HINDEX head_find_absolute(char* ptr,U32 ulen){
+HINDEX head_find_absolute( char* ptr,U32 ulen){
 //printf("head_find_absolute[%s] %d\n",ptr,ulen);
   HINDEX dir = 1;         //start at root
   U32 cnt=0;
@@ -119,6 +119,16 @@ HINDEX head_find_absolute(char* ptr,U32 ulen){
     ptr=ptr+cnt+1;
   }
   return dir;
+}
+/* ============================================================================
+*  Find an absolute path or die
+*/
+HINDEX head_find_abs_or_die( char* path){
+    HINDEX ret = head_find_absolute(path,strlen(path));
+    if(!ret){
+        fprintf(stderr,"ERROR: head_find_abs_or_die cannot find [%s]\n",path);
+        exit(1);
+    }
 }
 /* ============================================================================
 *  Find using a searchlist

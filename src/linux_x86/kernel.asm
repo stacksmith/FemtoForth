@@ -54,7 +54,6 @@ CODE "core'leave exit to outer host ",leave,T_NONE
     ;we are not going back to caller, or interpreter
     add         esp,8
     ;and in reverse.. interpreter is already on the stack!
-mov eax,0x99
     push        ebx
     push        ecx                     ;dat
     push        DWORD 0                 ;er
@@ -71,6 +70,55 @@ mov eax,0x99
 
     ret
 .x:
+
+;==============================================================================
+;------------------------------------------------------------------------------
+; U8  (--U8)   load a U8 from codestream.
+;
+CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
+    mov         esi,[esp+4]             ;src ptr
+    xchg        ebp,esp
+    push        eax
+    xor         eax,eax
+    xchg        esp,ebp
+    lodsb
+    mov         [esp+4],esi
+    ret
+.x:
+;------------------------------------------------------------------------------
+; U16 (--U16)  load a U16 from codestream.
+;
+CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
+    mov         esi,[esp+4]             ;src ptr
+    xchg        ebp,esp
+    push        eax
+    xor         eax,eax
+    xchg        esp,ebp
+    lodsw
+    mov         [esp+4],esi
+    ret
+.x:
+;------------------------------------------------------------------------------
+; U32 (--U32)   load a 32 from codestream.
+;
+CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
+    mov         esi,[esp+4]             ;src ptr
+    xchg        ebp,esp
+    push        eax
+    xchg        esp,ebp
+    lodsd
+    mov         [esp+4],esi
+    ret
+.x:
+
+;==============================================================================
+;------------------------------------------------------------------------------
+CODE "core'+ (a,b--sum)",add,T_NONE
+    add         eax,[ebp]
+    add         ebp,4
+    ret
+.x:
+
 CODE "core'nop ",nop,T_NONE
     sub         ebp,4
     mov         [ebp],eax
