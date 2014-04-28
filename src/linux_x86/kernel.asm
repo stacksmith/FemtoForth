@@ -35,6 +35,11 @@ TYPE_PROC equ 3
 macro RETURN {
     jmp         edi
 }
+macro DPUSH reg{
+    sub         ebp,4           ;DPUSH
+    mov         dword[ebp],reg  ;
+}
+    
 ; Format:
 ; 1 cnt   count of string, including null-term and padding
 ; ? name
@@ -94,32 +99,30 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
 ; U8  (--U8)   load a U8 from codestream.
 ;
 CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
-    xchg        ebp,esp
-    push        eax
+    DPUSH       eax
     xor         eax,eax
-    xchg        esp,ebp
-    lodsb
+    mov         al,[esi]
+    add         esi,1
     RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
 ;
 CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
-    xchg        ebp,esp
-    push        eax
+    DPUSH       eax
     xor         eax,eax
-    xchg        esp,ebp
-    lodsw
+    mov         ax,[esi]
+    add         esi,2
     RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
 ;
 CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
-    xchg        ebp,esp
-    push        eax
-    xchg        esp,ebp
-    lodsd
+    DPUSH       eax
+    xor         eax,eax
+    mov         eax,[esi]
+    add         esi,4
     RETURN
 .x:
 
