@@ -31,6 +31,10 @@ T_OFF   equ 4
 T_STR   equ 5
 
 TYPE_PROC equ 3
+
+macro RETURN {
+    ret
+}
 ; Format:
 ; 1 cnt   count of string, including null-term and padding
 ; ? name
@@ -81,7 +85,7 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
     popa    
     mov         eax,[ebp]
     add         ebp,4
-    ret
+    RETURN
 .x:
 ;==============================================================================
 ;------------------------------------------------------------------------------
@@ -95,7 +99,7 @@ CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
     xchg        esp,ebp
     lodsb
     mov         [esp+4],esi
-    ret
+    RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
@@ -108,7 +112,7 @@ CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
     xchg        esp,ebp
     lodsw
     mov         [esp+4],esi
-    ret
+    RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
@@ -120,7 +124,7 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
     xchg        esp,ebp
     lodsd
     mov         [esp+4],esi
-    ret
+    RETURN
 .x:
 
 ;==============================================================================
@@ -128,17 +132,9 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
 CODE "core'+ (a,b--sum)",add,T_NONE
     add         eax,[ebp]
     add         ebp,4
-    ret
+    RETURN
 .x:
 
-CODE "test'nop ",nop,T_NONE
-    sub         ebp,4
-    mov         [ebp],eax
-    mov         eax,$DEADDEAD
-    ret
- rept 300 { db 0 } 
-    ret
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "io'nop ",ionop,T_NONE
@@ -146,8 +142,15 @@ CODE "io'nop ",ionop,T_NONE
     mov         [ebp],eax
     mov         eax,$DEADDEAD
     ret
+    RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "test'nop ",nop,T_NONE
+    sub         ebp,4
+    mov         [ebp],eax
+    mov         eax,$DEADDEAD
+    RETURN
  rept 300 { db 0 } 
-    ret
 .x:
 
 ;------------------------------------------------------------------------------
