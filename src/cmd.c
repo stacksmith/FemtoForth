@@ -155,6 +155,7 @@ int command(char* ptr,U32 cnt){
         case 2:
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
             if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
+            if(0==strncmp(ptr,"ok",2)) { return 1;  };
             break;
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(search_list[0])); return 1;}

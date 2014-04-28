@@ -72,5 +72,6 @@ typedef struct sVar {
 /* 40 */  U8* sp_c;                   //c sp with context..
 /* 44 */  sRegsMM* sp_meow;
 /* 48 */  PTOKEN* run_table;          //preserving table during run
+          U32 terminator;             //set to non-0 as end of table
 } sVar;
 

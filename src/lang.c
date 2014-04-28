@@ -58,12 +58,13 @@ U8* lang_ql(U8*p){
 }
 int lang_q(){
   printf("\33[0;32m");
-/*  U32 cnt = src_one();
+
+  U32 cnt = src_one();
   char* ptr = src_ptr;
   src_ptr += cnt;
   U8* address = (U8*)strtol(ptr,NULL,16);
-*/
-    U8* address = (U8*)(var->sp_meow->TOS);
+
+//    U8* address = (U8*)(var->sp_meow->TOS);
     if(!verify_ptr(address+64)){
         src_error("q: illegal address\n");
         return 0;
@@ -110,7 +111,7 @@ int lang_times(){
 }
 int lang_t(){
     PTOKEN* p = (PTOKEN*) dstack_pop();
-    table_dump(p);
+    table_dump(0x01000000);
 }
 
 int lang_ref(char* ptr,U32 cnt){

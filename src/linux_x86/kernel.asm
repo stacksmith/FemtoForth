@@ -4,6 +4,7 @@
 ;
 ; format: described in macro below
 ;
+use32
 
 DATA_BASE  equ 0
 DATA_TOP   equ 4
@@ -13,14 +14,12 @@ DSP_BASE   equ 16
 DSP_TOP    equ 20
 RSP_BASE   equ 24
 RSP_TOP    equ 28
-HTABLE_PTR equ 32
-HTABLE_TOP equ 36
 
-DATA_PTR   equ 40
-TABLE_PTR  equ 44
-RUN_PTR    equ 48
-SP_C       equ 52
-SP_MEOW    equ 56
+DATA_PTR   equ 32
+RUN_PTR  equ 36
+RUN_PTR    equ 40
+SP_C       equ 40
+SP_MEOW    equ 44
 ; Register usage:
 
 
@@ -52,9 +51,29 @@ __#name:
 }
 ; return to C
 CODE "core'leave exit to outer host ",leave,T_NONE 
+    ;we are not going back to caller, or interpreter
+    add         esp,8
+    ;and in reverse.. interpreter is already on the stack!
+    push        ebx
+    push        ecx                     ;dat
+    push        DWORD 0                 ;er
+    push        ebp                     
+    push        esi
+    push        DWORD $DEADFEED
+    mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
+
+    mov         esp,[ecx+SP_C]          ;restore c stack
+    pop         edi
+    pop         esi
+    pop         ebp
+    pop         ebx
+ ;   mov eax,$BABE
     ret
 .x:
-
+CODE "core'nop ",nop,T_NONE
+    mov         eax,$DEADDEAD
+ rept 300 { db 0 } 
+    ret
+.x:
 ;------------------------------------------------------------------------------
-
 db 0    ;an empty record to terminate load process

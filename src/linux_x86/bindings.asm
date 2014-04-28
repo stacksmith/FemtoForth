@@ -1,8 +1,11 @@
 ;X86
 ;
 format elf
+use32
 
 section '.text' executable
+SP_C       equ 40
+SP_MEOW    equ 44
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter
@@ -10,19 +13,24 @@ section '.text' executable
 ; (tablebase)
 public meow_invoke
 meow_invoke:
-    mov         eax,[esp+4]             ;get tablebase off the stack
-    pusha                       ;overkill
+
+    mov         ecx,[esp+4]             ;get tablebase off the stack
+    push        ebx
+    push        ebp
+    push        esi
+    push        edi
     
-    ;mov         esp,[eax]       ;meow stack
-    ;...
-    ;mov         esp,
-    popa
-    ;mov         dword[eax],$DEADFEED
-    mov         eax,[esp+4]             ;get tablebase off the stack
-    mov         eax,[eax+44]            ;eax= sRegsMM structure
-    mov         dword[eax],$1234
-    
-    ret
+    mov         DWORD[ecx+SP_C],esp     ;save c stack
+
+    mov         esp,[ecx+SP_MEOW]       ;load meow stack
+    pop         eax                     ;TOS
+    pop         esi                     ;IP
+    pop         ebp                     ;DSP
+    add         esp,8                   ;ER
+    pop         ebx                     ; interp
+ jmp ebx
+ 
+     ret
 .x:
 
 ;=================================================================================================
@@ -31,12 +39,23 @@ meow_invoke:
 ; eax = interpreter temp
 ;
 public inner_interpreter
+return:
+    pop       esi
 inner_interpreter:
-    xor         eax,eax                 ;clear for byte token
-    lodsb                               ;eax is token,
-    shl         eax,2                   ;eax is index (token*4)
-    jnz         .continue               ;zero is special
-    call        esi                     ;call native code
-    jmp         .loop
+inner:
+    xor       eax,eax               ;clear upper 3 bytes for lodsb
+    lodsb                           ;al=tok, inc esi
+    shl       eax,2                 ;token*4 (pointers are 4-bytes), set flags...
+    jz        return                ;A 0 token that is not first means return
+inner_loop:
+    push      esi                   ;thread in...
+    shr       esi,4                 ;Tricky: esi shr 4 then shl 2 for alignment
+    mov       esi,[esi*4+eax]       ;and index it with token*4 resulting in CALL
+    xor       eax,eax
+    lodsb
+    shl       eax,2                 ;first byte of subroutine 0? Machine language code follows
+    jnz       inner_loop            ;continue threading
+    call      esi                   ;call assembly subroutine that follows
+    jmp       return                ;thanks for catching a bug, KSM
 .continue:                              ;non-native interpreter
 ret

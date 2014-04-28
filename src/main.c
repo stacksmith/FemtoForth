@@ -155,6 +155,9 @@ int main(int argc, char **argv)
   printf("data pointer is now at %p\n",var->data_ptr);
   
         cmd_init();
+    // stick a non-0 value into terminator, so that 0 pointers in the var
+    // structure will not get overwritten with table...
+    var->terminator = 0xFFFFFFFF;
     int i;
 for(i=0;i<20;i++)
   head_dump_one(i);

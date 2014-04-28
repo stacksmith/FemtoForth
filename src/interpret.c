@@ -36,6 +36,8 @@ void interpret_init(){
     p->ER  = 0;             //exception register
     p->DAT = (U32)var;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
+    
+//printf("inner interpreter is at %p\n",&inner_interpreter);
     var->sp_meow = p;
     // On another note, initialize some useful tokens
     //TODO: error-check that these are found!
@@ -173,13 +175,13 @@ int interpret_outer(){
             return 0;
          }
     //execute
-    if(var->run_ptr != var->data_ptr) {
+//    if(var->run_ptr != var->data_ptr) {
 //        data_compile_U8(0);
         data_compile_token(hleave);                    //terminate with a return
 //printf("--%p\n",var->data_ptr);
 lang_ql(var->run_ptr);//
         call_meow(var->run_ptr);                    //run from run_ptr
-    }      
+//    }      
     //---------------------------------------
     // reset after run
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
