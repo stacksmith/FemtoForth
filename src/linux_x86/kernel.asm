@@ -119,7 +119,7 @@ CODE "core'+ (a,b--sum)",add,T_NONE
     ret
 .x:
 
-CODE "core'nop ",nop,T_NONE
+CODE "test'nop ",nop,T_NONE
     sub         ebp,4
     mov         [ebp],eax
     mov         eax,$DEADDEAD
@@ -127,5 +127,16 @@ CODE "core'nop ",nop,T_NONE
  rept 300 { db 0 } 
     ret
 .x:
+
+;------------------------------------------------------------------------------
+CODE "io'nop ",ionop,T_NONE
+    sub         ebp,4
+    mov         [ebp],eax
+    mov         eax,$DEADDEAD
+    ret
+ rept 300 { db 0 } 
+    ret
+.x:
+
 ;------------------------------------------------------------------------------
 db 0    ;an empty record to terminate load process

@@ -138,7 +138,9 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
     if('\''==*ptr)
     return head_find_absolute(ptr+1,len);
   HINDEX dir;
+//printf("head_find dir is [%d] \n",*searchlist);
   while(dir=*searchlist++){
+//printf("head_find[%s] trying directory %s \n",ptr,head_get_name(dir));
     HINDEX ret;
     if(ret=head_locate(dir,ptr,len))
 //printf("head_find found [%s] %d\n",ptr,len);

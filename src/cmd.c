@@ -178,7 +178,7 @@ int command(char* ptr,U32 cnt){
 *  Call this after the dictionary has been loaded
 */
 void cmd_init(){
-    search_list[0] = head_find_absolute("test",4);    //wd
-    search_list[1] = head_find_absolute("core",4);    //
-    search_list[2] = head_find_absolute("io",2);    //
+    search_list[0] = head_find_abs_or_die("test");    //wd
+    search_list[1] = head_find_abs_or_die("core");    //
+    search_list[2] = head_find_abs_or_die("io");    //
 }
