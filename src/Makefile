@@ -34,16 +34,16 @@ APP := main
 $(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o kernel.bin
 	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
-kernel.bin: $(PLATFORM)/kernel.asm
-	$(FASM) -s kernel.dat $(PLATFORM)/kernel.asm kernel.bin
+kernel.bin: platform/$(PLATFORM)/kernel.asm
+	$(FASM) -s kernel.dat platform/$(PLATFORM)/kernel.asm kernel.bin
 	../tools/fasmlist kernel.dat kernel.lst
 ifeq ($(PLATFORM),android_arm)
 	adb push kernel.bin /data/tmp
 endif
 	@rm -f kernel.dat 
 	
-bindings.o: $(PLATFORM)/bindings.asm
-	$(FASM) -s bindings.dat $(PLATFORM)/bindings.asm  bindings.o
+bindings.o: platform/$(PLATFORM)/bindings.asm
+	$(FASM) -s bindings.dat platform/$(PLATFORM)/bindings.asm  bindings.o
 	../tools/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	

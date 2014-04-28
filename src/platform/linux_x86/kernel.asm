@@ -6,31 +6,11 @@
 ;
 use32
 
-DATA_BASE  equ 0
-DATA_TOP   equ 4
-TABLE_BASE equ 8
-TABLE_TOP  equ 12
-DSP_BASE   equ 16
-DSP_TOP    equ 20
-RSP_BASE   equ 24
-RSP_TOP    equ 28
-
-DATA_PTR   equ 32
-RUN_PTR  equ 36
-RUN_PTR    equ 40
-SP_C       equ 40
-SP_MEOW    equ 44
+include "../kernel_common.s"
 ; Register usage:
+DSP equ ebp
+TOS equ eax
 
-
-T_NONE  equ 0
-T_U8    equ 1
-T_U16   equ 2
-T_U32   equ 3
-T_OFF   equ 4
-T_STR   equ 5
-
-TYPE_PROC equ 3
 
 macro RETURN {
     jmp         edi
@@ -39,7 +19,10 @@ macro DPUSH reg{
     sub         ebp,4           ;DPUSH
     mov         dword[ebp],reg  ;
 }
-    
+macro DPOP reg {
+    mov         reg,[ebp]
+    add         ebp,4
+}
 ; Format:
 ; 1 cnt   count of string, including null-term and padding
 ; ? name
@@ -95,6 +78,35 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
     RETURN
 .x:
 ;==============================================================================
+; FORTH basics
+;------------------------------------------------------------------------------
+; else # (--)   unconditional jump to offset
+;
+CODE "core'DSP (--DSP) get DataStack pointer",DSP,T_NONE
+        DPUSH   eax
+        mov     eax,DSP
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'dup (n--n,n)",dup,T_NONE
+        DPUSH   eax
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'drop (n--)",drop,T_NONE
+        DPOP    eax
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
+        push    eax
+        DPOP    eax
+        RETURN
+.x:
+
+;==============================================================================
 ;------------------------------------------------------------------------------
 ; U8  (--U8)   load a U8 from codestream.
 ;
@@ -125,8 +137,39 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
     add         esi,4
     RETURN
 .x:
-
+;------------------------------------------------------------------------------
+; REF (--REF)   load a reference via table. ***TABLE
+;
+CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
+    DPUSH       eax             ;just like U32 fetch
+    xor         eax,eax
+    mov         al,[esi]
+    add         esi,1
+    mov         ecx,esi         ;calculate table base
+    shr         ecx,4
+    shl         ecx,2
+    ;
+    mov         eax,[ecx+eax*4]
+    RETURN
+.x:
 ;==============================================================================
+;------------------------------------------------------------------------------
+; times
+;
+; count on return stack.  Loop to offset. Clean up RSP at the end...
+CODE "core'times (--) execute expression that follows cnt times",times,T_OFF
+        sub         DWORD[esp],1
+        jz          .z
+        movsx       ebx,byte[esi]
+        add         esi,1
+        add         esi,ebx
+        RETURN
+.z:     add         esi,1               ;skip offset
+        add         esp,4               ;get rid of the 0 on rsp
+        RETURN
+.x:
+;==============================================================================
+
 ;------------------------------------------------------------------------------
 CODE "core'+ (a,b--sum)",add,T_NONE
     add         eax,[ebp]

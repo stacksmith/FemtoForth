@@ -99,11 +99,11 @@ U32 dstack_pop(){
  * pop count off the return stack.
  * ==========================================================================*/
 int lang_times(){
-   HINDEX hpush = head_find_absolute("core'push",9);
+   HINDEX hpush = head_find_abs_or_die("core'push");
    data_compile_token(hpush);
    dstack_push((U32)var->data_ptr);       //save loop target on stack
    interpret_one();                     //compile expression
-   HINDEX htimes = head_find_absolute("core'times",10);
+   HINDEX htimes = head_find_abs_or_die("core'times");
    data_compile_token(htimes);
    data_compile_off_S8(dstack_pop());
    
