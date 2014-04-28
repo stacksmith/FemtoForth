@@ -70,7 +70,19 @@ CODE "core'leave exit to outer host ",leave,T_NONE
 
     ret
 .x:
-
+;------------------------------------------------------------------------------
+CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
+    pusha
+    mov         eax,4                   ;fwrite
+    mov         ebx,1                   ;handle
+    lea         ecx,[esp+28]
+    mov         edx,1
+    int         0x80
+    popa    
+    mov         eax,[ebp]
+    add         ebp,4
+    ret
+.x:
 ;==============================================================================
 ;------------------------------------------------------------------------------
 ; U8  (--U8)   load a U8 from codestream.
