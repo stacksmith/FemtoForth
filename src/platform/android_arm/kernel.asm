@@ -182,7 +182,7 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
 
 ;==============================================================================
 ;------------------------------------------------------------------------------
-CODE "core'+ (a,b--sum)",add,T_NONE
+CODE "core'op'+ (a,b--sum)",add,T_NONE
         DPOP    r1
         add     r0,r1
         RETURN

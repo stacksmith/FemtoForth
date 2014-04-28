@@ -47,7 +47,7 @@ bindings.o: platform/$(PLATFORM)/bindings.asm
 	../tools/fasmlist bindings.dat bindings.lst
 	@rm -f bindings.dat 
 	
-main.o: main.c global.h header.h data.h src.h
+main.o: main.c global.h header.h data.h src.h lang.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) main.c -o main.o 
 
 header.o: header.c global.h header.h data.h

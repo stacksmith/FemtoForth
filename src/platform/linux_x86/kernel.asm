@@ -171,7 +171,7 @@ CODE "core'times (--) execute expression that follows cnt times",times,T_OFF
 ;==============================================================================
 
 ;------------------------------------------------------------------------------
-CODE "core'+ (a,b--sum)",add,T_NONE
+CODE "core'op'+ (a,b--sum)",add,T_NONE
     add         eax,[ebp]
     add         ebp,4
     RETURN
