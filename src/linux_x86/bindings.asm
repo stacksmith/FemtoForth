@@ -29,9 +29,10 @@ meow_invoke:
     pop         esi                     ;IP
     pop         ebp                     ;DSP
     add         esp,8                   ;ER
-    pop         ebx                     ;interp
+    pop         edi                     ;EDI=interp
     ; invoke
-    jmp ebx
+    push        esi
+    jmp         edi
 .x:
 ;=================================================================================================
 ; Inner interpreter.
@@ -41,8 +42,8 @@ meow_invoke:
 ;TODO: TOS cannot be eax...
 public inner_interpreter
 return:
-    pop       esi
 inner_interpreter:
+    pop       esi
 inner:
     xor       edx,edx               ;clear upper 3 bytes for lodsb
     mov       dl,[esi]              ;al=tok, inc esi
@@ -58,6 +59,5 @@ inner:
     inc       esi
     shl       edx,2                 ;first byte of subroutine 0? Machine language code follows
     jnz       .inner_loop            ;continue threading
-    call      esi                   ;call assembly subroutine that follows
-    jmp       return                ;thanks for catching a bug, KSM
+    jmp       esi                   ;call assembly subroutine that follows
 

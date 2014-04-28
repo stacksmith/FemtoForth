@@ -33,7 +33,7 @@ T_STR   equ 5
 TYPE_PROC equ 3
 
 macro RETURN {
-    ret
+    jmp         edi
 }
 ; Format:
 ; 1 cnt   count of string, including null-term and padding
@@ -56,14 +56,14 @@ __#name:
 ; return to C
 CODE "core'leave exit to outer host ",leave,T_NONE 
     ;we are not going back to caller, or interpreter
-    add         esp,8
+    add         esp,4
     ;and in reverse.. interpreter is already on the stack!
-    push        ebx
+    push        edi                     ;vm pointer
     push        ecx                     ;dat
     push        DWORD 0                 ;er
-    push        ebp                     
-    push        esi
-    push        eax
+    push        ebp                     ;DSP
+    push        esi                     ;IP
+    push        eax                     ;TOS
     mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
 
     mov         esp,[ecx+SP_C]          ;restore c stack
@@ -92,38 +92,38 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
 ; U8  (--U8)   load a U8 from codestream.
 ;
 CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
-    mov         esi,[esp+4]             ;src ptr
+    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xor         eax,eax
     xchg        esp,ebp
     lodsb
-    mov         [esp+4],esi
+    mov         [esp],esi
     RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
 ;
 CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
-    mov         esi,[esp+4]             ;src ptr
+    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xor         eax,eax
     xchg        esp,ebp
     lodsw
-    mov         [esp+4],esi
+    mov         [esp],esi
     RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
 ;
 CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
-    mov         esi,[esp+4]             ;src ptr
+    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xchg        esp,ebp
     lodsd
-    mov         [esp+4],esi
+    mov         [esp],esi
     RETURN
 .x:
 
