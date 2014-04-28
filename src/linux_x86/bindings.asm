@@ -29,8 +29,6 @@ meow_invoke:
     add         esp,8                   ;ER
     pop         ebx                     ; interp
  jmp ebx
- 
-     ret
 .x:
 
 ;=================================================================================================
@@ -38,6 +36,7 @@ meow_invoke:
 ; esi = IP
 ; eax = interpreter temp
 ;
+;TODO: TOS cannot be eax...
 public inner_interpreter
 return:
     pop       esi

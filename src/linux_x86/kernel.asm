@@ -54,12 +54,13 @@ CODE "core'leave exit to outer host ",leave,T_NONE
     ;we are not going back to caller, or interpreter
     add         esp,8
     ;and in reverse.. interpreter is already on the stack!
+mov eax,0x99
     push        ebx
     push        ecx                     ;dat
     push        DWORD 0                 ;er
     push        ebp                     
     push        esi
-    push        DWORD $DEADFEED
+    push        eax
     mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
 
     mov         esp,[ecx+SP_C]          ;restore c stack
@@ -67,11 +68,14 @@ CODE "core'leave exit to outer host ",leave,T_NONE
     pop         esi
     pop         ebp
     pop         ebx
- ;   mov eax,$BABE
+
     ret
 .x:
 CODE "core'nop ",nop,T_NONE
+    sub         ebp,4
+    mov         [ebp],eax
     mov         eax,$DEADDEAD
+    ret
  rept 300 { db 0 } 
     ret
 .x:

@@ -111,7 +111,7 @@ int lang_times(){
 }
 int lang_t(){
     PTOKEN* p = (PTOKEN*) dstack_pop();
-    table_dump(0x01000000);
+    table_dump(p);
 }
 
 int lang_ref(char* ptr,U32 cnt){
