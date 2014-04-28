@@ -116,12 +116,10 @@ CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
 ; U32 (--U32)   load a 32 from codestream.
 ;
 CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
-    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xchg        esp,ebp
     lodsd
-    mov         [esp],esi
     RETURN
 .x:
 
