@@ -17,6 +17,7 @@ meow_invoke:
     mov         ecx,[esp+4]             ;get tablebase off the stack
     ;preserve C registers
     push        ebx
+    push        ecx
     push        ebp
     push        esi
     push        edi
@@ -31,8 +32,26 @@ meow_invoke:
     add         esp,8                   ;ER
     pop         edi                     ;EDI=interp
     ; invoke
-    push        esi
-    jmp         edi
+   jmp         edi
+
+;and in reverse.. interpreter is already on the stack!
+    push        edi                     ;vm pointer
+    push        DWORD $01000000         ;dat TODO:*** THIS SUCKS
+    push        DWORD 0                 ;er
+    push        ebp                     ;DSP
+    push        esi                     ;IP
+    push        eax                     ;TOS
+    mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
+
+    mov         ecx,DWORD $01000000;    ;TODO:*** THIS SUCKS
+    mov         esp,[ecx+SP_C]          ;restore c stack
+    pop         edi
+    pop         esi
+    pop         ebp
+    pop         ecx
+    pop         ebx
+
+    ret
 .x:
 ;=================================================================================================
 ; Inner interpreter.
@@ -42,8 +61,8 @@ meow_invoke:
 ;TODO: TOS cannot be eax...
 public inner_interpreter
 return:
-inner_interpreter:
     pop       esi
+inner_interpreter:
 inner:
     xor       edx,edx               ;clear upper 3 bytes for lodsb
     mov       dl,[esi]              ;al=tok, inc esi
@@ -59,5 +78,7 @@ inner:
     inc       esi
     shl       edx,2                 ;first byte of subroutine 0? Machine language code follows
     jnz       .inner_loop            ;continue threading
-    jmp       esi                   ;call assembly subroutine that follows
+    mov       ecx,esi               ;routine address
+    pop       esi                   ;no stacking of IP...
+    jmp       ecx                   ;call assembly subroutine that follows
 

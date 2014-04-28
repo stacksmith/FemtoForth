@@ -55,11 +55,11 @@ __#name:
 }
 ; return to C
 CODE "core'leave exit to outer host ",leave,T_NONE 
-    ;we are not going back to caller, or interpreter
-    add         esp,4
-    ;and in reverse.. interpreter is already on the stack!
+ ;and in reverse.. interpreter is already on the stack!
+    mov         ecx,DWORD $01000000;    ;TODO:*** THIS SUCKS
+    
     push        edi                     ;vm pointer
-    push        ecx                     ;dat
+    push        ecx                     ;dat TODO:*** THIS SUCKS
     push        DWORD 0                 ;er
     push        ebp                     ;DSP
     push        esi                     ;IP
@@ -70,9 +70,11 @@ CODE "core'leave exit to outer host ",leave,T_NONE
     pop         edi
     pop         esi
     pop         ebp
+    pop         ecx
     pop         ebx
 
     ret
+
 .x:
 ;------------------------------------------------------------------------------
 CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
@@ -92,26 +94,22 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
 ; U8  (--U8)   load a U8 from codestream.
 ;
 CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
-    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xor         eax,eax
     xchg        esp,ebp
     lodsb
-    mov         [esp],esi
     RETURN
 .x:
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
 ;
 CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
-    mov         esi,[esp]             ;src ptr
     xchg        ebp,esp
     push        eax
     xor         eax,eax
     xchg        esp,ebp
     lodsw
-    mov         [esp],esi
     RETURN
 .x:
 ;------------------------------------------------------------------------------

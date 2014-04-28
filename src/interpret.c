@@ -63,7 +63,7 @@ void call_meow(U8* addr){
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
   U32 ret=    meow_invoke(var);
-//printf("call_meow: %08X\n",ret);
+printf("call_meow: %08X\n",ret);
 
 }
 
