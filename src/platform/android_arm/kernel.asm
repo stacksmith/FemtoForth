@@ -112,6 +112,19 @@ CODE "io'emit",emit,T_NONE                      ;(c -- )
         ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
+;------------------------------------------------------------------------------
+CODE "sys'gettimeofday (--Sec,uSec)",sys_gettimeofday,T_NONE
+        DPUSH   r0
+        push    {r0-r7,lr}
+        mov     r0,RSP                          ;will return data in r0,r1
+        mov     r1,0
+        mov     r7,78                         ;gettimeofday
+        swi     0
+        pop     {r0-r7,lr}
+        DPUSH   r0
+        mov     r0,r1
+        RETURN
+.x:
 
 ;==============================================================================
 ; FORTH basics
@@ -125,14 +138,14 @@ CODE "core'DSP (--DSP) get DataStack pointer",DSP,T_NONE
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'dup (n--n,n)",dup,T_NONE
-        DPUSH   r0
+CODE "core'drop (n--)",drop,T_NONE
+        DPOP    r0
         RETURN
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'drop (n--)",drop,T_NONE
-        DPOP    r0
+CODE "core'swap (a,b--b,a)",swap,T_NONE
+        swp     r0,r0,[DSP]
         RETURN
 .x:
 ;------------------------------------------------------------------------------
@@ -185,6 +198,12 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
 CODE "core'op'+ (a,b--sum)",add,T_NONE
         DPOP    r1
         add     r0,r1
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "core'op'- (a,b--(a-b))",sub,T_NONE
+        DPOP    r1                      ;r1 = a
+        sub     r0,r1,r0
         RETURN
 .x:
 ;==============================================================================

@@ -157,6 +157,7 @@ int lang(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
             if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
+            if(0==strncmp(ptr,"-",1)) { return lang_operator(ptr,cnt); }
             if(0==strncmp(ptr,";",1)) { return lang_return(); }
             if(0==strncmp(ptr,":",1)) { return lang_colon(); }
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }

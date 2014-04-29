@@ -77,6 +77,30 @@ CODE "io'emit (c--)",emit,T_NONE                      ;(c -- )
     add         ebp,4
     RETURN
 .x:
+;------------------------------------------------------------------------------
+CODE "sys'time ",sys_time,T_NONE
+    DPUSH       eax
+    pusha                               ;eax,ecx,edx,ebx,?,ebp,esi,edi
+    mov         eax,0x0D                ;sys_time
+    lea         ebx,[esp+28]            ;eax will return value
+    int         0x80
+    popa
+    
+    RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "sys'gettimeofday (--Sec,uSec)",sys_gettimeofday,T_NONE
+    DPUSH       eax
+    pusha
+    mov         eax,78                  ;sys_timeofday
+    lea         ebx,[esp+24]            ;eax
+    xor         ecx,ecx                 ;no tz
+    int         0x80
+    popa
+    DPUSH       ecx
+    RETURN
+.x:
+
 ;==============================================================================
 ; FORTH basics
 ;------------------------------------------------------------------------------
@@ -99,6 +123,14 @@ CODE "core'drop (n--)",drop,T_NONE
         DPOP    eax
         RETURN
 .x:
+
+;------------------------------------------------------------------------------
+;
+CODE "core'swap (n--)",swap,T_NONE
+        xchg    eax,[ebp]
+        RETURN
+.x:
+
 ;------------------------------------------------------------------------------
 CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
         push    eax
@@ -174,6 +206,16 @@ CODE "core'times (--) execute expression that follows cnt times",times,T_OFF
 CODE "core'op'+ (a,b--sum)",add,T_NONE
     add         eax,[ebp]
     add         ebp,4
+    RETURN
+.x:
+;==============================================================================
+
+;------------------------------------------------------------------------------
+CODE "core'op'- (a,b--(a-b))",sub,T_NONE
+    mov         ebx,[ebp]       ;ebx = a
+    sub         ebx,eax
+    add         ebp,4
+    mov         eax,ebx
     RETURN
 .x:
 
