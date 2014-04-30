@@ -1,0 +1,14 @@
+: timit
+{
+'sys'gettimeofday
+
+1000000000 times ( )
+
+'sys'gettimeofday
+
+swap2
+
+'core'op'D-
+
+;
+}
