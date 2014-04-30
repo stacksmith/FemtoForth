@@ -9,14 +9,16 @@ extern char* src_ptr;           //from src.cpp
 extern sVar* var;
 #include "cmd.h"
 extern HINDEX search_list[];
+#include "data.h"
 
 
 //TODO: check error conditions, return...
 extern HINDEX H_PROC;           //initilization code set this...
 
 //HINDEX H_OPDIR;          
+HINDEX H_0BRANCH;
 void lang_init(){
-//    H_OPDIR = head_find_abs_or_die("core'op");
+    H_0BRANCH = head_find_abs_or_die("core'0branch");
 }
 
 int lang_colon(){
@@ -134,7 +136,16 @@ int lang_return(void){
     data_compile_U8(0);
     return 1;
 }
-
+int lang_if(){
+    data_compile_token(H_0BRANCH);      //compile branch instruction
+    U8* pfix = data_compile_U8(0);      //for now, 0 branch offset
+    if(!interpret_compuntil("thanx",5))       //compile until 'then'
+      return 0;
+    U32 offset = var->data_ptr - pfix-1;
+printf("lang_if: offset is %d\n",offset);
+    *pfix = offset;
+    return 1;
+}
 /*int lang_operator(char* ptr,U32 cnt){
     HINDEX hop = head_locate(H_OPDIR,ptr,cnt);
     if(!hop){
@@ -167,6 +178,8 @@ int lang(char* ptr,U32 cnt){
           
             break;
         case 2:
+             if(0==strncmp(ptr,"if",2)) { return lang_if(); }
+           
             break;
         case 3:
             break;

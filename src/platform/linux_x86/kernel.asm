@@ -424,6 +424,7 @@ CODE "core'pop (--n) pop from return stack",pop,T_NONE
 .x:
 
 ;==============================================================================
+; Literals (from codestream)
 ;------------------------------------------------------------------------------
 ; U8  (--U8)   load a U8 from codestream.
 ;
@@ -467,6 +468,27 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
     shl         ecx,2
     ;
     mov         eax,[ecx+eax*4]
+    NEXT
+.x:
+
+;------------------------------------------------------------------------------
+; branch
+;
+CODE "core'branch (--) branch by signed U8 offset",branchU8,T_OFF
+    movsx       ebx,byte[esi]
+    add         esi,1
+    add         esi,ebx
+    NEXT
+.x:    
+;condition-code 0BRANCH OFFSET true-part rest-code
+CODE "core'0branch (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
+    movsx       ebx,byte[esi]           ;ebx is offset
+    add         esi,1
+    and         eax,1
+    dec         eax                     ;0->FFFFFFFF, 1->0
+    and         ebx,eax
+    add         esi,ebx                 ;add offset or 0
+    DPOP        eax
     NEXT
 .x:
 ;------------------------------------------------------------------------------

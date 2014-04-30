@@ -53,7 +53,7 @@ main.o: main.c global.h header.h data.h src.h lang.h
 header.o: header.c global.h header.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) header.c -o header.o 
 
-data.o: data.c data.h global.h table.h header.h
+data.o: data.c data.h global.h table.h header.h 
 	$(CC) -c $(INCLUDE) $(CFLAGS) data.c -o data.o 
 
 table.o: table.c table.h global.h header.h
@@ -68,7 +68,7 @@ src.o: src.c src.h global.h
 cmd.o: cmd.c global.h src.h cmd.h table.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) cmd.c -o cmd.o 
 
-lang.o: lang.c global.h header.h src.h interpret.h cmd.h
+lang.o: lang.c global.h header.h src.h interpret.h cmd.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) lang.c -o lang.o 
 	
 clean:
