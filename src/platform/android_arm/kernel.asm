@@ -149,6 +149,19 @@ CODE "core'swap (a,b--b,a)",swap,T_NONE
         RETURN
 .x:
 ;------------------------------------------------------------------------------
+;
+CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE
+        ldr     r1,[DSP]        ;r1=c
+        ldr     r2,[DSP,4]      ;r2=b
+        ldr     r3,[DSP,8];     ;r3=a
+        str     r1,[DSP,8]
+        str     r0,[DSP,4]
+        str     r3,[DSP]
+        mov     r0,r2
+        RETURN
+.x:
+
+;------------------------------------------------------------------------------
 CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
         RPUSH   r0
         DPOP    r0
@@ -204,6 +217,17 @@ CODE "core'op'+ (a,b--sum)",add,T_NONE
 CODE "core'op'- (a,b--(a-b))",sub,T_NONE
         DPOP    r1                      ;r1 = a
         sub     r0,r1,r0
+        RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "core'op'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
+        ldr     r1,[DSP]        ;r1=bh
+        ldr     r2,[DSP,4]      ;r2=al
+        ldr     r3,[DSP,8]      ;r3=ah
+        subs    r0,r2,r0        ;low
+        sbc     r3,r3,r1
+        str     r3,[DSP,8]
+        add     DSP,8
         RETURN
 .x:
 ;==============================================================================

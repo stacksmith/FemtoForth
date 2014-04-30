@@ -130,6 +130,15 @@ CODE "core'swap (n--)",swap,T_NONE
         xchg    eax,[ebp]
         RETURN
 .x:
+;------------------------------------------------------------------------------
+;
+CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE
+        xchg    eax,[ebp+4]     ;a,d,c,b
+        mov     ebx,[ebp]
+        xchg    ebx,[ebp+8]     ;c,d,a,b
+        mov     [ebp],ebx
+        RETURN
+.x:
 
 ;------------------------------------------------------------------------------
 CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
@@ -208,6 +217,8 @@ CODE "core'op'+ (a,b--sum)",add,T_NONE
     add         ebp,4
     RETURN
 .x:
+
+
 ;==============================================================================
 
 ;------------------------------------------------------------------------------
@@ -216,6 +227,17 @@ CODE "core'op'- (a,b--(a-b))",sub,T_NONE
     sub         ebx,eax
     add         ebp,4
     mov         eax,ebx
+    RETURN
+.x:
+;------------------------------------------------------------------------------
+CODE "core'op'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
+    mov         ebx,[ebp+4]       ;ebx = al
+    sub         ebx,eax
+    mov         eax,ebx           ;low done
+    mov         ebx,[ebp+8]       ;ebx = ah
+    sbb         ebx,[ebp]
+    add         ebp,12    
+    mov         [ebp],ebx
     RETURN
 .x:
 

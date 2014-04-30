@@ -1,4 +1,4 @@
-;ARM7
+ ;ARM7
 ;
 format elf
 
@@ -43,7 +43,13 @@ meow_invoke:
 ;=================================================================================================
 ; Inner interpreter.
 ; r3 = tokenN /table index.
+
 public inner_interpreter
+
+inner3:
+        RPOP     IP
+;        b        innerl
+
 inner_interpreter:
 
 ;innerl: ldrb    r12,[IP],1               ;2; fetch a token
@@ -67,7 +73,4 @@ inner_loop:
         RPUSH    IP                      ;not code!  push return address
         mov      IP,r2
         b        inner_loop
-inner3:
-        RPOP     IP
-        b        innerl
 
