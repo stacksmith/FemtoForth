@@ -101,14 +101,14 @@ U32 substr_cnt(char* str){
 *  Find an absolute path
 */
 HINDEX head_find_absolute( char* ptr,U32 ulen){
-//printf("head_find_absolute[%s] %d\n",ptr,ulen);
+printf("head_find_absolute[%s] %d\n",ptr,ulen);
   HINDEX dir = 1;         //start at root
   U32 cnt=0;
   int len=ulen;
   while(len>0){
       cnt=substr_cnt(ptr);
       len=len-cnt-1;
-//printf("head_find_absolute 1: [%s] %d\n",ptr,cnt);
+printf("head_find_absolute 1: [%s] %d\n",ptr,cnt);
     HINDEX found = head_locate(dir,ptr,cnt);
     if(!found) {
 //printf("head_find_absolute: COULD NOT FIND [%s] %d\n",ptr,cnt);
@@ -134,7 +134,7 @@ HINDEX head_find_abs_or_die( char* path){
 *  Find using a searchlist
 */
 HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
-//printf("head_find[%s] %d\n",ptr,len);
+printf("head_find[%s] %d\n",ptr,len);
     if('\''==*ptr)
     return head_find_absolute(ptr+1,len);
   HINDEX dir;
