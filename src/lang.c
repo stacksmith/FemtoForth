@@ -146,6 +146,13 @@ int lang_return(void){
     data_compile_U8(0);
     return 1;
 }
+void lang_fixup(){
+    U8* pfix = (U8*)dstack_pop();       //recover fixup address
+    U32 offset = var->data_ptr - pfix-1;
+printf("lang_fixup: offset is %d\n",offset);
+    *pfix = offset;
+}
+
 int lang_if(){
     data_compile_token(H_0BRANCH);      //compile branch instruction
     dstack_push((U32)data_compile_U8(0));    //keep fixup on stack
@@ -154,22 +161,17 @@ printf("lang_if: err \n");
         dstack_pop();  //on error, get rid of pfixup
         return 0;
     }
-    U8* pfix = (U8*)dstack_pop();       //recover fixup address
-    U32 offset = var->data_ptr - pfix-1;
-printf("lang_if: offset is %d\n",offset);
-    *pfix = offset;
+    lang_fixup();
     return 1;
 }
+
 int lang_else(){
     data_compile_token(H_BRANCH);      //compile branch instruction
     U8* newfixup = data_compile_U8(0);  //else's fixup address
     //fixup if's jump to here...
-    U8* pfix = (U8*)dstack_read();       //recover fixup address
-    U32 offset = var->data_ptr - pfix-1;
-printf("lang_else: offset is %d\n",offset);
-    *pfix = offset;
+    lang_fixup();
     //leave our fixup for if
-    dstack_write((U32)newfixup);
+    dstack_push((U32)newfixup);
     
 }
 
