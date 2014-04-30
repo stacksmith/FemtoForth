@@ -17,7 +17,9 @@ extern HINDEX H_PROC;           //initilization code set this...
 
 //HINDEX H_OPDIR;          
 HINDEX H_0BRANCH;
+HINDEX H_BRANCH;
 void lang_init(){
+    H_BRANCH = head_find_abs_or_die("core'branch");
     H_0BRANCH = head_find_abs_or_die("core'0branch");
 }
 
@@ -97,7 +99,7 @@ U32 dstack_pop(){
 }
 
 void dstack_write(U32 val){
-    *(var->sp_meow->DSP)=val;
+    var->sp_meow->TOS=val;
 }
 
 U32 dstack_read(){
@@ -158,6 +160,20 @@ printf("lang_if: offset is %d\n",offset);
     *pfix = offset;
     return 1;
 }
+int lang_else(){
+    data_compile_token(H_BRANCH);      //compile branch instruction
+    U8* newfixup = data_compile_U8(0);  //else's fixup address
+    //fixup if's jump to here...
+    U8* pfix = (U8*)dstack_read();       //recover fixup address
+    U32 offset = var->data_ptr - pfix-1;
+printf("lang_else: offset is %d\n",offset);
+    *pfix = offset;
+    //leave our fixup for if
+    dstack_write((U32)newfixup);
+    
+}
+
+
 /*int lang_operator(char* ptr,U32 cnt){
     HINDEX hop = head_locate(H_OPDIR,ptr,cnt);
     if(!hop){
@@ -196,6 +212,7 @@ int lang(char* ptr,U32 cnt){
         case 3:
             break;
         case 4:
+             if(0==strncmp(ptr,"else",4)) { return lang_else(); }
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }
