@@ -63,7 +63,7 @@ void call_meow(U8* addr){
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
   U32 ret=    meow_invoke(var);
-printf("call_meow: %08X\n",ret);
+//printf("call_meow: %08X\n",ret);
 
 }
 
@@ -178,7 +178,7 @@ int interpret_outer(){
 //        data_compile_U8(0);
         data_compile_token(hleave);                    //terminate with a return
 //printf("--%p\n",var->data_ptr);
-lang_ql(var->run_ptr);//
+//lang_ql(var->run_ptr);//
         call_meow(var->run_ptr);                    //run from run_ptr
 //    }      
     //---------------------------------------

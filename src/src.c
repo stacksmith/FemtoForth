@@ -4,21 +4,40 @@
 #include <string.h>
 #include "global.h"
 
+#define SRC_BUF_SIZE 256
 char* src_buf;
 char* src_ptr;
-char* src_saveptr=0;
+FILE* hfile;  
+U32 lineno;
 
+void src_reset(){
+    if(hfile != stdin) fclose(hfile);
+    hfile = stdin;                   //initial
+    *src_buf=0;                         //will trigger initial src_line!
+    src_ptr = src_buf;
+    lineno = 0;
+}
 
 void src_init(){
     src_buf = (char*)malloc(256);
-    *src_buf=0;                         //will trigger initial src_line!
-    src_ptr = src_buf;
-    
+    hfile = stdin;
+    src_reset();
+printf("SOURCE RESET\n");
 }
+
+
+/*=============================================================================
+ * SOURCE via file system....
+ * ==========================================================================*/
+
 //TODO: add file support
 void src_line(){
-    gets(src_buf);
+    if(NULL == fgets(src_buf,SRC_BUF_SIZE,hfile)){
+        src_reset();
+        //printf("src_line: EOF\n");
+    }
     src_ptr = src_buf;
+    lineno++;
 }
 /*=============================================================================
  * is_ws
@@ -44,9 +63,10 @@ int src_is_ws(char c){
 void src_ws(){
   while(1){
     char c = *src_ptr++;
-//printf("src_ws [%c] %d\n",c,c);
-    if(0==c) 
+//printf("src_ws [%c] %d pointer %p\n",c,c,src_ptr);
+    if(0==c) {
         src_line();        //reload as necessary
+    }
     else
         if(!src_is_ws(c)) {
             src_ptr--;
@@ -85,12 +105,27 @@ U32 src_one(){
  * on error, print error line and position...
  * ==========================================================================*/
 void src_error(char* msg){
-    printf("\33[0;31mERROR %s\33[0;37m\n",msg);
+    printf("\33[0;31mERROR %s\33[0;37m (%d)\n",msg,lineno);
     int i = src_ptr - src_buf; //how far into the file are we in?
     if(i>=0){
-        printf("%s\n",src_buf);         //print entire line
+        printf("%s",src_buf);         //print entire line
         printf("\33[1;31m");
         while(i-- >0 ) printf("_");     //print error point
         printf("|\33[0;37m\n");
+        src_reset();
     }
+}
+/*=============================================================================
+ * src_file
+ * 
+ * redirect input to a file
+ * TODO:reentrancy for includes
+ * ==========================================================================*/
+int src_file(char* fname){
+    hfile = fopen(fname,"r");
+    if(!hfile) {
+        src_error("File error\n");
+        return 0;
+    }
+    return 1;
 }

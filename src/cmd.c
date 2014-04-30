@@ -135,6 +135,10 @@ int cmd_deco(){
         ptr = deco_one(ptr);
     }
 }
+
+int cmd_load(){
+    return src_file("test.ff");
+}
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
     switch(cnt){
@@ -166,6 +170,7 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"deco",4)) {return cmd_deco();}
+            if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
             
     }
