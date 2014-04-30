@@ -42,31 +42,29 @@ meow_invoke:
 
 ;=================================================================================================
 ; Inner interpreter.
-; r3 = tokenN /table index.
-
+; 
+; r3 = token, *4=table index (for 32-bit tables)
+; r2 = next IP, if not pointing to code will become IP
+;
+; A partially unrolled interpreter.  Upon entry into a subroutine, the first
+; token is special: if it is zero, the subroutine is code.  Otherwise, token
+; zero means return from subroutine.  Obviously,  empty subroutines are not
+; allowed.
+;
+; Upon entry to code subroutines, IP points above, at the next token (not at
+; code).
+;
 public inner_interpreter
-
-inner3:
-        RPOP     IP
-;        b        innerl
-
+;
+return:
+        RPOP     IP                         ;restore IP from stack, returning
 inner_interpreter:
-
-;innerl: ldrb    r12,[IP],1               ;2; fetch a token
-;        lsls    r12,2                    ;1; r3 = table index; set Z if code.
-;        bxeq    IP                       ;2; 0=CODE! 
-;        str     IP,[sp,-4]!
-;        lsr     IP,IP,4                  ;1; create a 16-byte range address
-;        ldr     IP,[r12,IP,LSL 2]        ;2; r2 is return IP (dereference table)
-;        b       innerl                   ;1;
-; TODO: entry point?
-innerl:
         ldrb     r3,[IP],1             ;2; load token
         lsls     r3,2                  ; ; r3 = table index (token*4)
-        beq      inner3                  ;zero? return
+        beq      return                  ;first token zero? RETURN
 inner_loop:
         lsr      r2,IP,4                 ;r2 is table base/4
-        ldr      r2,[r3,r2,LSL 2]        ;r2 is new IP, but not yet...
+        ldr      r2,[r3,r2,LSL 2]        ;r2 will become IP if not code...
         ldrb     r3,[r2],1               ;r3 = token from target
         lsls     r3,2                    ;r3 = table index from target
         bxeq     r2                      ;zero? CODE! execute it..

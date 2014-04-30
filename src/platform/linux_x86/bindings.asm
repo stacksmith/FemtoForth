@@ -55,15 +55,21 @@ meow_invoke:
 .x:
 ;=================================================================================================
 ; Inner interpreter.
-; esi = IP
-; eax = interpreter temp
 ;
-;TODO: TOS cannot be eax...
+; trashes ecx,edx
+;
+; A partially unrolled interpreter.  Upon entry into a subroutine, the first
+; token is special: if it is zero, the subroutine is code.  Otherwise, token
+; zero means return from subroutine.  Obviously,  empty subroutines are not
+; allowed.
+;
+; Upon entry to code subroutines, IP points above, at the next token (not at
+; code).
+;
 public inner_interpreter
 return:
     pop       esi
 inner_interpreter:
-inner:
     xor       edx,edx               ;clear upper 3 bytes for lodsb
     mov       dl,[esi]              ;al=tok, inc esi
     inc       esi
