@@ -31,7 +31,7 @@ endif
 APP := main
 
 
-$(APP): main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o kernel.bin
+$(APP):  main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o kernel.bin
 	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
 
 kernel.bin: platform/$(PLATFORM)/kernel.asm

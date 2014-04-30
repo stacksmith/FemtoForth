@@ -23,7 +23,7 @@ RDAT equ r11            ;data segment register...
 RSP equ sp
 RSP! equ sp!
 
-
+TOS equ r0
 
 macro RPUSH reg {
   str reg,[RSP,-4]!
@@ -40,7 +40,7 @@ macro DPOP reg {
   ldr reg,[DSP],4
 }
 
-macro RETURN {
+macro NEXT {
     bx lr
 }
 ; return to C
@@ -123,7 +123,7 @@ CODE "sys'gettimeofday (--Sec,uSec)",sys_gettimeofday,T_NONE
         pop     {r0-r7,lr}
         DPUSH   r0
         mov     r0,r1
-        RETURN
+        NEXT
 .x:
 
 ;==============================================================================
@@ -134,20 +134,128 @@ CODE "sys'gettimeofday (--Sec,uSec)",sys_gettimeofday,T_NONE
 CODE "core'DSP (--DSP) get DataStack pointer",DSP,T_NONE
         DPUSH   r0
         mov     r0,DSP
-        RETURN
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'drop (n--)",drop,T_NONE
+CODE "core'dup ( n -- n n ) Duplicates the top stack item.",dup,T_NONE
+        DPUSH   r0
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'drop ( n -- ) Discards the top stack item.",drop,T_NONE
         DPOP    r0
-        RETURN
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "core'swap (a,b--b,a)",swap,T_NONE
+CODE "core'swap ( n1 n2 -- n2 n1 ) Reverses the top two stack items.",swap,T_NONE
         swp     r0,r0,[DSP]
-        RETURN
+        NEXT
 .x:
+;------------------------------------------------------------------------------
+;
+CODE "core'over ( n1 n2 -- n1 n2 n1 ) Makes a copy of the second item and pushes it on top.",over,T_NONE
+        DPUSH   r0
+        ldr     r0,[DSP,4]
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'rot ( a b c -- b c a ) Rotates the third item to the top.",rot,T_NONE
+        DPOP    r1              ;r1=b
+        DPOP    r2              ;r2=a
+        DPUSH   r1
+        DPUSH   r0
+        mov     r0,r2
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'-rot ( a b c -- c a b ) Rotates the first item to third.",minusrot,T_NONE
+        DPOP    r1              ;r1=b
+        DPOP    r2              ;r2=a
+        DPUSH   r0
+        DPUSH   r2
+        mov     r0,r1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'?dup ( a -- a a | 0 ) duplicate top of stack if non-zero",conddup,T_NONE
+        cmp     r0,0
+        streq   r0,[DSP,-4]!
+.done:  NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'1+ ( a -- a+1 ) increment",incr,T_NONE
+        add     r0,1
+.done:  NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'1- ( a -- a-1 ) decrement",decr,T_NONE
+        sub     r0,1
+.done:  NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'4+ ( a -- a+4 ) increment by 4",incr4,T_NONE
+        add     r0,4
+.done:  NEXT
+.x:
+;------------------------------------------------------------------------------
+;
+CODE "core'4- ( a -- a-14 ) decrement by 4",decr4,T_NONE
+        sub     r0,4
+.done:  NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'+ (a,b--sum)",add,T_NONE
+        DPOP    r1
+        add     r0,r1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'- (a,b--(a-b))",sub,T_NONE
+        DPOP    r1                      ;r1 = a
+        sub     r0,r1,r0
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
+CODE "core'= ( n1 n2 -- flag )  \ True if n1 = n2",cmp_eq,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r0,r1
+        moveq   r0,1
+        movne   r0,0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'<> ( n1 n2 -- flag )  \ True if n1 <> n2",cmp_ne,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r0,r1
+        moveq   r0,0
+        movne   r0,1
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
+        ldr     r1,[DSP]        ;r1=bh
+        ldr     r2,[DSP,4]      ;r2=al
+        ldr     r3,[DSP,8]      ;r3=ah
+        subs    r0,r2,r0        ;low
+        sbc     r3,r3,r1
+        str     r3,[DSP,8]
+        add     DSP,8
+        NEXT
+.x:
+
+
+
+
 ;------------------------------------------------------------------------------
 ;
 CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE
@@ -158,14 +266,14 @@ CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE
         str     r0,[DSP,4]
         str     r3,[DSP]
         mov     r0,r2
-        RETURN
+        NEXT
 .x:
 
 ;------------------------------------------------------------------------------
 CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
         RPUSH   r0
         DPOP    r0
-        RETURN
+        NEXT
 .x:
     
 
@@ -176,7 +284,7 @@ CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
 CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
         DPUSH   r0
         ldrb    r0,[IP],1               ;fetch literal from [IP], increment
-        RETURN
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ; U16 (--U16)  load a U16 from codestream.
@@ -184,7 +292,7 @@ CODE "core'U8 (--n) fetch a U8 that follows in the codestream",U8,T_U8
 CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
         DPUSH   r0
         ldrh    r0,[IP],2               ;fetch literal from [IP], increment
-        RETURN
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ; U32 (--U32)   load a 32 from codestream.
@@ -192,7 +300,7 @@ CODE "core'U16 (--n) fetch a U16 that follows in the codestream",U16,T_U16
 CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
         DPUSH   r0
         ldr     r0,[IP],4               ;fetch literal from [IP], increment
-        RETURN
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ; REF (--REF)   load a reference via table. ***TABLE
@@ -203,33 +311,10 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
         lsls    r1,2                    ;r1 is tok*4, table offset
         DPUSH   r0
         ldr     r0,[r1,r2,LSL 2]        ;just like the interpreter
-        RETURN
+        NEXT
 .x:
 
 ;==============================================================================
-;------------------------------------------------------------------------------
-CODE "core'op'+ (a,b--sum)",add,T_NONE
-        DPOP    r1
-        add     r0,r1
-        RETURN
-.x:
-;------------------------------------------------------------------------------
-CODE "core'op'- (a,b--(a-b))",sub,T_NONE
-        DPOP    r1                      ;r1 = a
-        sub     r0,r1,r0
-        RETURN
-.x:
-;------------------------------------------------------------------------------
-CODE "core'op'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
-        ldr     r1,[DSP]        ;r1=bh
-        ldr     r2,[DSP,4]      ;r2=al
-        ldr     r3,[DSP,8]      ;r3=ah
-        subs    r0,r2,r0        ;low
-        sbc     r3,r3,r1
-        str     r3,[DSP,8]
-        add     DSP,8
-        RETURN
-.x:
 ;==============================================================================
 ;------------------------------------------------------------------------------
 ; >?  (a,b--a,?)  
@@ -238,7 +323,7 @@ CODE "core'>_",gt_,T_OFF
         cmp     r1,r0
         movls   r0,1
         movgt   r0,0
-        RETURN
+        NEXT
 .x:
 ;==============================================================================
 ; BRANCH
@@ -248,7 +333,7 @@ CODE "core'>_",gt_,T_OFF
 CODE "core'else",else,T_OFF
         ldrsb   r1,[IP],1       ;load offset, increment IP
         add     IP,r1
-        RETURN
+        NEXT
 .x:
 
 ;------------------------------------------------------------------------------
@@ -263,7 +348,7 @@ CODE "core'times (cnt--) execute expression that follows cnt times",times,T_OFF
         strne     r2,[RSP]              ;if nz, update count on RSP
         bxne      lr 
         add       RSP,4                 ;if
-        RETURN
+        NEXT
 .x:   
     
 

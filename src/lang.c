@@ -14,9 +14,9 @@ extern HINDEX search_list[];
 //TODO: check error conditions, return...
 extern HINDEX H_PROC;           //initilization code set this...
 
-HINDEX H_OPDIR;          
+//HINDEX H_OPDIR;          
 void lang_init(){
-    H_OPDIR = head_find_abs_or_die("core'op");
+//    H_OPDIR = head_find_abs_or_die("core'op");
 }
 
 int lang_colon(){
@@ -135,7 +135,7 @@ int lang_return(void){
     return 1;
 }
 
-int lang_operator(char* ptr,U32 cnt){
+/*int lang_operator(char* ptr,U32 cnt){
     HINDEX hop = head_locate(H_OPDIR,ptr,cnt);
     if(!hop){
         src_error("operator not found");
@@ -147,6 +147,7 @@ int lang_operator(char* ptr,U32 cnt){
     data_compile_token(hop);
     return 1;
 }
+*/
 int lang(char* ptr,U32 cnt){
 //printf("lang [%s] %x %d\n",ptr,ptr,cnt);
     // If a word starts with a &, get the address of it...
@@ -156,8 +157,8 @@ int lang(char* ptr,U32 cnt){
     }
     switch(cnt){
         case 1:
-            if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
-            if(0==strncmp(ptr,"-",1)) { return lang_operator(ptr,cnt); }
+//            if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
+//            if(0==strncmp(ptr,"-",1)) { return lang_operator(ptr,cnt); }
             if(0==strncmp(ptr,";",1)) { return lang_return(); }
             if(0==strncmp(ptr,":",1)) { return lang_colon(); }
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }
