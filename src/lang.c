@@ -96,6 +96,14 @@ U32 dstack_pop(){
     return ret;
 }
 
+void dstack_write(U32 val){
+    *(var->sp_meow->DSP)=val;
+}
+
+U32 dstack_read(){
+    return (var->sp_meow->TOS);
+}
+
 /*=============================================================================
  * times
  * 
@@ -138,9 +146,13 @@ int lang_return(void){
 }
 int lang_if(){
     data_compile_token(H_0BRANCH);      //compile branch instruction
-    U8* pfix = data_compile_U8(0);      //for now, 0 branch offset
-    if(!interpret_compuntil("thanx",5))       //compile until 'then'
-      return 0;
+    dstack_push((U32)data_compile_U8(0));    //keep fixup on stack
+    if(!interpret_compuntil("thanx",5)) {       //compile until 'then'
+printf("lang_if: err \n");
+        dstack_pop();  //on error, get rid of pfixup
+        return 0;
+    }
+    U8* pfix = (U8*)dstack_pop();       //recover fixup address
     U32 offset = var->data_ptr - pfix-1;
 printf("lang_if: offset is %d\n",offset);
     *pfix = offset;
