@@ -17,7 +17,7 @@ typedef struct sHeader {
         //
         PARM  parm;                //decompilation data
         U8 namelen;                //actual name part of string
-        U16 unused_a;              //padding                   
+        U16 srclen;               //padding                   
         //
         // a name follows inline
         char name[];
@@ -35,7 +35,9 @@ typedef sHeader* HINDEX;
 HINDEX head_get_root(){
     return (HINDEX)var->head_base;
 }
-
+U32 head_size(HINDEX h){
+    return sizeof(sHeader) + h->srclen+1;
+}
 /*
     Create a new header.  
 */
@@ -51,6 +53,7 @@ HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   //copy name and comment inline, null-term...
   strncpy(head->name,src,cnt);
   head->name[cnt] = 0;
+  head->srclen = cnt;
   var->head_ptr = (U8*)(head->name+cnt+1);
   
   //calculate name size
@@ -177,45 +180,36 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
 *  Resolve   given a pointer, find header
 * 
 *  We will find the header pointing at the pointer, or the nearest one below,
-*  in case we are pointing inside a routine.  The highest one wins, to allow
-*  for overloading.
+*  in case we are pointing inside a routine.  'The Price Is Right' rules apply.
 * 
 */
 HINDEX head_resolve(TOKEN* ptr,U32* poffset){
-     //TODO:
-printf("head_save_one NOT IMPLEMENTED\n");
-exit(0);
-/*//printf("\n%p :",ptr);
-//printf("head_resolve %p %p\n",ptr,poffset);
-    if(!ptr){
+//sprintf("head_resolve %p %p\n",ptr,poffset);
+    if(!ptr){ //TODO: can this happen?
         if(poffset) *poffset=0;
         return 0;
     }
-    HINDEX h;
-    HINDEX best_hindex=0;
+    HINDEX h=(HINDEX)var->head_base;
+    HINDEX best_hindex=h;
     U32    best_offset = 0xFFFFFFFF;
-    //search from the top for overdefining (for now)
-    for(h = hindex_last;h >= 1; h--){
-        TOKEN* p = HEAD[h].pcode;       //header points here.
-        //since we are scanning down, it is always safe to
-        //return the topmost matching one.
-        if(!p) continue;
-        if(p == ptr) {
-            if(poffset) *poffset = 0;   //if offset requested, 0 it is.
-            return h;
-        }
-        //if head points below the pointer, track offset (if it's better)
-        if(p < ptr) {
-            if((ptr-p)<best_offset){
-                best_offset = (ptr-p);
+    //traverse the dictionary brute force style, disregarding hierarchy.
+    while(h < (HINDEX)var->head_ptr){
+//printf("head_resolve1 %p \n",h);
+        TOKEN* target = h->pcode;       //header points here.
+//printf("head_resolve2 %p \n",target);
+        //if target is below the pointer, track offset (if it's better)
+        if((target > var->data_base) && (target <= ptr)) {
+            if((ptr-target)<best_offset){
+                best_offset = (ptr-target);
                 best_hindex=h;
             }
         }
+        h = (HINDEX)(head_size(h) + (U32)h);
     }
     //finally, return the best match
     if(poffset) *poffset = best_offset;
     return best_hindex;
-*/}
+}
 
 const char* head_get_name(HINDEX h){
     return h->name; 

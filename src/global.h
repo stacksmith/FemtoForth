@@ -6,6 +6,7 @@
 typedef unsigned int U32;
 typedef unsigned short U16;
 typedef unsigned char U8;
+typedef char S8;
 struct sHeader;
 
 typedef struct sHeader* HINDEX;        //header index

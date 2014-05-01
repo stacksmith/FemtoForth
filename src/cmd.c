@@ -110,16 +110,42 @@ int cmd_save(){
 }
 TOKEN* deco_one(TOKEN*p){
     PTOKEN* base = table_base(p);
+    U8 token = *p;
+    if(!token){
+        printf("%p ;\n",p);
+        return(p++);
+    }
+    
+    
     PTOKEN target = base[*p];
+    
     U32 off;
     HINDEX head = head_resolve(target,&off);
     printf("%p %.*s",p,head_get_namelen(head),head_get_name(head));
     p++;
-    switch(head_get_parm(head)){
+    U32 type;
+    switch(type=head_get_parm(head)){
+        case T_NA:
+            break;
         case T_U8: 
             printf(" %02X",*(U8*)p);
             p++;
             break;
+        case T_U16: 
+            printf(" %04X",*(U16*)p);
+            p++;
+            break;
+        case T_U32:
+            printf(" $%08X (%d)",*(U32*)p,*(U32*)p);
+            p+=4;
+            break;
+        case T_OFF:
+            printf(" %p (%d)",p + 1 + *(S8*)p,*(S8*)p);
+            p++;
+            break;
+        default:
+            printf("UNIMPLEMENTED type in decompiler %d\n",type);
+            exit(0);
     }
     
     printf("\n");
@@ -127,6 +153,7 @@ TOKEN* deco_one(TOKEN*p){
 }
 int cmd_deco(){
     TOKEN* ptr = (TOKEN*)(var->sp_meow->TOS);
+    //validate token
     if ((ptr < var->data_base) || (ptr > var->data_top)){
         src_error("deco: illegal address\n");
         return 0;
