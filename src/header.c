@@ -20,6 +20,14 @@ typedef struct sHeader {
         const char *pname;               //malloc'd name
         
 } sHeader;
+
+void head_init(U8*start, U32 size){
+}
+
+
+
+
+
 sHeader*       HEAD;
 HINDEX hindex_last = 0;
 //TODO: error-check allocation
@@ -221,9 +229,6 @@ void    head_set_parm(HINDEX h,PARM parm){
 }
 void    head_set_code(HINDEX h,TOKEN* code){
     HEAD[h].pcode = code;
-}
-void    head_set_segment(void* ptr){
-    HEAD = ptr;
 }
 
 

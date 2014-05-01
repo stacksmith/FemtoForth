@@ -1,5 +1,5 @@
+void head_init(U8*start, U32 size);
 
-void    head_set_segment(void* ptr);
 
 U32     head_get_namelen(HINDEX h);
 HINDEX  head_get_child(HINDEX h);

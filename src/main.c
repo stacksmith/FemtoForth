@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 //---------------------------------------------------------------------
 // HEAD
         void* phead = malloc(HEAD_SIZE);
-        head_set_segment(phead);
+        head_init(phead,HEAD_SIZE);
  printf("HEAD at %p \n",phead);
 //---------------------------------------------------------------------
      

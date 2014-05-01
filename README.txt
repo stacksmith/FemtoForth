@@ -1,6 +1,8 @@
 
 TODO:
 - fix table dump to print full path, no comment
+- convert heads to a linear format, for easy saving.
+    -next,dad,child,type head pointers
 
 
 WATCH OUT:
