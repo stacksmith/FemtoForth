@@ -150,7 +150,7 @@ int lang_return(void){
 void lang_fixup(){
     U8* pfix = (U8*)dstack_pop();       //recover fixup address
     U32 offset = var->data_ptr - pfix-1;
-printf("lang_fixup: offset is %d\n",offset);
+//printf("lang_fixup: offset is %d\n",offset);
     *pfix = offset;
 }
 

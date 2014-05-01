@@ -65,7 +65,7 @@ CODE "core'leave exit to outer host ",leave,T_NONE
 
 .x:
 ;------------------------------------------------------------------------------
-CODE "io'putc (c--)",key,T_NONE                      ;(c -- )
+CODE "io'putc (c--)",putc,T_NONE                      ;(c -- )
     pusha
     mov         eax,4                   ;fwrite
     mov         ebx,1                   ;handle
@@ -78,7 +78,7 @@ CODE "io'putc (c--)",key,T_NONE                      ;(c -- )
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "io'getc (--c)",emit,T_NONE                      ;(c -- )
+CODE "io'getc (--c)",getc,T_NONE                      ;(c -- )
     DPUSH       eax
     pusha
     mov         eax,3                   ;fread
@@ -248,7 +248,7 @@ CODE "core'<> ( n1 n2 -- flag )  \ True if n1 <> n2",cmp_ne,T_NONE
 CODE "core'< ( n1 n2 -- flag )  \ True if n1 < n2",cmp_lt,T_NONE
     xor         ebx,ebx
     cmp         [ebp],eax
-    setl       bl
+    setl        bl
     add         ebp,4
     mov         eax,ebx
     NEXT
@@ -348,6 +348,12 @@ CODE "core'xor  ( n1 n2 -- n1^n2 )  \ logical xor",log_xor,T_NONE
     add         ebp,4
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "core'invert  ( n1 -- ~n2 )  \ bitwise not",bit_not,T_NONE
+    not         eax
+    NEXT
+.x: 
+
 ;==============================================================================
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
@@ -395,11 +401,6 @@ CODE "core'c!  ( val addr -- )  \ store val at addr",cstore,T_NONE
     NEXT
 .x: 
 
-;------------------------------------------------------------------------------
-CODE "core'invert  ( n1 -- ~n2 )  \ bitwise not",bit_not,T_NONE
-    not         eax
-    NEXT
-.x: 
 ;------------------------------------------------------------------------------
 ;
 CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE

@@ -101,7 +101,7 @@ CODE "system'irp1",irp1,T_NONE
 ;    bx          lr
 ;.x:
 ;------------------------------------------------------------------------------
-CODE "io'emit",emit,T_NONE                      ;(c -- )
+CODE "io'putc",putc,T_NONE                      ;(c -- )
         push    {r0-r7,lr}
         mov     r0,1                            ;stdout
         mov     r1,RSP                           ;char is RSP[0]
@@ -112,6 +112,19 @@ CODE "io'emit",emit,T_NONE                      ;(c -- )
         ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
+;------------------------------------------------------------------------------
+CODE "io'getc (--c)",getc,T_NONE                      ;(c -- )
+        DPUSH   r0
+        push    {r0-r7,lr}
+        mov     r0,0                            ;stdout
+        mov     r1,RSP                          ;char is RSP[0],r0
+        mov     r2,1
+        mov     r7,3                            ;fread
+        swi     0
+        pop     {r0-r7,lr}
+        and     r0,$FF
+        bx      lr
+.x:
 ;------------------------------------------------------------------------------
 CODE "sys'gettimeofday (--Sec,uSec)",sys_gettimeofday,T_NONE
         DPUSH   r0
@@ -224,6 +237,17 @@ CODE "core'- (a,b--(a-b))",sub,T_NONE
         sub     r0,r1,r0
         NEXT
 .x:
+;------------------------------------------------------------------------------
+CODE "core'* (a,b--a*b)",mul,T_NONE
+        DPOP    r1
+        SMULL   r0,r1,r0,r1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'2* (n--n*2)",mul2,T_NONE
+        lsl     r0,1
+        NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 CODE "core'= ( n1 n2 -- flag )  \ True if n1 = n2",cmp_eq,T_NONE
@@ -241,6 +265,136 @@ CODE "core'<> ( n1 n2 -- flag )  \ True if n1 <> n2",cmp_ne,T_NONE
         movne   r0,1
         NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "core'< ( n1 n2 -- flag )  \ True if n1 < n2",cmp_lt,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r1,r0
+        movge   r0,0                    ;<              
+        movlt   r0,1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'> ( n1 n2 -- flag )  \ True if n1 > n2",cmp_gt,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r0,r1
+        movge   r0,0                    ;> (r0 and r1 reversed)            
+        movlt   r0,1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'<= ( n1 n2 -- flag )  \ True if n1 <= n2",cmp_le,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r0,r1
+        movge   r0,1                    ;<              
+        movlt   r0,0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'>= ( n1 n2 -- flag )  \ True if n1 > n2",cmp_ge,T_NONE
+        DPOP    r1                      ;r1=n1
+        cmp     r1,r0
+        movge   r0,1                    ;<              
+        movlt   r0,0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'0= ( n1 -- flag )  \ True if n1 is 0",cmp_zr,T_NONE
+        cmp     r0,0
+        moveq   r0,1
+        movne   r0,0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'0<> ( n1 -- flag )  \ True if n1 is not 0",cmp_nz,T_NONE
+        cmp     r0,0
+        moveq   r0,1
+        movne   r0,0
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'0<  ( n1 -- flag )  \ True if n1 is less than 0",cmp_ltz,T_NONE
+        cmp     r0,0
+        movge   r0,1
+        movlt   r0,0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'0>  ( n1 -- flag )  \ True if n1 is greater than 0",cmp_gtz,T_NONE
+        cmp     r0,0
+        movgt   r0,1
+        movle   r0,0
+        NEXT
+.x:
+;==============================================================================
+; FORTH logical 
+;------------------------------------------------------------------------------
+CODE "core'and  ( n1 n2 -- n1&n2 )  \ logical and",log_and,T_NONE
+        DPOP    r1              ;r1=n1
+        and     r0,r1
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'or  ( n1 n2 -- n1|n2 )  \ logical or",log_or,T_NONE
+        DPOP    r1              ;r1=n1
+        orr     r0,r1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'xor  ( n1 n2 -- n1^n2 )  \ logical xor",log_xor,T_NONE
+        DPOP    r1              ;r1=n1
+        eor     r0,r1
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'invert  ( n1 -- ~n2 )  \ bitwise not",bit_not,T_NONE
+        ;RSB     r0,0
+        mvn     r0,r0
+        NEXT
+.x: 
+
+;==============================================================================
+; FORTH shifts 
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+CODE "core'<<  ( n1 n2 -- n1<<n2 )  \ shift n1 left by n2 bits",lshift,T_NONE
+        DPOP    r1              ;r1=n1
+        lsl     r0,r1
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'>>  ( n1 n2 -- n1>>n2 )  \ shift n1 right by n2 bits",rshift,T_NONE
+        DPOP    r1              ;r1=n1
+        lsr     r0,r1
+        NEXT
+.x:
+;==============================================================================
+; FORTH memory 
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+CODE "core'@  ( addr -- val )  \ fetch val from addr",fetch,T_NONE
+        ldr     r0,[r0]
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'!  ( val addr -- )  \ store val at addr",store,T_NONE
+        DPOP    r1              ;val
+        str     r1,[r0]
+        DPOP    r0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'c@  ( addr -- val )  \ fetch val from addr",cfetch,T_NONE
+        ldrb    r0,[r0]
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'c!  ( val addr -- )  \ store val at addr",cstore,T_NONE
+        DPOP    r1              ;val
+        strb    r1,[r0]
+        DPOP    r0
+        NEXT
+.x: 
+
 ;------------------------------------------------------------------------------
 CODE "core'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
         ldr     r1,[DSP]        ;r1=bh
@@ -275,7 +429,13 @@ CODE "core'push (n--) push n onto ReturnStack",push,T_NONE
         DPOP    r0
         NEXT
 .x:
-    
+;------------------------------------------------------------------------------
+CODE "core'pop (--n) pop from return stack",pop,T_NONE
+        DPUSH   r0
+        RPOP    r0
+        NEXT
+.x:
+   
 
 ;==============================================================================
 ;------------------------------------------------------------------------------
@@ -319,14 +479,16 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
 CODE "core'branch (--) branch by signed U8 offset",branchU8,T_OFF
         ldrsb   r1,[IP],1               ;get offset
         add     IP,r1
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;condition-code 0BRANCH OFFSET true-part rest-code
 CODE "core'0branch (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
         ldrsb   r1,[IP],1               ;get offset
         cmp     r0,0                    ;is TOS 0?
-        addne   IP,r1                   ;if not, add the offset...
+        addeq   IP,r1                   ;if not, add the offset...
         DPOP    r0                      ;eat the condition byte
+        NEXT
 .x:
 
 ;==============================================================================
