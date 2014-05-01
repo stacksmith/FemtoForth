@@ -7,81 +7,98 @@
 // sHeader structure is private.  Headers can be reworked
 // at a later time.
 typedef struct sHeader {
-        HINDEX next;               //header index
-        HINDEX dad;
-        HINDEX child;
-        HINDEX type;               //points at type directory
+        struct sHeader* next;               //header index
+        struct sHeader* dad;
+        struct sHeader* child;
+        struct sHeader* type;               //points at type directory
         TOKEN* pcode;              //headers refer to actual code
         //
         PARM  parm;                //decompilation data
         U8 namelen;                //actual name part of string
         U16 unused_a;              //padding                   
         //
-        const char *pname;               //malloc'd name
+        // a name follows inline
+        char name[];
         
 } sHeader;
+typedef sHeader* HINDEX;
+/*
+ * Head dictionary is a linear structure containing sHeaders...
 
 
+*/
 
-
-
-
-sHeader*       HEAD;
+U8*            phead;           //U8* since sHeader is variable length...
+HINDEX hroot ;                  //hroot is special...
 
 void head_init(U8*start, U32 size){
-        HEAD=start;
+        phead=start;
+        hroot = (HINDEX)phead;
+printf("head_init: root is %p\n",hroot);
+
 }
 
+HINDEX head_get_root(){
+    return hroot;
+}
 
-HINDEX hindex_last = 0;
-//TODO: error-check allocation
-HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
+/*
+    Create a new header.  
+*/
+HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
-  HINDEX ret = hindex_last;
-//printf("head_new: working on %d. (%s)\n",ret,name);
-  sHeader* header = &HEAD[hindex_last++];   //claim a header
-  header->dad = dad;
-  header->child = 0;
-  header->type = type;
-  header->pcode = pcode;
-  header->parm = parm;
-  //name and comment
-  header->pname = strndup(name,cnt);
-  char*pcomment = strpbrk(name," \t\r\n");
-  header->namelen = pcomment?pcomment-name:cnt;
-printf("head_new: (%.*s)\n",header->namelen,name);
+    HINDEX head = (HINDEX)phead;
+    
+  head->dad = dad;
+  head->child = 0;
+  head->type = type;
+  head->pcode = pcode;
+  head->parm = parm;
+  //copy name and comment inline, null-term...
+  strncpy(head->name,src,cnt);
+  head->name[cnt] = 0;
+  phead = (U8*)(head->name+cnt+1);
   
-  //now actually count up the 
-  if(ret){
-    header->next = HEAD[dad].child;      //dad's first child is our sib
- //printf("head_new: %s's next is %d:%s\n",HEAD[ret].name,header->next,HEAD[header->next].name);
-    HEAD[dad].child=ret;                //we are dad's first child
-  } else {
-    header->next = 0;
+  //calculate name size
+  char*sep = strpbrk(head->name," \t\r\n");
+  U32 namelen = sep?sep-head->name:cnt;
+  if(namelen>255) {
+      src_error("head_new: name too long %d [%s]\n",namelen,head->name);
+      return 0;
   }
-  return ret;
+  head->namelen = namelen;
+//printf("head_new: (%.*s)\n",head->namelen,head->name);
+  
+  //link in
+    head->next = dad?dad->child:0;      //dad's first child is our sib
+    if(dad)
+        dad->child=head;                //we are dad's first child
+  
+  return head;
 }
 
-HINDEX head_locate(HINDEX dir,char* name,U32 len){
-    HINDEX h = HEAD[dir].child;
-//printf("head_locate: dir is %d,child is %d[%s]\n",dir,h,head_get_name(h)HEAD[h].name);      
+HINDEX head_locate(HINDEX dir,char* name,U32 len){   
+//printf("head_locate: dir is %p[%s]\n",dir,dir->name);      
+//printf("head_locate: child is %p\n",dir->child);      
+    HINDEX h = dir->child;
     while(h){
-//printf("h=%d [%s]\n",h,HEAD[h].name);     
-        if(len == HEAD[h].namelen)
-            if(0==strncmp(name,HEAD[h].pname,len))
+        if(len == h->namelen)
+            if(0==strncmp(name,h->name,len))
                 return h;
-if(HEAD[h].next==h){
-  printf("ERROR: %s's next is itself!\n",HEAD[dir].pname);
+if(h->next==h){
+  printf("ERROR: %s's next is itself!\n",h->name);
   exit(0);
 }
-        h = HEAD[h].next;
+        h = h->next;
     
   }
+  
   return h;
 }
 extern HINDEX H_PROC;
 HINDEX head_find_or_create(char* path){
-  HINDEX dir = 1;         //start at root
+//printf("head_find_or_create [%s]\n",path);
+  HINDEX dir = head_get_root();         //start at root
   char* name = strtok(path,"'");
   while(name){
     HINDEX found = head_locate(dir,name,strlen(name));
@@ -116,7 +133,7 @@ U32 substr_cnt(char* str){
 */
 HINDEX head_find_absolute( char* ptr,U32 ulen){
 //printf("head_find_absolute[%s] %d\n",ptr,ulen);
-  HINDEX dir = 1;         //start at root
+  HINDEX dir = head_get_root();         //start at root
   U32 cnt=0;
   int len=ulen;
   while(len>0){
@@ -171,7 +188,10 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
 * 
 */
 HINDEX head_resolve(TOKEN* ptr,U32* poffset){
-//printf("\n%p :",ptr);
+     //TODO:
+printf("head_save_one NOT IMPLEMENTED\n");
+exit(0);
+/*//printf("\n%p :",ptr);
 //printf("head_resolve %p %p\n",ptr,poffset);
     if(!ptr){
         if(poffset) *poffset=0;
@@ -201,46 +221,46 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     //finally, return the best match
     if(poffset) *poffset = best_offset;
     return best_hindex;
-}
+*/}
 
 const char* head_get_name(HINDEX h){
-    return HEAD[h].pname; 
+    return h->name; 
 }
 U32 head_get_namelen(HINDEX h){
-    return HEAD[h].namelen;
+    return h->namelen;
 }
 HINDEX head_get_child(HINDEX h){
-    return HEAD[h].child;
+    return h->child;
 }
 HINDEX head_get_next(HINDEX h){
-    return HEAD[h].next;
+    return h->next;
 }
 HINDEX head_get_dad(HINDEX h){
-    return HEAD[h].dad;
+    return h->dad;
 }
 TOKEN* head_get_code(HINDEX h){
-    return HEAD[h].pcode;
+    return h->pcode;
 }
 PARM head_get_parm(HINDEX h){
-    return HEAD[h].parm;
+    return h->parm;
 }
 
 void    head_set_type(HINDEX h,HINDEX type){
-    HEAD[h].type = type;
+    h->type = type;
 };
 void    head_set_parm(HINDEX h,PARM parm){
-    HEAD[h].parm = parm;
+    h->parm = parm;
 }
 void    head_set_code(HINDEX h,TOKEN* code){
-    HEAD[h].pcode = code;
+    h->pcode = code;
 }
 
 
 void head_dump_one(HINDEX h){
-  sHeader*p = &HEAD[h];
+  sHeader*p = h;
   // next dad child type table
-  printf("%4d %4x %4x %4x type:%4x ->:%8x parm:%d [%s]\n",
-         h,p->next,p->dad,p->child,p->type,(U32)p->pcode,p->parm,p->pname);
+  printf("%p (next)%p (dad)%p (child)%p type:%p ->:%8x parm:%d [%s]\n",
+         p,p->next,p->dad,p->child, p->type,(U32)p->pcode,p->parm,p->name);
 }
 
 /* ============================================================================
@@ -256,26 +276,36 @@ void head_dump_one(HINDEX h){
  */
 
 int head_save_one(FILE* f,HINDEX h){
-    U32 ret = 0;
+    //TODO:
+printf("head_save_one NOT IMPLEMENTED\n");
+exit(0);
+/*    U32 ret = 0;
     ret+=fwrite(&HEAD[h], sizeof(sHeader)-4, 1, f );
-    U32 textlen = strlen(HEAD[h].pname)+1;
+    U32 textlen = strlen(h->name)+1;
     ret+=fwrite(&textlen,4,1,f);
-    ret+=fwrite(HEAD[h].pname,textlen,1,f);
+    ret+=fwrite(h->name,textlen,1,f);
     return (ret==3)?1:0;
+*/ 
 }
 
 
 int head_load_one(FILE* f,HINDEX h){
+    //TODO:
+printf("head_load_one NOT IMPLEMENTED\n");
+exit(0);
    
     
 }
 int head_save(FILE* f){
-    U32 cnt = hindex_last;
+    //TODO:
+printf("head_save NOT IMPLEMENTED\n");
+exit(0);
+/*    U32 cnt = hindex_last;
     if(1 != fwrite(&cnt,4,1,f)) return 0;
     int i;
     for(i=0;i<cnt;i++){
         if(1 != head_save_one(f,i)) return 0;
     }
     return 1;
-    
+*/    
 }

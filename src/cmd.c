@@ -37,7 +37,7 @@ int interpret_cd(){
   U32 cnt = src_one();
   char* ptr = src_ptr;
   src_ptr += cnt;
-  HINDEX x=1; //root
+  HINDEX x=head_get_root(); //root
   // handle cd '  as cd to root...
   if(  ((cnt==2)&&(*ptr=='.')&&(*(ptr+1)=='.') )){
     x = head_get_dad(search_list[0]);
@@ -65,6 +65,7 @@ int cmd_sys(){
     printf("%08X ",*DSP);                       //NOS
     printf("%08X ",(U32)DSP);                   //DSP
     printf("%08X ",(U32)(var->sp_meow+1));      //RSP (not counting struct)
+//    printf("%08X ",(U32)
     printf("%08X ",(U32)(var->data_ptr));       //compiling here
     printf("%08X ",(U32)(table_base(var->data_ptr)));  //table base
     printf("%8d ",(table_end(var->data_ptr) - (1+table_base(var->data_ptr))));  //table base

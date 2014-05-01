@@ -6,8 +6,9 @@
 typedef unsigned int U32;
 typedef unsigned short U16;
 typedef unsigned char U8;
+struct sHeader;
 
-typedef U16 HINDEX;        //header index
+typedef struct sHeader* HINDEX;        //header index
 typedef U32 TINDEX;        //table index
 typedef U8  PARM ;         //token stream parameter
 

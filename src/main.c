@@ -22,21 +22,15 @@ HINDEX H_PROC;
 HINDEX H_DIR;
 
 void head_build(){
-  head_new("",0, 0,0,0,0);
-  HINDEX H_ROOT =       head_new("",0,          0,2,      T_NA,         0); //type is DIR           
-  HINDEX H_TYPE =       head_new("TYPE",4,      0,3,      T_NA,         H_ROOT);
-         H_DIR =        head_new("DIR",3,       0,H_TYPE, T_NA,         H_TYPE); //dad is TYPE  
-         H_PROC =       head_new("PROC",4,      0,H_TYPE, T_NA,         H_TYPE);
-//  HINDEX H_IO =         head_new("io",2,        0,H_DIR,  T_NA,         H_ROOT);
+//                         name     pcode,type  PARM      DAD
+  HINDEX H_ROOT = head_new("",0,        0,0,      T_NA,         0); //type is DIR           
+  HINDEX H_TYPE = head_new("TYPE",4,    0,0,      T_NA,      H_ROOT);
   
-  
-/*  HINDEX H_EMIT =       head_new("emit",        0,H_PROC, T_NONE,       H_IO);
-   head_code(H_EMIT,(U8*)emit,(U8*)emit_x);
-  HINDEX H_KEY =        head_new("key",         0,H_PROC, T_NONE,       H_IO);
-   head_code(H_KEY,(U8*)key,(U8*)key_x);
-  HINDEX H_TTT =        head_new("ttt",         0,H_PROC, T_NONE,       H_IO);
-   head_code(H_TTT,(U8*)ttt,(U8*)ttt_x);
-*/  
+         H_DIR =  head_new("DIR",3,     0,H_TYPE, T_NA,      H_TYPE); //dad is TYPE  
+         H_PROC = head_new("PROC",4,    0,H_TYPE, T_NA,      H_TYPE);
+//TODO: fixup type (DIR) for root and type...!
+printf("ROOT IS %p\n",H_ROOT);
+head_dump_one(H_ROOT);
 }
 #include "interpret.h"
 
@@ -47,6 +41,7 @@ void head_build(){
  * - 
  */
 int kernel_load_record(FILE* f){
+//printf("kernel_load_record %d\n",1);
     // Read the byte-long name length... 0 terminates
     U8 namelen;
     fread(&namelen,1,1,f);
@@ -62,7 +57,6 @@ int kernel_load_record(FILE* f){
     // Read parameter code
     PARM parm;
     fread(&parm,1,1,f);
-printf("kernel_load_record 1 Type %d\n",parm);
     // skip 3 bytes
     char notused[3];
     fread(&notused,3,1,f);
@@ -161,8 +155,7 @@ int main(int argc, char **argv)
     // structure will not get overwritten with table...
     var->terminator = 0xFFFFFFFF;
     int i;
-for(i=0;i<20;i++)
-  head_dump_one(i);
+//for(i=0;i<20;i++)
 
       
 // U32 qqq = xxx(0x3456,0x1234);

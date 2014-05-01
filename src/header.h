@@ -1,6 +1,6 @@
 void head_init(U8*start, U32 size);
 
-
+HINDEX head_get_root();
 U32     head_get_namelen(HINDEX h);
 HINDEX  head_get_child(HINDEX h);
 HINDEX  head_get_next(HINDEX h);
@@ -16,6 +16,8 @@ void    head_set_code(HINDEX h,TOKEN* code);
 HINDEX  head_new(char* name,U32 cnt, U8* pcode,HINDEX type,PARM parm, HINDEX dad);
 
 void    head_build();
+HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist);
+
 HINDEX head_locate(HINDEX dir,char* name,U32 len);
 HINDEX head_find_or_create(char* path);
 HINDEX head_find_absolute( char* path,U32 len);
