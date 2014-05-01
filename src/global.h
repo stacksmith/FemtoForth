@@ -59,20 +59,20 @@ typedef struct sRegsMM {
 //=======================================================
 // DANGER: update bindings.asm and kernel.asm if offset change!!!
 typedef struct sVar {
-/* 0  */  U8* data_base;                /* 0 */
-/* 4  */  U8* data_top;
-/* 8  */  U8* table_base;
-/* 12 */  U8* table_top;
-/* 16 */  U8* dsp_base;
-/* 20 */  U8* dsp_top;
-/* 24 */  U8* rsp_base;
-/* 28 */  U8* rsp_top; 
+/* 0 */  U8* sp_c;                   //c sp with context..
+/* 4 */  sRegsMM* sp_meow;
+/* 8  */  U8* data_base;                /* 0 */
+/* 16  */  U8* data_top;
+/* 20 */  U8* table_base;
+/* 24 */  U8* table_top;
+/* 28 */  U8* dsp_base;
+/* 32 */  U8* dsp_top;
+/* 36 */  U8* rsp_base;
+/* 40 */  U8* rsp_top; 
 //U8* shit;  
-/* 32 */  TOKEN* data_ptr;
-/* 36 */  TOKEN* run_ptr;
-/* 40 */  U8* sp_c;                   //c sp with context..
-/* 44 */  sRegsMM* sp_meow;
-/* 48 */  PTOKEN* run_table;          //preserving table during run
+/* 44 */  TOKEN* data_ptr;
+/* 48 */  TOKEN* run_ptr;
+/* 52 */  PTOKEN* run_table;          //preserving table during run
           U32 terminator;             //set to non-0 as end of table
 } sVar;
 

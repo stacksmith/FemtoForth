@@ -4,8 +4,8 @@ format elf
 use32
 
 section '.text' executable
-SP_C       equ 40
-SP_MEOW    equ 44
+SP_C       equ 0
+SP_MEOW    equ 4
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter

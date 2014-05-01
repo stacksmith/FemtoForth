@@ -1,18 +1,19 @@
 ; structures
-DATA_BASE  equ 0
-DATA_TOP   equ 4
-TABLE_BASE equ 8
-TABLE_TOP  equ 12
-DSP_BASE   equ 16
-DSP_TOP    equ 20
-RSP_BASE   equ 24
-RSP_TOP    equ 28
+SP_C       equ 0
+SP_MEOW    equ 4
 
-DATA_PTR   equ 32
-RUN_PTR  equ 36
-RUN_PTR    equ 40
-SP_C       equ 40
-SP_MEOW    equ 44
+;DATA_BASE  equ 0
+;DATA_TOP   equ 4
+;TABLE_BASE equ 8
+;TABLE_TOP  equ 12
+;DSP_BASE   equ 16
+;DSP_TOP    equ 20
+;RSP_BASE   equ 24
+;RSP_TOP    equ 28
+
+;DATA_PTR   equ 32
+;RUN_PTR  equ 36
+;RUN_PTR    equ 40
 ; parsing parameter types
 T_NONE  equ 0
 T_U8    equ 1
