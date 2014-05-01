@@ -21,14 +21,18 @@ typedef struct sHeader {
         
 } sHeader;
 
-void head_init(U8*start, U32 size){
-}
 
 
 
 
 
 sHeader*       HEAD;
+
+void head_init(U8*start, U32 size){
+        HEAD=start;
+}
+
+
 HINDEX hindex_last = 0;
 //TODO: error-check allocation
 HINDEX head_new(char* name,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
