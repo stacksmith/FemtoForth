@@ -313,6 +313,21 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
         ldr     r0,[r1,r2,LSL 2]        ;just like the interpreter
         NEXT
 .x:
+;------------------------------------------------------------------------------
+; branch
+;
+CODE "core'branch (--) branch by signed U8 offset",branchU8,T_OFF
+        ldrsb   r1,[IP],1               ;get offset
+        add     IP,r1
+.x:
+;------------------------------------------------------------------------------
+;condition-code 0BRANCH OFFSET true-part rest-code
+CODE "core'0branch (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
+        ldrsb   r1,[IP],1               ;get offset
+        cmp     r0,0                    ;is TOS 0?
+        addne   IP,r1                   ;if not, add the offset...
+        DPOP    r0                      ;eat the condition byte
+.x:
 
 ;==============================================================================
 ;==============================================================================
