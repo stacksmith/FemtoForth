@@ -3,6 +3,8 @@
 #include "global.h"
 #include "header.h"
 #include "data.h"
+
+extern sVar*   var;
 //=======================================================
 // sHeader structure is private.  Headers can be reworked
 // at a later time.
@@ -28,18 +30,10 @@ typedef sHeader* HINDEX;
 
 */
 
-U8*            phead;           //U8* since sHeader is variable length...
-HINDEX hroot ;                  //hroot is special...
 
-void head_init(U8*start, U32 size){
-        phead=start;
-        hroot = (HINDEX)phead;
-printf("head_init: root is %p\n",hroot);
-
-}
 
 HINDEX head_get_root(){
-    return hroot;
+    return (HINDEX)var->head_base;
 }
 
 /*
@@ -47,7 +41,7 @@ HINDEX head_get_root(){
 */
 HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
-    HINDEX head = (HINDEX)phead;
+    HINDEX head = (HINDEX)var->head_ptr;
     
   head->dad = dad;
   head->child = 0;
@@ -57,7 +51,7 @@ HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   //copy name and comment inline, null-term...
   strncpy(head->name,src,cnt);
   head->name[cnt] = 0;
-  phead = (U8*)(head->name+cnt+1);
+  var->head_ptr = (U8*)(head->name+cnt+1);
   
   //calculate name size
   char*sep = strpbrk(head->name," \t\r\n");

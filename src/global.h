@@ -69,10 +69,14 @@ typedef struct sVar {
 /* 32 */  U8* dsp_top;
 /* 36 */  U8* rsp_base;
 /* 40 */  U8* rsp_top; 
+/* 44 */  U8* head_base; 
+/* 48 */  U8* head_top; 
+/* 52 */  U8* head_ptr; 
+
 //U8* shit;  
-/* 44 */  TOKEN* data_ptr;
-/* 48 */  TOKEN* run_ptr;
-/* 52 */  PTOKEN* run_table;          //preserving table during run
+/* 56 */  TOKEN* data_ptr;
+/* 60 */  TOKEN* run_ptr;
+/* 64 */  PTOKEN* run_table;          //preserving table during run
           U32 terminator;             //set to non-0 as end of table
 } sVar;
 

@@ -59,13 +59,13 @@ int interpret_cd(){
  * display pointers and data
  * ==========================================================================*/
 int cmd_sys(){
-    printf("\33[1;32m     TOS      NOS      DSP      RSP      CPL     BASE  ENTRIES\33[0;32m\n");
+    printf("\33[1;32m     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES\33[0;32m\n");
     U32* DSP = (U32*)(var->sp_meow->DSP);
     printf("%08X ",var->sp_meow->TOS);          //TOS
     printf("%08X ",*DSP);                       //NOS
     printf("%08X ",(U32)DSP);                   //DSP
     printf("%08X ",(U32)(var->sp_meow+1));      //RSP (not counting struct)
-//    printf("%08X ",(U32)
+    printf("%08X ",(U32)(var->head_ptr));
     printf("%08X ",(U32)(var->data_ptr));       //compiling here
     printf("%08X ",(U32)(table_base(var->data_ptr)));  //table base
     printf("%8d ",(table_end(var->data_ptr) - (1+table_base(var->data_ptr))));  //table base

@@ -139,9 +139,10 @@ int main(int argc, char **argv)
  printf("RSP at %p ",var->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
-        void* phead = malloc(HEAD_SIZE);
-        head_init(phead,HEAD_SIZE);
- printf("HEAD at %p \n",phead);
+        var->head_base = (U8*)malloc(HEAD_SIZE);
+        var->head_top = var->head_base + HEAD_SIZE;
+        var->head_ptr = var->head_base;
+ printf("HEAD at %p \n",var->head_base);
 //---------------------------------------------------------------------
      
         head_build();

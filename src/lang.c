@@ -41,6 +41,7 @@ int verify_ptr(U8* ptr){
     if ((ptr >= var->table_base) && (ptr < var->table_top))   return 1;
     if ((ptr >= var->dsp_base) && (ptr < var->dsp_top))       return 1;
     if ((ptr >= var->rsp_base) && (ptr < var->rsp_top))     return 1;
+    if ((ptr >= var->head_base) && (ptr < var->head_top))     return 1;
     return 0;
 }
 /*=============================================================================
