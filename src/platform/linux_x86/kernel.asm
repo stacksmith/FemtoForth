@@ -329,6 +329,21 @@ CODE "core'0>=  ( n1 -- flag )  \ True if n1 is greater then or equal to 0",cmp_
     NEXT
 .x: 
 ;==============================================================================
+;==============================================================================
+; special conditionals.  RHS is destroyed, but not lhs!
+CODE "core'if'> ( n1 n2 -- n1) conditionally execute the following expression",if_gt,T_NONE
+    xor         ecx,ecx                 ;offset
+    cmp         [ebp],eax               ;compare n1,n2
+     setle       cl                      ;if n1 <= n2
+    movsx       ebx,byte[esi]           ;ebx is offset
+     sub         ecx,1                   ;if n1 <= n2, 0.  if n1>n2, 0xFFFF
+    add         esi,1
+     and         ebx,ecx
+ ;   add         esi,ebx                 ;add offset or 0
+    DPOP        eax
+    NEXT
+.x:
+;==============================================================================
 ; FORTH logical 
 ;------------------------------------------------------------------------------
 CODE "core'and  ( n1 n2 -- n1&n2 )  \ logical and",log_and,T_NONE
