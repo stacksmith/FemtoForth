@@ -5,6 +5,8 @@ U32     head_get_namelen(HINDEX h);
 HINDEX  head_get_child(HINDEX h);
 HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
+HINDEX  head_get_type(HINDEX h);
+
 TOKEN*          head_get_code(HINDEX h);
 PARM            head_get_parm(HINDEX h);
 const char*     head_get_name(HINDEX h);

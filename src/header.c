@@ -232,6 +232,9 @@ TOKEN* head_get_code(HINDEX h){
 PARM head_get_parm(HINDEX h){
     return h->parm;
 }
+HINDEX  head_get_type(HINDEX h){
+    return h->type;
+}
 
 void    head_set_type(HINDEX h,HINDEX type){
     h->type = type;

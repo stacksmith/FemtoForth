@@ -133,15 +133,23 @@ int lang_t(){
     table_dump(p);
 }
 
-int lang_ref(char* ptr,U32 cnt){
-    //find the identifier following the &
-    HINDEX htarget = head_find(ptr,cnt,search_list);
+/*=============================================================================
+* ref   - compile a reference to an addres.
+* 
+* - code: <ref> <tok>   at runtime leave address (onding to tok) on dstack
+*/
+int lang_ref_p(HINDEX htarget){
     if(!htarget) return 0; //TODO: error
-    HINDEX href = head_find_absolute("core'REF",8);
+    HINDEX href = head_find_absolute("core'REF",8); //TODO:pre-find
     if(!href) return 0;
     data_compile_token(href);
     data_compile_token(htarget);
     return 1;
+}
+int lang_ref(char* ptr,U32 cnt){
+    //find the identifier following the &
+    HINDEX htarget = head_find(ptr,cnt,search_list);
+    return lang_ref_p(htarget);
 }
 int lang_return(void){
     data_compile_U8(0);

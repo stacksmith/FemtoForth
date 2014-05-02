@@ -20,6 +20,7 @@ sVar*   var;                    //system variables
 */
 HINDEX H_PROC;
 HINDEX H_DIR;
+HINDEX H_VAR;
 
 void head_build(){
 //                         name     pcode,type  PARM      DAD
@@ -28,6 +29,7 @@ void head_build(){
   
          H_DIR =  head_new("DIR",3,     0,H_TYPE, T_NA,      H_TYPE); //dad is TYPE  
          H_PROC = head_new("PROC",4,    0,H_TYPE, T_NA,      H_TYPE);
+         H_VAR = head_new("VAR",3,      0,H_TYPE, T_NA,      H_TYPE);
 //TODO: fixup type (DIR) for root and type...!
 printf("ROOT IS %p\n",H_ROOT);
 head_dump_one(H_ROOT);
@@ -94,22 +96,7 @@ int main(int argc, char **argv)
 {
 	
 //---------------------------------------------------------------------
-// Table - runtime 
-//
-        U8*table_base = mmap((U8**)(CODE_ADDRESS/4),
-                 sizeof(TINDEX)*TABLE_SIZE,
-                 PROT_READ+PROT_WRITE+PROT_EXEC,
-                 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
-                 0,0);
-        //var structure is placed into TABLE!
-        var = (sVar*)table_base;
-        var->table_base = table_base;
-        printf("TABLE at %p ",var->table_base);
-        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
-       // var->table_ptr = (U8**)var->table_base;
-       // *var->table_ptr++ = 0 ; //first table entry is always 0 !
- //---------------------------------------------------------------------
-// data -  
+// Data segment.  Houses var at the bottom...  
 //
         // memmap data segment
         U8* data_base = mmap((void*)0x04000000,
@@ -117,12 +104,29 @@ int main(int argc, char **argv)
                  PROT_READ+PROT_WRITE+PROT_EXEC,
                  MAP_ANONYMOUS|MAP_PRIVATE|MAP_FIXED,
                  0,0);
+        //var structure is placed into TABLE!
+        var = (sVar*)data_base;
+        var->data_ptr = data_base + sizeof(sVar);
+
         // install system var structure at bottom
         var->data_base = data_base;
         var->data_top = data_base + CODE_SIZE;
-        var->data_ptr = data_base;
 
         printf("data at %p->%p ",var->data_base,var->data_top);
+
+//---------------------------------------------------------------------
+// Table - runtime 
+//
+        U8*table_base = mmap((U8**)(CODE_ADDRESS/4),
+                 sizeof(TINDEX)*TABLE_SIZE,
+                 PROT_READ+PROT_WRITE+PROT_EXEC,
+                 MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
+                 0,0);
+        var->table_base = table_base;
+        printf("TABLE at %p ",var->table_base);
+        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
+       // var->table_ptr = (U8**)var->table_base;
+       // *var->table_ptr++ = 0 ; //first table entry is always 0 !
       
 //---------------------------------------------------------------------
 // DSP

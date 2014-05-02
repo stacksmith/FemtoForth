@@ -62,7 +62,7 @@ void call_meow(U8* addr){
 //printf("call_meow will run: %08X\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
-  U32 ret=    meow_invoke(var);
+  U32 ret=    meow_invoke(var); //var is in data!
 //printf("call_meow: %08X\n",ret);
 
 }
@@ -116,14 +116,24 @@ extern int lang(char*ptr,U32 cnt);
 /*
  * compile a single unit - lang, native or literal...
  */
+extern HINDEX H_PROC;
+extern HINDEX H_VAR;
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //check for 'x' literals, they will break head_find!
     if(('\''==*ptr)&&('\'')==*ptr+2) return  interpret_literal_c(ptr,cnt);
     if(lang(ptr,cnt)) return 1;
 
-    HINDEX x = head_find(ptr, cnt,search_list);
-    if(x) return data_compile_token(x);                  //compile a token...
+    HINDEX h = head_find(ptr, cnt,search_list);
+printf("found %p\n",h);
+    if(h) {
+        //simple type dispatch.  Real language dispatches better..
+        HINDEX type = head_get_type(h);
+        if(type==H_PROC)
+            return data_compile_token(h);                  //compile a token...
+        if(type==H_VAR)
+            return lang_ref_p(h);
+    }
     return interpret_literal(ptr,cnt);        //finally try literal
 }
 

@@ -177,6 +177,22 @@ int cmd_see(){
 int cmd_load(){
     return src_file("test.ff");
 }
+extern HINDEX H_VAR;
+int lang_var(){
+    U32 cnt = src_one();
+    char* ptr = src_ptr;
+    src_ptr += cnt;
+    // create an entry
+    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
+    data_compile_U32(0);
+    var->run_ptr = var->data_ptr;
+cmd_sys();
+    return 1;
+  //  var->run_ptr += 4;
+//    lang_ref(ptr,cnt);          //compile address of variable
+    
+}
+
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
     switch(cnt){
@@ -209,6 +225,9 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
+            break;
+        case 8:
+            if(0==strncmp(ptr,"variable",8)) { return lang_var(); }
             break;
             
     }
