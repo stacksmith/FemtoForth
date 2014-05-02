@@ -137,19 +137,14 @@ int interpret_compone(char* ptr,U32 cnt){
 }
 
 int interpret_one(){
-    //next
-    U32 cnt = src_one();
-    char* ptr = var->src_ptr;
-    var->src_ptr += cnt;
+    U32 cnt; char* ptr = src_word(&cnt);
     return interpret_compone(ptr,cnt);
 }
 
 
 int interpret_compuntil(char* delim, U32 delimcnt){
     while(1){
-        U32 cnt = src_one();
-        char* ptr = var->src_ptr;
-        var->src_ptr += cnt;
+        U32 cnt; char* ptr = src_word(&cnt);
         if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
             return 1;
         if(!interpret_compone(ptr,cnt)) {
@@ -175,9 +170,8 @@ int interpret_outer_p(char* ptr,U32 cnt){
 }
 int interpret_outer(){
 //printf("interpret_outer\n");
-    U32 cnt = src_one();
-    char* ptr = var->src_ptr;
-    var->src_ptr += cnt;
+    U32 cnt;
+    char* ptr = src_word(&cnt);
     //---------------------------------------
     //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;

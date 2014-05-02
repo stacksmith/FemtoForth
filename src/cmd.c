@@ -7,6 +7,9 @@ extern sVar* var ;
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
 #include "table.h"
+extern HINDEX H_VAR;
+extern HINDEX H_DIR;
+extern HINDEX H_ROOT;
 
 /******************************************************************/
 
@@ -176,12 +179,9 @@ int cmd_see(){
 int cmd_load(){
     return src_file("test.ff");
 }
-extern HINDEX H_VAR;
 
 int lang_var(){
-    U32 cnt = src_one();
-    char* ptr = var->src_ptr;
-    var->src_ptr += cnt;
+     U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
     HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
     data_compile_U32(0);
@@ -189,20 +189,28 @@ int lang_var(){
     return 1;
 }
 int lang_sysvar(){
-    U32 cnt = src_one();
-    char* ptr = var->src_ptr;
-    var->src_ptr += cnt;
+    U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
     HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
     // parse the next value, that is the address of lang_sysvar
-    cnt = src_one();
-    ptr = var->src_ptr;
-    var->src_ptr += cnt;
+    ptr = src_word(&cnt);
+ printf("lang_sysvar: parse [%s] %d\n",ptr,cnt);
     char* endptr;
     TOKEN* target = (TOKEN*)strtol(ptr,&endptr,16);
+ printf("lang_sysvar: setting to %p\n",target);
+    if(endptr != ptr+cnt){
+        src_error("unable to parse target of sysvar\n");
+        return 0;
+    }
     //TODO: this is bull
     head_set_code(h,target);
     return 1;
+}
+int cmd_mkdir(){
+     U32 cnt; char* ptr = src_word(&cnt);
+     //careful, no pathing
+    HINDEX h = head_new(ptr,cnt,0,H_DIR,T_NA,search_list[0]);
+     
 }
 
 //TODO: check error conditions, return...
@@ -238,6 +246,8 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
+        case 5:
+            if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
         case 6:
             if(0==strncmp(ptr,"sysvar",6)) { return lang_sysvar(); }
         case 8:
@@ -257,4 +267,6 @@ void cmd_init(){
     search_list[0] = head_find_abs_or_die("test");    //wd
     search_list[1] = head_find_abs_or_die("core");    //
     search_list[2] = head_find_abs_or_die("io");    //
+    search_list[3] = H_ROOT;    //
+    
 }
