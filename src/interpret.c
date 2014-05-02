@@ -7,7 +7,7 @@
 #include "table.h"
 #include "lang.h"
 
-extern char* src_ptr;           //from src.cpp
+
 // interpret.c
 
 #include "cmd.h"
@@ -125,7 +125,6 @@ int interpret_compone(char* ptr,U32 cnt){
     if(lang(ptr,cnt)) return 1;
 
     HINDEX h = head_find(ptr, cnt,search_list);
-printf("found %p\n",h);
     if(h) {
         //simple type dispatch.  Real language dispatches better..
         HINDEX type = head_get_type(h);
@@ -140,8 +139,8 @@ printf("found %p\n",h);
 int interpret_one(){
     //next
     U32 cnt = src_one();
-    char* ptr = src_ptr;
-    src_ptr += cnt;
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
     return interpret_compone(ptr,cnt);
 }
 
@@ -149,12 +148,12 @@ int interpret_one(){
 int interpret_compuntil(char* delim, U32 delimcnt){
     while(1){
         U32 cnt = src_one();
-        char* ptr = src_ptr;
-        src_ptr += cnt;
+        char* ptr = var->src_ptr;
+        var->src_ptr += cnt;
         if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
             return 1;
         if(!interpret_compone(ptr,cnt)) {
-            printf("ERROR [[%s]]\n",src_ptr);
+            printf("ERROR [[%s]]\n",var->src_ptr);
             return 0;
         }
          
@@ -169,16 +168,16 @@ int interpret_outer_p(char* ptr,U32 cnt){
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
             src_error("not found:");
-            *src_ptr=0;                         //abandon line!
+            *var->src_ptr=0;                         //abandon line!
             return 0;
          }
     return 1;
 }
 int interpret_outer(){
-
+//printf("interpret_outer\n");
     U32 cnt = src_one();
-    char* ptr = src_ptr;
-    src_ptr += cnt;
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
     //---------------------------------------
     //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;

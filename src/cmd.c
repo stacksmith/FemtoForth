@@ -1,8 +1,7 @@
 #include "global.h"
 #include "header.h"
 #include "src.h"
-extern char* src_ptr;           //from src.cpp
-// interpret.c
+extern sVar* var ;
 
 #include "cmd.h"
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
@@ -35,8 +34,8 @@ cmd_ls(HINDEX dir){
 //
 int interpret_cd(){
   U32 cnt = src_one();
-  char* ptr = src_ptr;
-  src_ptr += cnt;
+  char* ptr = var->src_ptr;
+  var->src_ptr += cnt;
   HINDEX x=head_get_root(); //root
   // handle cd '  as cd to root...
   if(  ((cnt==2)&&(*ptr=='.')&&(*(ptr+1)=='.') )){
@@ -153,8 +152,8 @@ TOKEN* see_one(TOKEN*p){
 }
 int cmd_see(){
 //    U32 cnt = src_one();
-//    char* p = src_ptr;
-//    src_ptr += cnt;
+//    char* p = var->src_ptr;
+//    var->src_ptr += cnt;
     
 //    HINDEX h = head_find(p,cnt,search_list);
 //    if(!h) return 0;
@@ -178,19 +177,32 @@ int cmd_load(){
     return src_file("test.ff");
 }
 extern HINDEX H_VAR;
+
 int lang_var(){
     U32 cnt = src_one();
-    char* ptr = src_ptr;
-    src_ptr += cnt;
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
     // create an entry
     HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
     data_compile_U32(0);
     var->run_ptr = var->data_ptr;
-cmd_sys();
     return 1;
-  //  var->run_ptr += 4;
-//    lang_ref(ptr,cnt);          //compile address of variable
-    
+}
+int lang_sysvar(){
+    U32 cnt = src_one();
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
+    // create an entry
+    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
+    // parse the next value, that is the address of lang_sysvar
+    cnt = src_one();
+    ptr = var->src_ptr;
+    var->src_ptr += cnt;
+    char* endptr;
+    TOKEN* target = (TOKEN*)strtol(ptr,&endptr,16);
+    //TODO: this is bull
+    head_set_code(h,target);
+    return 1;
 }
 
 //TODO: check error conditions, return...
@@ -226,6 +238,8 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
+        case 6:
+            if(0==strncmp(ptr,"sysvar",6)) { return lang_sysvar(); }
         case 8:
             if(0==strncmp(ptr,"variable",8)) { return lang_var(); }
             break;

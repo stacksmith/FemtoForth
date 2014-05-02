@@ -5,36 +5,37 @@
 #include "global.h"
 
 #define SRC_BUF_SIZE 256
-char* src_buf;
-char* src_ptr;
+//char* src_buf;
+extern sVar* var;
+//char* src_ptr;
 FILE* hfile;  
 U32 lineno;
 
 void src_reset(){
     if(hfile != stdin) fclose(hfile);
     hfile = stdin;                   //initial
-    *src_buf=0;                         //will trigger initial src_line!
-    src_ptr = src_buf;
+    *var->src_base=0;                         //will trigger initial src_line!
+     var->src_ptr = var->src_base;
     lineno = 0;
 }
 
 void src_init(){
-    src_buf = (char*)malloc(256);
+    var->src_base = (char*)malloc(256);
     hfile = stdin;
     src_reset();
-printf("SOURCE RESET\n");
+//printf("SOURCE RESET\n");
 }
 
 void src_skip_line(){
     char c;
     while(1){
-        switch(c=*src_ptr){
+        switch(c=*var->src_ptr){
             case '\r':
             case '\n':
             case 0:
                 return;
             default:
-                src_ptr++;
+                var->src_ptr++;
         }
     }
 }
@@ -45,11 +46,11 @@ void src_skip_line(){
 
 //TODO: add file support
 void src_line(){
-    if(NULL == fgets(src_buf,SRC_BUF_SIZE,hfile)){
+    if(NULL == fgets(var->src_base,SRC_BUF_SIZE,hfile)){
         src_reset();
         //printf("src_line: EOF\n");
     }
-    src_ptr = src_buf;
+    var->src_ptr = var->src_base;
     lineno++;
 }
 /*=============================================================================
@@ -75,14 +76,15 @@ int src_is_ws(char c){
  * ==========================================================================*/
 void src_ws(){
   while(1){
-    char c = *src_ptr++;
-//printf("src_ws [%c] %d pointer %p\n",c,c,src_ptr);
+    char c = *var->src_ptr++;
+//printf("src_ws %p\n",var->src_ptr);
+//printf("src_ws [%c] %d pointer %p\n",c,c,var->src_ptr);
     if(0==c) {
         src_line();        //reload as necessary
     }
     else
         if(!src_is_ws(c)) {
-            src_ptr--;
+            var->src_ptr--;
             return;
         }
   }
@@ -91,11 +93,11 @@ void src_ws(){
 /*=============================================================================
  * cnt
  * 
- * Count the word at src_ptr, using ws
+ * Count the word at var->src_ptr, using ws
  * ==========================================================================*/
 U32 src_cnt(){
   U32 cnt=0;
-  char*p = src_ptr;
+  char*p = var->src_ptr;
   while(1){
     char c = *p++;
     if( (0==c) || src_is_ws(c))  return cnt;
@@ -109,6 +111,7 @@ U32 src_cnt(){
  * ==========================================================================*/
 
 U32 src_one(){
+printf("src_one %p\n",var->src_ptr);
   src_ws();
   return src_cnt();
 }
@@ -119,9 +122,9 @@ U32 src_one(){
  * ==========================================================================*/
 void src_error(char* msg){
     printf("\33[0;31mERROR %s\33[0;37m (%d)\n",msg,lineno);
-    int i = src_ptr - src_buf; //how far into the file are we in?
+    int i = var->src_ptr - var->src_base; //how far into the file are we in?
     if(i>=0){
-        printf("%s",src_buf);         //print entire line
+        printf("%s",var->src_base);         //print entire line
         printf("\33[1;31m");
         while(i-- >0 ) printf("_");     //print error point
         printf("|\33[0;37m\n");

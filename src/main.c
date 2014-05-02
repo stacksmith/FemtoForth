@@ -156,10 +156,8 @@ int main(int argc, char **argv)
   
         cmd_init();
         lang_init();
-    // stick a non-0 value into terminator, so that 0 pointers in the var
-    // structure will not get overwritten with table...
-    var->terminator = 0xFFFFFFFF;
-    int i;
+
+//        int i;
 //for(i=0;i<20;i++)
 
       

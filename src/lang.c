@@ -4,7 +4,7 @@
 #include "global.h"
 #include "header.h"
 #include "src.h"
-extern char* src_ptr;           //from src.cpp
+
 #include "interpret.h"
 extern sVar* var;
 #include "cmd.h"
@@ -26,14 +26,14 @@ void lang_init(){
 int lang_colon(){
     //the entire line is name/comment...
 //  U32 cnt = src_one();
-//  char* ptr = src_ptr;
-//  src_ptr += cnt;
+//  char* ptr = var->src_ptr;
+//  var->src_ptr += cnt;
 //printf("interpret_colon: will create %s\n",ptr);
     //TODO: check for duplication...of string and of datatptr...
     src_ws(); //TODO: check for immediate return case...
-    U32 cnt = strlen(src_ptr);
-    head_new(src_ptr,cnt, var->data_ptr,  H_PROC,T_NA, search_list[0]);
-    src_ptr +=cnt;
+    U32 cnt = strlen(var->src_ptr);
+    head_new(var->src_ptr,cnt, var->data_ptr,  H_PROC,T_NA, search_list[0]);
+    var->src_ptr +=cnt;
     return 1;
 }
 int verify_ptr(U8* ptr){
@@ -71,8 +71,8 @@ int lang_q(){
   printf("\33[0;32m");
 
   U32 cnt = src_one();
-  char* ptr = src_ptr;
-  src_ptr += cnt;
+  char* ptr = var->src_ptr;
+  var->src_ptr += cnt;
   U8* address = (U8*)strtol(ptr,NULL,16);
 
 //    U8* address = (U8*)(var->sp_meow->TOS);
