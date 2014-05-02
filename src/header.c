@@ -159,15 +159,63 @@ HINDEX head_find_abs_or_die( char* path){
     }
 }
 /* ============================================================================
+*  search down from the directory specified
+*/
+HINDEX head_find_down(HINDEX dir, char* ptr,U32 ulen){
+//printf("head_find_down[%s] %d\n",ptr,ulen);
+  U32 cnt=0;
+  int len=ulen;
+  while(len>0){
+      cnt=substr_cnt(ptr);
+      len=len-cnt-1;
+//printf("head_find_absolute 1: [%s] %d\n",ptr,cnt);
+    HINDEX found = head_locate(dir,ptr,cnt);
+    if(!found) {
+//printf("head_find_absolute: COULD NOT FIND [%s] %d\n",ptr,cnt);
+    
+      return 0;
+    }
+    dir = found;
+    ptr=ptr+cnt+1;
+  }
+  return dir;
+}
+
+/* ============================================================================
+*  Find initial entry.
+* 
+* It must be visible.
+*/
+HINDEX head_find_initial(char* ptr,U32 len,HINDEX* searchlist){
+//printf("head_find_initial [%s] %d\n",ptr,len);
+  HINDEX dir;
+  while(dir=*searchlist++){
+//printf("head_find[%s] trying directory %s \n",ptr,head_get_name(dir));
+    HINDEX ret;
+    if(ret=head_locate(dir,ptr,len))
+      return ret;
+  }
+  return 0;
+}
+/* ============================================================================
 *  Find using a searchlist
 */
 HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
 //printf("head_find[%s] %d\n",ptr,len);
     if('\''==*ptr)
     return head_find_absolute(ptr+1,len);
-  HINDEX dir;
 //printf("head_find dir is [%d] \n",*searchlist);
-  while(dir=*searchlist++){
+  // find the initial term
+  U32 cnt = substr_cnt(ptr);            //count the initial word
+  HINDEX dir = head_find_initial(ptr,cnt,searchlist);
+  if(!dir)      return 0;
+  ptr+=cnt; len-=cnt;
+  if(len)
+  // now drill down
+    dir = head_find_down(dir,ptr+1,len-1);      //account for the '
+  return dir;
+}
+/*  while(dir=*searchlist++){
 //printf("head_find[%s] trying directory %s \n",ptr,head_get_name(dir));
     HINDEX ret;
     if(ret=head_locate(dir,ptr,len))

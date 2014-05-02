@@ -18,13 +18,15 @@ sVar*   var;                    //system variables
 /*
  * Attach code to a header...
 */
+HINDEX H_ROOT;
 HINDEX H_PROC;
 HINDEX H_DIR;
 HINDEX H_VAR;
 
+
 void head_build(){
 //                         name     pcode,type  PARM      DAD
-  HINDEX H_ROOT = head_new("",0,        0,0,      T_NA,         0); //type is DIR           
+         H_ROOT = head_new("",0,        0,0,      T_NA,         0); //type is DIR           
   HINDEX H_TYPE = head_new("TYPE",4,    0,0,      T_NA,      H_ROOT);
   
          H_DIR =  head_new("DIR",3,     0,H_TYPE, T_NA,      H_TYPE); //dad is TYPE  

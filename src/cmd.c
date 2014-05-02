@@ -9,6 +9,7 @@ HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 #include "table.h"
 extern HINDEX H_VAR;
 extern HINDEX H_DIR;
+extern HINDEX H_ROOT;
 
 /******************************************************************/
 
@@ -266,4 +267,6 @@ void cmd_init(){
     search_list[0] = head_find_abs_or_die("test");    //wd
     search_list[1] = head_find_abs_or_die("core");    //
     search_list[2] = head_find_abs_or_die("io");    //
+    search_list[3] = H_ROOT;    //
+    
 }
