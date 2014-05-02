@@ -241,7 +241,7 @@ int lang(char* ptr,U32 cnt){
     //
     
     HINDEX operator;
-    if('('==ptr[cnt-1]){
+    if( (cnt>1) && ('('==ptr[cnt-1])){
         // Before parsing ahead, preserve the operator
         char buf[256];
         strncpy(buf,ptr,cnt-1);

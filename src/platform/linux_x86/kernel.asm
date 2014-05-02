@@ -42,7 +42,7 @@ __#name:
     ;RPOP IP
 }
 ; return to C
-CODE "core'leave exit to outer host ",leave,T_NONE 
+CODE "core'leave  exit to outer host ",leave,T_NONE 
  ;and in reverse.. interpreter is already on the stack!
     mov         ecx,DWORD $01000000;    ;TODO:*** THIS SUCKS
     
@@ -65,7 +65,7 @@ CODE "core'leave exit to outer host ",leave,T_NONE
 
 .x:
 ;------------------------------------------------------------------------------
-CODE "io'putc (c--)",putc,T_NONE                      ;(c -- )
+CODE "io'putc  (c--)",putc,T_NONE                      ;(c -- )
     pusha
     mov         eax,4                   ;fwrite
     mov         ebx,1                   ;handle

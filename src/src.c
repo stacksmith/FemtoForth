@@ -28,7 +28,7 @@ printf("SOURCE RESET\n");
 void src_skip_line(){
     char c;
     while(1){
-        switch(c=src_ptr){
+        switch(c=*src_ptr){
             case '\r':
             case '\n':
             case 0:
