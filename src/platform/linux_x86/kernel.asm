@@ -44,7 +44,7 @@ __#name:
 ; return to C
 CODE "core'leave  exit to outer host ",leave,T_NONE 
  ;and in reverse.. interpreter is already on the stack!
-    mov         ecx,DWORD $01000000;    ;TODO:*** THIS SUCKS
+    mov         ecx,DWORD $04000000;    ;TODO:DATA!*** THIS SUCKS
     
     push        edi                     ;vm pointer
     push        ecx                     ;dat TODO:*** THIS SUCKS

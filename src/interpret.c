@@ -7,7 +7,7 @@
 #include "table.h"
 #include "lang.h"
 
-extern char* src_ptr;           //from src.cpp
+
 // interpret.c
 
 #include "cmd.h"
@@ -62,7 +62,7 @@ void call_meow(U8* addr){
 //printf("call_meow will run: %08X\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
-  U32 ret=    meow_invoke(var);
+  U32 ret=    meow_invoke(var); //var is in data!
 //printf("call_meow: %08X\n",ret);
 
 }
@@ -116,22 +116,31 @@ extern int lang(char*ptr,U32 cnt);
 /*
  * compile a single unit - lang, native or literal...
  */
+extern HINDEX H_PROC;
+extern HINDEX H_VAR;
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //check for 'x' literals, they will break head_find!
     if(('\''==*ptr)&&('\'')==*ptr+2) return  interpret_literal_c(ptr,cnt);
     if(lang(ptr,cnt)) return 1;
 
-    HINDEX x = head_find(ptr, cnt,search_list);
-    if(x) return data_compile_token(x);                  //compile a token...
+    HINDEX h = head_find(ptr, cnt,search_list);
+    if(h) {
+        //simple type dispatch.  Real language dispatches better..
+        HINDEX type = head_get_type(h);
+        if(type==H_PROC)
+            return data_compile_token(h);                  //compile a token...
+        if(type==H_VAR)
+            return lang_ref_p(h);
+    }
     return interpret_literal(ptr,cnt);        //finally try literal
 }
 
 int interpret_one(){
     //next
     U32 cnt = src_one();
-    char* ptr = src_ptr;
-    src_ptr += cnt;
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
     return interpret_compone(ptr,cnt);
 }
 
@@ -139,12 +148,12 @@ int interpret_one(){
 int interpret_compuntil(char* delim, U32 delimcnt){
     while(1){
         U32 cnt = src_one();
-        char* ptr = src_ptr;
-        src_ptr += cnt;
+        char* ptr = var->src_ptr;
+        var->src_ptr += cnt;
         if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
             return 1;
         if(!interpret_compone(ptr,cnt)) {
-            printf("ERROR [[%s]]\n",src_ptr);
+            printf("ERROR [[%s]]\n",var->src_ptr);
             return 0;
         }
          
@@ -159,16 +168,16 @@ int interpret_outer_p(char* ptr,U32 cnt){
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
             src_error("not found:");
-            *src_ptr=0;                         //abandon line!
+            *var->src_ptr=0;                         //abandon line!
             return 0;
          }
     return 1;
 }
 int interpret_outer(){
-
+//printf("interpret_outer\n");
     U32 cnt = src_one();
-    char* ptr = src_ptr;
-    src_ptr += cnt;
+    char* ptr = var->src_ptr;
+    var->src_ptr += cnt;
     //---------------------------------------
     //Prepare to clean up our tracks...
     var->run_ptr = var->data_ptr;

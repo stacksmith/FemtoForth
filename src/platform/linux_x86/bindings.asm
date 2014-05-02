@@ -14,7 +14,7 @@ SP_MEOW    equ 4
 public meow_invoke
 meow_invoke:
 
-    mov         ecx,[esp+4]             ;get tablebase off the stack
+    mov         ecx,[esp+4]             ;get database off the stack
     ;preserve C registers
     push        ebx
     push        ecx

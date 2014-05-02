@@ -60,24 +60,45 @@ typedef struct sRegsMM {
 //=======================================================
 // DANGER: update bindings.asm and kernel.asm if offset change!!!
 typedef struct sVar {
-/* 0 */  U8* sp_c;                   //c sp with context..
-/* 4 */  sRegsMM* sp_meow;
-/* 8  */  U8* data_base;                /* 0 */
-/* 16  */  U8* data_top;
-/* 20 */  U8* table_base;
-/* 24 */  U8* table_top;
-/* 28 */  U8* dsp_base;
-/* 32 */  U8* dsp_top;
-/* 36 */  U8* rsp_base;
-/* 40 */  U8* rsp_top; 
-/* 44 */  U8* head_base; 
-/* 48 */  U8* head_top; 
-/* 52 */  U8* head_ptr; 
+/* 00  0 */ 
+            U8* sp_c;                   //c sp with context..
+/* 04  4 */ 
+            sRegsMM* sp_meow;           //our context
+/* 08  8 */ 
+            TOKEN* data_ptr;
+/* 0C 16 */ 
+            TOKEN* run_ptr;
+/* 10 20 */ 
+            PTOKEN* run_table;          //preserving table during run
+/* 14 24 */ 
+            char*  src_ptr;
+/* 18 28 */ 
+            U8* head_ptr; 
+/* 1C 32 */ 
+            U8* data_base;                
+/* 20 36 */ 
+            U8* data_top;
+/* 24 40 */ 
+            U8* table_base;
+/* 28 44 */ 
+            U8* table_top;
+/* 2C 48 */ 
+            U8* dsp_base;
+/* 30 52 */ 
+            U8* dsp_top;
+/* 34 56 */  
+            U8* rsp_base;
+/* 38 60 */ 
+            U8* rsp_top; 
+/* 3C 64 */ 
+            U8* head_base; 
+/* 40 68 */           
+            U8* head_top; 
+/* 44 72 */           
+            char* src_base; 
+/* 48 76 */           
+            char* src_top; 
 
-//U8* shit;  
-/* 56 */  TOKEN* data_ptr;
-/* 60 */  TOKEN* run_ptr;
-/* 64 */  PTOKEN* run_table;          //preserving table during run
-          U32 terminator;             //set to non-0 as end of table
+
 } sVar;
 
