@@ -376,6 +376,13 @@ CODE "core'>>  ( n1 n2 -- n1>>n2 )  \ shift n1 right by n2 bits",rshift,T_NONE
     shr         eax,cl
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "core'ror  ( n1 n2 -- n )  \ rotate n1 right by n2 bits",rotr,T_NONE
+    mov         ecx,eax
+    DPOP        eax
+    ror         eax,cl
+    NEXT
+.x: 
 ;==============================================================================
 ; FORTH memory 
 ;------------------------------------------------------------------------------
