@@ -1,4 +1,8 @@
-sysvar data_ptr 0x04000008
+cd '
+mkdir dic
+cd dic
+sysvar ptr 0x04000008
+
 
 
 

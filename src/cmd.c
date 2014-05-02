@@ -7,6 +7,8 @@ extern sVar* var ;
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
 #include "table.h"
+extern HINDEX H_VAR;
+extern HINDEX H_DIR;
 
 /******************************************************************/
 
@@ -176,7 +178,6 @@ int cmd_see(){
 int cmd_load(){
     return src_file("test.ff");
 }
-extern HINDEX H_VAR;
 
 int lang_var(){
      U32 cnt; char* ptr = src_word(&cnt);
@@ -203,6 +204,12 @@ int lang_sysvar(){
     //TODO: this is bull
     head_set_code(h,target);
     return 1;
+}
+int cmd_mkdir(){
+     U32 cnt; char* ptr = src_word(&cnt);
+     //careful, no pathing
+    HINDEX h = head_new(ptr,cnt,0,H_DIR,T_NA,search_list[0]);
+     
 }
 
 //TODO: check error conditions, return...
@@ -238,6 +245,8 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
+        case 5:
+            if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
         case 6:
             if(0==strncmp(ptr,"sysvar",6)) { return lang_sysvar(); }
         case 8:
