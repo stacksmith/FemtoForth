@@ -1,8 +1,12 @@
+sysvar data_ptr 0x04000008
+
+
+
 cd 'io
 : hexd (hexd--ascii) convert a hex digit to ascii
 { 
   $F and '0' +
-  if( $39 over <= ) 
+  if( $39 over < ) 
     7 + 
   thanx ; 
 }

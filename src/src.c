@@ -111,9 +111,16 @@ U32 src_cnt(){
  * ==========================================================================*/
 
 U32 src_one(){
-printf("src_one %p\n",var->src_ptr);
+//printf("src_one %p\n",var->src_ptr);
   src_ws();
   return src_cnt();
+}
+
+char* src_word(U32* pcnt){
+    *pcnt = src_one();          //parse a word, count
+    char* ret = var->src_ptr;
+    var->src_ptr += *pcnt;
+    return ret;
 }
 /*=============================================================================
  * src_error_print
