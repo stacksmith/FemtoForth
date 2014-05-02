@@ -152,17 +152,17 @@ TOKEN* see_one(TOKEN*p){
     return p;
 }
 int cmd_see(){
-    U32 cnt = src_one();
-    char* p = src_ptr;
-    src_ptr += cnt;
+//    U32 cnt = src_one();
+//    char* p = src_ptr;
+//    src_ptr += cnt;
     
-    HINDEX h = head_find(p,cnt,search_list);
-    if(!h) return 0;
-    TOKEN* ptr = head_get_code(h);
+//    HINDEX h = head_find(p,cnt,search_list);
+//    if(!h) return 0;
+//   TOKEN* ptr = h-
     
     
     
-    //TOKEN* ptr = (TOKEN*)(var->sp_meow->TOS);
+    TOKEN* ptr = (TOKEN*)dstack_pop();
     //validate token
     if ((ptr < var->data_base) || (ptr > var->data_top)){
         src_error("see: illegal address\n");

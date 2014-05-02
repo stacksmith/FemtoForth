@@ -7,4 +7,4 @@ U32 src_cnt();
 U32 src_one();
 void src_error(char* msg);
 int src_file(char* fname);
-
+void src_skip_line();

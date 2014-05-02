@@ -349,8 +349,13 @@ CODE "core'xor  ( n1 n2 -- n1^n2 )  \ logical xor",log_xor,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "core'invert  ( n1 -- ~n2 )  \ bitwise not",bit_not,T_NONE
+CODE "core'invert  ( n1 -- ~n1 )  \ bitwise not",bit_not,T_NONE
     not         eax
+    NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "core'negate  ( n1 -- 0-n1 )  \ arithmetic negation",negate,T_NONE
+    neg         eax
     NEXT
 .x: 
 

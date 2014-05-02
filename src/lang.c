@@ -175,7 +175,10 @@ int lang_else(){
     dstack_push((U32)newfixup);
     
 }
-
+int lang_if_paren(){
+    int ret = interpret_compuntil(")",1);       //compile conditional
+    
+}
 
 /*int lang_operator(char* ptr,U32 cnt){
     HINDEX hop = head_locate(H_OPDIR,ptr,cnt);
@@ -190,8 +193,10 @@ int lang_else(){
     return 1;
 }
 */
-int lang(char* ptr,U32 cnt){
-//printf("lang [%s] %x %d\n",ptr,ptr,cnt);
+int lang_p(char* ptr,U32 cnt){
+// printf("lang_p: [%.*s] %d\n", cnt,ptr,cnt);
+   
+    
     // If a word starts with a &, get the address of it...
     // and compile it 
     if((cnt>1)&&('&'==*ptr)){
@@ -200,7 +205,7 @@ int lang(char* ptr,U32 cnt){
     switch(cnt){
         case 1:
 //            if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
-//            if(0==strncmp(ptr,"-",1)) { return lang_operator(ptr,cnt); }
+//            if(0==strncmp(ptr,"&",1)) { return lang_ref); }
             if(0==strncmp(ptr,";",1)) { return lang_return(); }
             if(0==strncmp(ptr,":",1)) { return lang_colon(); }
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }
@@ -210,9 +215,12 @@ int lang(char* ptr,U32 cnt){
             break;
         case 2:
              if(0==strncmp(ptr,"if",2)) { return lang_if(); }
+             if(0==strncmp(ptr,"//",2)) { src_skip_line(); return 1;}
+             
            
             break;
         case 3:
+            if(0==strncmp(ptr,"if(",3)) { return lang_if_paren(); }
             break;
         case 4:
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }
@@ -224,3 +232,26 @@ int lang(char* ptr,U32 cnt){
     return 0;
 }
 
+int lang(char* ptr,U32 cnt){
+   // operatoring: if any word ends with a (, compile rhs expression
+    // until the ')', then run the word without the (...  This essentially
+    // turns any word into a parse-ahead-style operator.  For instance,
+    // a +( b -( somefunction )
+    // see( ' myword )
+    //
+    
+    HINDEX operator;
+    if('('==ptr[cnt-1]){
+        // Before parsing ahead, preserve the operator
+        char buf[256];
+        strncpy(buf,ptr,cnt-1);
+        buf[cnt-1]=0;
+        // Now, compile rhs expression
+        int ret = interpret_compuntil(")",1);       //compile conditional
+        if(!ret) return 0;
+        //finally invoke the operator
+        ret= interpret_compone(buf,cnt-1); //may be a lang or a forth word
+        return ret;
+    }
+    return lang_p(ptr,cnt);
+}
