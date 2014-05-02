@@ -108,7 +108,7 @@ int cmd_save(){
     
     return 1;
 }
-TOKEN* deco_one(TOKEN*p){
+TOKEN* see_one(TOKEN*p){
     PTOKEN* base = table_base(p);
     U8 token = *p;
     if(!token){
@@ -151,16 +151,26 @@ TOKEN* deco_one(TOKEN*p){
     printf("\n");
     return p;
 }
-int cmd_deco(){
-    TOKEN* ptr = (TOKEN*)(var->sp_meow->TOS);
+int cmd_see(){
+    U32 cnt = src_one();
+    char* p = src_ptr;
+    src_ptr += cnt;
+    
+    HINDEX h = head_find(p,cnt,search_list);
+    if(!h) return 0;
+    TOKEN* ptr = head_get_code(h);
+    
+    
+    
+    //TOKEN* ptr = (TOKEN*)(var->sp_meow->TOS);
     //validate token
     if ((ptr < var->data_base) || (ptr > var->data_top)){
-        src_error("deco: illegal address\n");
+        src_error("see: illegal address\n");
         return 0;
     }
     int i;
     for(i=0;i<15;i++){
-        ptr = deco_one(ptr);
+        ptr = see_one(ptr);
     }
 }
 
@@ -192,12 +202,12 @@ int command(char* ptr,U32 cnt){
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(search_list[0])); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
+            if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
             break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
-            if(0==strncmp(ptr,"deco",4)) {return cmd_deco();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
             
