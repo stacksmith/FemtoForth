@@ -65,24 +65,24 @@ CODE "core'leave  exit to outer host ",leave,T_NONE
 
 .x:
 ;------------------------------------------------------------------------------
-CODE "io'putc  (c--)",putc,T_NONE                      ;(c -- )
+CODE "io'putc  (c,handle--)",putc1,T_NONE                      ;(c -- )
     pusha
     mov         eax,4                   ;fwrite
-    mov         ebx,1                   ;handle
-    lea         ecx,[esp+28]
+    mov         ebx,[esp+28]            ;handle in TOS
+    mov         ecx,ebp                 ;buffer from NOS
     mov         edx,1
     int         0x80
     popa    
-    mov         eax,[ebp]
-    add         ebp,4
+    mov         eax,[ebp+4]
+    add         ebp,8
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "io'getc (--c)",getc,T_NONE                      ;(c -- )
+CODE "io'getc (handle--c)",getc1,T_NONE                      ;(c -- )
     DPUSH       eax
     pusha
     mov         eax,3                   ;fread
-    mov         ebx,0                   ;handle
+    mov         ebx,[esp+28]            ;handle in TOS
     lea         ecx,[esp+28]
     mov         edx,1
     int         0x80
@@ -537,14 +537,6 @@ CODE "core'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
 
 
 ;------------------------------------------------------------------------------
-CODE "io'nop ",ionop,T_NONE
-    sub         ebp,4
-    mov         [ebp],eax
-    mov         eax,$DEADDEAD
-    ret
-    NEXT
-.x:
-;------------------------------------------------------------------------------
 CODE "test'nop ",nop,T_NONE
     sub         ebp,4
     mov         [ebp],eax
@@ -552,6 +544,39 @@ CODE "test'nop ",nop,T_NONE
     NEXT
  rept 300 { db 0 } 
 .x:
-
+;==============================================================================
+; variable
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+CODE "TYPE'U32'prim'compile (--val)",var_fetchp,T_NONE
+    DPUSH       eax          
+     xor         eax,eax
+     mov         al,[esi]        ;next token
+     add         esi,1
+    mov         ecx,esi         ;calculate table base ***
+    shr         ecx,4
+    shl         ecx,2
+    ;
+    mov         eax,[ecx+eax*4]
+    mov         eax,[eax]
+    NEXT
+.x:
+;==============================================================================
+; store variable
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+CODE "TYPE'U32'prim'into (val--)",var_storep,T_NONE
+     xor         ebx,ebx
+     mov         bl,[esi]        ;next token
+     add         esi,1
+    mov         ecx,esi         ;calculate table base ***
+    shr         ecx,4
+    shl         ecx,2
+    ;
+    mov         ebx,[ecx+ebx*4]         ;address of variable
+    mov         [ebx],eax
+    DPOP        eax
+    NEXT
+.x:
 ;------------------------------------------------------------------------------
 db 0    ;an empty record to terminate load process

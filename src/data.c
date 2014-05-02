@@ -1,3 +1,4 @@
+#include <string.h>
 #include "global.h"
 #include "table.h"
 #include "header.h"
@@ -99,4 +100,20 @@ int data_save(FILE* f){
     return 1;
 }
     
-
+int data_ref_style_p(HINDEX htarget,HINDEX hoperation){
+    data_compile_token(hoperation);
+    data_compile_token(htarget);
+    return 1;
+}
+int data_ref_style(HINDEX htarget,char* abspath){
+    U32 len = strlen(abspath);
+    if(!htarget) {
+        return 0; //TODO: error
+    }
+    HINDEX href = head_find_absolute(abspath,len); //
+    if(!href) {
+        printf("data_ref_style: can't find [%s]\n",abspath);
+        return 0;
+    }
+    return data_ref_style_p(htarget,href);
+}

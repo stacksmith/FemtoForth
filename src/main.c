@@ -21,7 +21,7 @@ sVar*   var;                    //system variables
 HINDEX H_ROOT;
 HINDEX H_PROC;
 HINDEX H_DIR;
-HINDEX H_VAR;
+HINDEX H_U32;
 
 
 void head_build(){
@@ -31,7 +31,7 @@ void head_build(){
   
          H_DIR =  head_new("DIR",3,     0,H_TYPE, T_NA,      H_TYPE); //dad is TYPE  
          H_PROC = head_new("PROC",4,    0,H_TYPE, T_NA,      H_TYPE);
-         H_VAR = head_new("VAR",3,      0,H_TYPE, T_NA,      H_TYPE);
+         H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
 //TODO: fixup type (DIR) for root and type...!
 printf("ROOT IS %p\n",H_ROOT);
 head_dump_one(H_ROOT);

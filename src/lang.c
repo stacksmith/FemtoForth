@@ -201,6 +201,27 @@ int lang_if_paren(){
     return 1;
 }
 */
+int lang_oper(char* opname,U32 oplen){
+//printf("lang_oper\n");
+    U32 cnt; char* ptr = src_word(&cnt);        //next
+    HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
+    if(!h) return 0;
+    HINDEX type = head_get_type(h);
+    HINDEX prim = head_locate(type,"prim",4);
+    if(!prim) {
+        printf("lang_oper can't find TYPE'%.*s'prim directory\n",
+               head_get_namelen(type),head_get_name(type));
+        return 0;
+    }
+    HINDEX operation = head_locate(prim,opname,oplen);
+    if(!operation){
+        printf("lang_oper can't find TYPE'%.*s'prim'%.*s directory\n",
+               head_get_namelen(type),head_get_name(type),oplen,opname);
+        return 0;
+    }
+    //compile a reference-style sequence
+    return data_ref_style_p(h,operation);
+}
 int lang_p(char* ptr,U32 cnt){
 // printf("lang_p: [%.*s] %d\n", cnt,ptr,cnt);
    
@@ -232,6 +253,7 @@ int lang_p(char* ptr,U32 cnt){
             break;
         case 4:
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }
+             if(0==strncmp(ptr,"into",4)) { return lang_oper("into",4); }
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }

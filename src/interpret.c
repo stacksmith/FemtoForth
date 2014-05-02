@@ -117,7 +117,11 @@ extern int lang(char*ptr,U32 cnt);
  * compile a single unit - lang, native or literal...
  */
 extern HINDEX H_PROC;
-extern HINDEX H_VAR;
+extern HINDEX H_U32;
+//TODO refprim...
+
+
+
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //check for 'x' literals, they will break head_find!
@@ -130,8 +134,9 @@ int interpret_compone(char* ptr,U32 cnt){
         HINDEX type = head_get_type(h);
         if(type==H_PROC)
             return data_compile_token(h);                  //compile a token...
-        if(type==H_VAR)
-            return lang_ref_p(h);
+        if(type==H_U32){
+            return data_ref_style(h,"TYPE'U32'prim'compile");
+        }
     }
     return interpret_literal(ptr,cnt);        //finally try literal
 }
