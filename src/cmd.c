@@ -7,7 +7,7 @@ extern sVar* var ;
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 
 #include "table.h"
-extern HINDEX H_VAR;
+extern HINDEX H_U32;
 extern HINDEX H_DIR;
 extern HINDEX H_ROOT;
 
@@ -183,7 +183,7 @@ int cmd_load(){
 int lang_var(){
      U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
-    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
+    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_U32,T_NA,search_list[0]);
     data_compile_U32(0);
     var->run_ptr = var->data_ptr;
     return 1;
@@ -191,7 +191,7 @@ int lang_var(){
 int lang_sysvar(){
     U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
-    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_VAR,T_NA,search_list[0]);
+    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_U32,T_NA,search_list[0]);
     // parse the next value, that is the address of lang_sysvar
     ptr = src_word(&cnt);
  printf("lang_sysvar: parse [%s] %d\n",ptr,cnt);
@@ -240,6 +240,7 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
+            if(0==strncmp(ptr,"U32",3)) { return lang_var(); }
             break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
@@ -250,8 +251,6 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
         case 6:
             if(0==strncmp(ptr,"sysvar",6)) { return lang_sysvar(); }
-        case 8:
-            if(0==strncmp(ptr,"variable",8)) { return lang_var(); }
             break;
             
     }

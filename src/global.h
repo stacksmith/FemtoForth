@@ -97,7 +97,7 @@ typedef struct sVar {
 /* 44 72 */           
             char* src_base; 
 /* 48 76 */           
-            char* src_top; 
+            char* src_top;             
 
 
 } sVar;
