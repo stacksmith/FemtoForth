@@ -155,7 +155,15 @@ int interpret_compuntil(char* delim, U32 delimcnt){
 int command(char* ptr,U32 cnt);
 
 
-
+int interpret_outer_p(char* ptr,U32 cnt){
+    if(!command(ptr,cnt)) 
+        if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
+            src_error("not found:");
+            *src_ptr=0;                         //abandon line!
+            return 0;
+         }
+    return 1;
+}
 int interpret_outer(){
 
     U32 cnt = src_one();
@@ -166,13 +174,7 @@ int interpret_outer(){
     var->run_ptr = var->data_ptr;
     var->run_table = table_end(var->data_ptr);
 //printf("in: run_table is at %08p\n",var->run_table);
-    //try to run as command
-    if(!command(ptr,cnt)) 
-        if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
-            src_error("not found:");
-            *src_ptr=0;                         //abandon line!
-            return 0;
-         }
+    interpret_outer_p(ptr,cnt);
     //execute
 //    if(var->run_ptr != var->data_ptr) {
 //        data_compile_U8(0);
