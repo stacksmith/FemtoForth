@@ -21,7 +21,7 @@ typedef struct sHeader {
         U16 srclen;               //padding                   
         //
         // a name follows inline
-        char name[];
+        char src[];
         
 } sHeader;
 typedef sHeader* HINDEX;
@@ -80,18 +80,18 @@ HINDEX head_commit(HINDEX h){
     *dest++=0;
     h->srclen++;
     //count the name size
-    char*sep = strpbrk(h->name," \t\r\n");
-    h->namelen = sep?sep - h->name: strlen(h->name);
+    char*sep = strpbrk(h->src," \t\r\n");
+    h->namelen = sep?sep - h->src: strlen(h->src);
     //and confirm
     var->head_ptr = (U8*)dest;
 }
 
 
-/*(  //calculate name size
-  char*sep = strpbrk(head->name," \t\r\n");
-  U32 namelen = sep?sep-head->name:cnt;
+ /*(  //calculate name size
+  char*sep = strpbrk(head->src," \t\r\n");
+  U32 namelen = sep?sep-head->src:cnt;
   if(namelen>255) {
-      src_error("head_new: name too long %d [%s]\n",namelen,head->name);
+      src_error("head_new: name too long %d [%s]\n",namelen,head->src);
       return 0;
   }
   head->namelen = namelen;
@@ -102,10 +102,10 @@ HINDEX head_locate(HINDEX dir,char* name,U32 len){
     HINDEX h = dir->child;
     while(h){
         if(len == h->namelen)
-            if(0==strncmp(name,h->name,len))
+            if(0==strncmp(name,h->src,len))
                 return h;
 if(h->next==h){
-  printf("ERROR: %s's next is itself!\n",h->name);
+  printf("ERROR: %s's next is itself!\n",h->src);
   exit(0);
 }
         h = h->next;
@@ -290,7 +290,7 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
 }
 
 const char* head_get_name(HINDEX h){
-    return h->name; 
+    return h->src; 
 }
 U32 head_get_namelen(HINDEX h){
     return h->namelen;
@@ -315,7 +315,7 @@ HINDEX  head_get_type(HINDEX h){
 }
 
 char* head_get_source(HINDEX h){
-    return h->name + h->namelen;
+    return h->src + h->namelen;
 }
 void    head_set_type(HINDEX h,HINDEX type){
     h->type = type;

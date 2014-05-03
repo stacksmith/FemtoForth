@@ -6,8 +6,11 @@ U32 HOUT
 // ---
 : emit (c--)
 {  HOUT putc ; }
+end
+
 : key (--n)
 { HIN getc ; }
+end
 
 : hexd (hexd--ascii) convert a hex digit to ascii
 { 
@@ -16,7 +19,7 @@ U32 HOUT
     7 + 
   thanx ; 
 }
-
+end
 
 : hexp (val,nybcnt--)
 {
@@ -26,11 +29,14 @@ U32 HOUT
   )
   drop ;
 }
+end
+
 : . (val--)
 {
   8 hexp ;
 }
-  
+end
+
 
 : ctell (ptr,cnt--)
 { times (
@@ -38,11 +44,12 @@ U32 HOUT
   )
   drop ;
 }
-: cr
-{ $D emit $A emit ; }
+end
 
-: tab
-{ 9 emit ; }
+: cr { $D emit $A emit ; }
+end
+: tab { 9 emit ; }
+end
 
 // ============================================ 
 : color (col--)
@@ -52,21 +59,23 @@ U32 HOUT
    'm' emit
    ;
 }
+end
+
 cd color
-: red
-{ 1 color ; }
-: green
-{ 2 color ; }
-: yellow
-{ 3 color ; }
-: blue
-{ 4 color ; }
-: magenta
-{ 4 color ; }
-: cyan
-{ 6 color ; }
-: white
-{ 7 color ; }
+: red { 1 color ; }
+end
+: green { 2 color ; }
+end
+: yellow { 3 color ; }
+end
+: blue { 4 color ; }
+end
+: magenta { 4 color ; }
+end
+: cyan { 6 color ; }
+end
+: white { 7 color ; }
+end
 
 cd io
 : splashp
@@ -74,10 +83,11 @@ cd io
   "-+|+-- -- - - -- -" ctell
   ) cr ;
 }
-
+end
 : splash
 { splashp 
   tab tab color'yellow " FemtoForth" ctell 
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
+end
 
