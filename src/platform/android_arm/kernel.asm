@@ -101,19 +101,20 @@ CODE "system'irp1",irp1,T_NONE
 ;    bx          lr
 ;.x:
 ;------------------------------------------------------------------------------
-CODE "io'putc",putc,T_NONE                      ;(c -- )
+CODE "io'putc  (c,handle--)",putc1,T_NONE                      ;(c -- )
         push    {r0-r7,lr}
-        mov     r0,1                            ;stdout
-        mov     r1,RSP                           ;char is RSP[0]
+;       ldr     r0,1                            ;r0 is already handle..
+        mov     r1,DSP                          ;char is RSP[0], saved r0
         mov     r2,1
         mov     r7,4                            ;write
         swi     0
         pop     {r0-r7,lr}
+        add     DSP,4
         ldr     r0,[DSP],4                      ;drop
         bx      lr
 .x:  
 ;------------------------------------------------------------------------------
-CODE "io'getc (--c)",getc,T_NONE                      ;(c -- )
+CODE "io'getc (handle--c)",getc1,T_NONE                      ;(c -- )
         DPUSH   r0
         push    {r0-r7,lr}
         mov     r0,0                            ;stdout
@@ -358,14 +359,21 @@ CODE "core'invert  ( n1 -- ~n2 )  \ bitwise not",bit_not,T_NONE
 ;------------------------------------------------------------------------------
 CODE "core'<<  ( n1 n2 -- n1<<n2 )  \ shift n1 left by n2 bits",lshift,T_NONE
         DPOP    r1              ;r1=n1
-        lsl     r0,r1
+        lsl     r0,r1,r0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'>>  ( n1 n2 -- n1>>n2 )  \ shift n1 right by n2 bits",rshift,T_NONE
         DPOP    r1              ;r1=n1
-        lsr     r0,r1
+        lsr     r0,r1,r0
         NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'ror  ( n1 n2 -- n )  \ rotate n1 right by n2 bits",rotr,T_NONE
+        DPOP    r1              ;r1=n1
+        ror     r0,r1,r0
+        NEXT
+
 .x:
 ;==============================================================================
 ; FORTH memory 
@@ -466,7 +474,7 @@ CODE "core'U32 (--n) fetch a U32 that follows in the codestream",U32,T_U32
 ; REF (--REF)   load a reference via table. ***TABLE
 ;
 CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
-        ldrb    r1,[IP],1               ;r1 is tok used to fetch reference
+        ldrb    r1,[IP],1               ;r1 is tok used to fetch reference***
         lsr     r2,IP,4                 ;r2 is base
         lsls    r1,2                    ;r1 is tok*4, table offset
         DPUSH   r0
@@ -528,8 +536,29 @@ CODE "core'times (cnt--) execute expression that follows cnt times",times,T_OFF
         NEXT
 .x:   
     
-
-
+;==============================================================================
+; variable
+;------------------------------------------------------------------------------
+;------------------------------------------------------------------------------
+CODE "TYPE'U32'prim'compile (--val)",var_fetchp,T_NONE
+        DPUSH     r0
+        ldrsb     r1,[IP],1             ;r1 is offset, IP++
+        lsr       r2,IP,4               ;r2 is base ***
+        lsls      r1,2                  ;r1 is tok*4, table offset
+        ldr       r0,[r1,r2,LSL 2]      ;r0 is table entry
+        ldr       r0,[r0]               ;value
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "TYPE'U32'prim'into (val--)",var_storep,T_NONE
+        ldrsb     r1,[IP],1             ;r1 is offset, IP++
+        lsr       r2,IP,4               ;r2 is base ***
+        lsls      r1,2                  ;r1 is tok*4, table offset
+        ldr       r1,[r1,r2,LSL 2]      ;r0 is table entry
+        str       r0,[r1]
+        DPOP      r0
+        NEXT
+.x:
 
 
 ;------------------------------------------------------------------------------
