@@ -32,3 +32,17 @@ U32 HOUT
 }
   
 
+: ctell (ptr,cnt--)
+{ times (
+    c@++ emit
+  )
+  drop ;
+}
+
+: color (col--)
+{  $1B emit
+   "[0;3" ctell
+   '0' + emit // output as ascii digit
+   'm' emit
+   ;
+}

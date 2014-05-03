@@ -414,6 +414,16 @@ CODE "core'c!  ( val addr -- )  \ store val at addr",cstore,T_NONE
 .x: 
 
 ;------------------------------------------------------------------------------
+CODE "core'c@++ ( addr -- addr+1 val) fetch and increment pointer",finc1,T_NONE
+        mov     ebx,eax
+        xor     eax,eax
+        mov     al,[ebx]
+        add     ebx,1
+        DPUSH   ebx
+        NEXT
+.x:
+        
+;------------------------------------------------------------------------------
 ;
 CODE "core'swap2 (a,b,c,d--c,d,a,b)",swap2,T_NONE
         xchg    eax,[ebp+4]     ;a,d,c,b
@@ -483,6 +493,19 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
     mov         eax,[ecx+eax*4]
     NEXT
 .x:
+;------------------------------------------------------------------------------
+; STRING  
+;
+CODE "core'STR8 (--str,cnt) fetch a string pointer.  String follows inline",STR8,T_STR8
+    DPUSH       eax             ;preserve tos
+     xor         eax,eax        ;load count into TOS
+     mov         al,[esi]
+     add         esi,1
+    DPUSH       esi             ;STR
+    add         esi,eax         ;skip string
+    NEXT
+ .x:   
+
 
 ;------------------------------------------------------------------------------
 ; branch

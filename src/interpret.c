@@ -100,6 +100,16 @@ int interpret_literal_c(char* ptr,U32 cnt){
     }
     return 0;
 }
+int interpret_literal_str(char*ptr,U32 cnt){
+    if((cnt>255) || ('"'==ptr[cnt-1])){ //sanity check
+        data_compile_token(head_find_abs_or_die("core'STR8"));
+        //TODO: add escape sequences
+        data_compile_U8(cnt-2); //don't count the quotes
+        data_compile_blob(ptr+1,cnt-2);
+        return 1;
+    }
+    return 0;
+}
 int interpret_literal(char* ptr,U32 cnt){
 //printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);
     U32 radix = 10;
@@ -107,7 +117,7 @@ int interpret_literal(char* ptr,U32 cnt){
     switch(first){
         case '$': return interpret_literal_num(ptr+1,cnt-1,16);
         case '\'': return interpret_literal_c(ptr,cnt);
-//        case '"': return interpret_literal_str(ptr,cnt);
+        case '"': return interpret_literal_str(ptr,cnt);
         default:  return interpret_literal_num(ptr,cnt,10);
     }
     return 0;

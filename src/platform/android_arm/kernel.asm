@@ -402,6 +402,13 @@ CODE "core'c!  ( val addr -- )  \ store val at addr",cstore,T_NONE
         DPOP    r0
         NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "core'c@++ ( addr -- addr+1 val) fetch and increment pointer",finc1,T_NONE
+        mov     r1,r0                   ;addr
+        ldrb    r0,[r1],1               ;val
+        DPUSH   r1
+        NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 CODE "core'D- (ah,al,bh,bl--ch,cl)",2sub,T_NONE
@@ -480,6 +487,17 @@ CODE "core'REF (--n) fetch a REF that follows in the codestream",REF,T_REF
         DPUSH   r0
         ldr     r0,[r1,r2,LSL 2]        ;just like the interpreter
         NEXT
+.x:
+;------------------------------------------------------------------------------
+; STRING  
+;
+CODE "core'STR8 (--str,cnt) fetch a string pointer.  String follows inline",STR8,T_STR8
+
+    DPUSH       r0              ;preserve TOS
+    ldrb        r0,[IP],1       ;count
+    DPUSH       IP              ;STR
+    add         IP,r0
+    NEXT
 .x:
 ;------------------------------------------------------------------------------
 ; branch
