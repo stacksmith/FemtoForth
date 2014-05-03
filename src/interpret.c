@@ -6,7 +6,7 @@
 #include "cmd.h"
 #include "table.h"
 #include "lang.h"
-
+#include "data.h"
 
 // interpret.c
 
@@ -101,14 +101,23 @@ int interpret_literal_c(char* ptr,U32 cnt){
     return 0;
 }
 int interpret_literal_str(char*ptr,U32 cnt){
-    if((cnt>255) || ('"'==ptr[cnt-1])){ //sanity check
-        data_compile_token(head_find_abs_or_die("core'STR8"));
-        //TODO: add escape sequences
-        data_compile_U8(cnt-2); //don't count the quotes
-        data_compile_blob(ptr+1,cnt-2);
-        return 1;
+    var->src_ptr = ptr; //cnt is not valid, back up truck
+printf("interpret_literal_str [%s] %d\n",ptr,cnt);
+    data_compile_token(head_find_abs_or_die("core'STR8"));
+    //TODO: add escape sequences
+    U8* pcnt = data_compile_U8(0); //will fixup later
+    cnt = 0;
+    ptr++; //past the initial "
+    while(1){
+        char c = *ptr++;
+        if('"' == c) break;
+        cnt++;
+        data_compile_U8(c);
     }
-    return 0;
+    var->src_ptr = ptr;
+    if(cnt>255) return 0;
+    *pcnt = cnt;
+    return 1;
 }
 int interpret_literal(char* ptr,U32 cnt){
 //printf("interpret_literal [%s] %x %d\n",ptr,ptr,cnt);

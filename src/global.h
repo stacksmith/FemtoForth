@@ -21,7 +21,7 @@ typedef TOKEN* PTOKEN;
 #define T_U16   2
 #define T_U32   3
 #define T_OFF   4
-#define T_STR   5
+#define T_STR8  5
 #define T_REF   6
 
 

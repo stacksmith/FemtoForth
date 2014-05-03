@@ -348,3 +348,6 @@ exit(0);
     return 1;
 */    
 }
+/****************************
+ * By convention, the first line contains a stack comment...
+*/

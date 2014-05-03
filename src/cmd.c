@@ -21,11 +21,14 @@ cmd_ls(HINDEX dir){
 //printf("ls in %d\n",dir);
   HINDEX h = head_get_child(dir);
   while(h){
-    printf("\33[0;32m");
+    printf("\33[0;32m"); //green
     int dir = (head_get_child(h) != 0);        //TODO:
-    if(dir) printf("\33[1;32m");
+    if(dir) printf("\33[1;32m"); //directory is bright
     printf("%.*s ",head_get_namelen(h),head_get_name(h));
-    if(dir) printf("\33[0;37m");
+    // type
+    HINDEX type = head_get_type(h);
+    printf("\t\33[2;37m%.*s\t",head_get_namelen(type),head_get_name(type));
+//    if(dir) printf("\33[0;37m");
     //now the comment part
     printf("\t\33[0;33m %s\n",head_get_name(h)+head_get_namelen(h));
     h=head_get_next(h);
@@ -114,43 +117,57 @@ TOKEN* see_one(TOKEN*p){
     PTOKEN* base = table_base(p);
     U8 token = *p;
     if(!token){
-        printf("%p ;\n",p);
+        printf("\33[2m<\33[0;32m;\33[0;2m>\33[0m");
         return(p++);
     }
     
     
+    //print token
     PTOKEN target = base[*p];
-    
     U32 off;
     HINDEX head = head_resolve(target,&off);
-    printf("%p %.*s",p,head_get_namelen(head),head_get_name(head));
+    //dim the brackets; token is green
+    printf("\33[2m<\33[0;32m%.*s\33[0;2m>\33[0m",head_get_namelen(head),head_get_name(head));
     p++;
-    U32 type;
-    switch(type=head_get_parm(head)){
-        case T_NA:
-            break;
-        case T_U8: 
-            printf(" %02X",*(U8*)p);
-            p++;
-            break;
-        case T_U16: 
-            printf(" %04X",*(U16*)p);
-            p++;
-            break;
-        case T_U32:
-            printf(" $%08X (%d)",*(U32*)p,*(U32*)p);
-            p+=4;
-            break;
-        case T_OFF:
-            printf(" %p (%d)",p + 1 + *(S8*)p,*(S8*)p);
-            p++;
-            break;
-        default:
-            printf("UNIMPLEMENTED type in decompiler %d\n",type);
-            exit(0);
+    U32 type=head_get_parm(head);
+    if(T_NA != type){
+        printf("\33[2m<\33[0;33m");      //dim brace, reddish consts
+        switch(type){
+            case T_NA:
+
+                break;
+            case T_U8: 
+                printf("$%02X (%d)",*(U8*)p,*(U8*)p);
+                if(isprint(*(char*)p))
+                    printf(" '%c'",*(char*)p);
+                p++;
+                break;
+            case T_U16: 
+                printf("$%04X (%d)",*(U16*)p,*(U16*)p);
+                p++;
+                break;
+            case T_U32:
+                printf("$%08X (%d)",*(U32*)p,*(U32*)p);
+                p+=4;
+                break;
+            case T_OFF:
+                printf("(%d)",*(S8*)p); //p + 1 + *(S8*)p
+                p++;
+                break;
+            case T_STR8:
+                printf("\"%.*s\"",*(U8*)p,(char*)(p+1) );
+                p=p+(*(U8*)p)+1;
+                break;
+            default:
+                printf("UNIMPLEMENTED type in decompiler %d\n",type);
+                printf("\33[0m");
+                exit(0);
+        }
+        printf("\33[0;2m>\33[0m"); //crap background
     }
+ 
     
-    printf("\n");
+//    printf("\n");
     return p;
 }
 int cmd_see(){
@@ -171,9 +188,12 @@ int cmd_see(){
         return 0;
     }
     int i;
+    printf("%p ",ptr);
     for(i=0;i<15;i++){
         ptr = see_one(ptr);
     }
+    printf("\n");
+    dstack_push(ptr);
 }
 
 int cmd_load(){

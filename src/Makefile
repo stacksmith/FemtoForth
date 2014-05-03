@@ -59,7 +59,7 @@ data.o: data.c data.h global.h table.h header.h
 table.o: table.c table.h global.h header.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) table.c -o table.o 
 	
-interpret.o: interpret.c global.h header.h src.h interpret.h cmd.h table.h lang.h
+interpret.o: interpret.c global.h header.h src.h interpret.h cmd.h table.h lang.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) interpret.c -o interpret.o 
 
 src.o: src.c src.h global.h

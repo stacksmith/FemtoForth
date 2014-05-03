@@ -96,7 +96,7 @@ printf("kernel_load done\n");
 
 int main(int argc, char **argv)
 {
-	
+printf("\33[0;40m");	
 //---------------------------------------------------------------------
 // Data segment.  Houses var at the bottom...  
 //

@@ -38,7 +38,13 @@ U32 HOUT
   )
   drop ;
 }
+: cr
+{ $D emit $A emit ; }
 
+: tab
+{ 9 emit ; }
+
+// ============================================ 
 : color (col--)
 {  $1B emit
    "[0;3" ctell
@@ -46,3 +52,32 @@ U32 HOUT
    'm' emit
    ;
 }
+cd color
+: red
+{ 1 color ; }
+: green
+{ 2 color ; }
+: yellow
+{ 3 color ; }
+: blue
+{ 4 color ; }
+: magenta
+{ 4 color ; }
+: cyan
+{ 6 color ; }
+: white
+{ 7 color ; }
+
+cd io
+: splashp
+{ color'blue 4 times (
+  "-+|+-- -- - - -- -" ctell
+  ) cr ;
+}
+
+: splash
+{ splashp 
+  tab tab color'yellow " FemtoForth" ctell 
+  tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
+  splashp color'white cr ; }
+

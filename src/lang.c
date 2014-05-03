@@ -24,11 +24,6 @@ void lang_init(){
 }
 
 int lang_colon(){
-    //the entire line is name/comment...
-//  U32 cnt = src_one();
-//  char* ptr = var->src_ptr;
-//  var->src_ptr += cnt;
-//printf("interpret_colon: will create %s\n",ptr);
     //TODO: check for duplication...of string and of datatptr...
     src_ws(); //TODO: check for immediate return case...
     U32 cnt = strlen(var->src_ptr);
