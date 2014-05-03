@@ -5,6 +5,7 @@
 #include "data.h"
 
 extern sVar*   var;
+
 //=======================================================
 // sHeader structure is private.  Headers can be reworked
 // at a later time.
@@ -24,6 +25,7 @@ typedef struct sHeader {
         
 } sHeader;
 typedef sHeader* HINDEX;
+
 /*
  * Head dictionary is a linear structure containing sHeaders...
 
@@ -39,24 +41,53 @@ U32 head_size(HINDEX h){
     return sizeof(sHeader) + h->srclen+1;
 }
 /*
-    Create a new header.  
+    Create a new header.  Sequence:
+    -head_new... to create header
+    -head_append_source to add source
+    -head_commit to finish
 */
-HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
+HINDEX head_new(U8*pcode,HINDEX type,PARM parm,HINDEX dad)
 {
-    HINDEX head = (HINDEX)var->head_ptr;
-    
+  HINDEX head = (HINDEX)var->head_ptr;
   head->dad = dad;
   head->child = 0;
   head->type = type;
   head->pcode = pcode;
   head->parm = parm;
-  //copy name and comment inline, null-term...
-  strncpy(head->name,src,cnt);
-  head->name[cnt] = 0;
-  head->srclen = cnt;
-  var->head_ptr = (U8*)(head->name+cnt+1);
-  
-  //calculate name size
+  head->srclen = 0;
+  head->namelen = 0;
+  //link in
+  head->next = dad?dad->child:0;      //dad's first child is our sib
+  if(dad)
+    dad->child=head;                //we are dad's first child
+//printf("head_new: dad is %p\n",dad);
+  return head;
+}
+/*
+ * append source... if cnt=0, it is calculated.
+*/
+HINDEX head_append_source(HINDEX h,char* buf,U32 cnt){
+    if(!cnt) cnt = strlen(buf);
+    //append string to the end
+    char* dest = ((char*)(h+1)) + h->srclen;
+    memcpy(dest,buf,cnt);
+    h->srclen += cnt;
+    return h;
+}
+HINDEX head_commit(HINDEX h){
+    //null-terminate source
+    char* dest = ((char*)(h+1)) + h->srclen;
+    *dest++=0;
+    h->srclen++;
+    //count the name size
+    char*sep = strpbrk(h->name," \t\r\n");
+    h->namelen = sep?sep - h->name: strlen(h->name);
+    //and confirm
+    var->head_ptr = (U8*)dest;
+}
+
+
+/*(  //calculate name size
   char*sep = strpbrk(head->name," \t\r\n");
   U32 namelen = sep?sep-head->name:cnt;
   if(namelen>255) {
@@ -65,18 +96,9 @@ HINDEX head_new(char* src,U32 cnt, U8*pcode,HINDEX type,PARM parm,HINDEX dad)
   }
   head->namelen = namelen;
 //printf("head_new: (%.*s)\n",head->namelen,head->name);
-  
-  //link in
-    head->next = dad?dad->child:0;      //dad's first child is our sib
-    if(dad)
-        dad->child=head;                //we are dad's first child
-  
-  return head;
-}
-
-HINDEX head_locate(HINDEX dir,char* name,U32 len){   
-//printf("head_locate: dir is %p[%s]\n",dir,dir->name);      
-//printf("head_locate: child is %p\n",dir->child);      
+*/
+HINDEX head_locate(HINDEX dir,char* name,U32 len){  
+//printf("head_locate %.*s: in dir  %p[%s]\n",len,name,dir,dir->name);      
     HINDEX h = dir->child;
     while(h){
         if(len == h->namelen)
@@ -100,7 +122,15 @@ HINDEX head_find_or_create(char* path){
   while(name){
     HINDEX found = head_locate(dir,name,strlen(name));
     if(!found) {
-      dir = head_new(name,strlen(name),  0,H_PROC,T_NA,dir);
+//printf("head_find_or_create  CREATING [%s] in dir %p\n",name,dir);
+      dir = head_new(0,H_PROC,T_NA,dir);
+      head_append_source(dir,name,0);
+      head_commit(dir);
+//head_dump_one(dir);
+/*U8* q = lang_ql((U8*)dir);
+q=lang_ql(q);
+q=lang_ql(q);
+*/
     } else {
       dir = found;
     }
@@ -284,6 +314,9 @@ HINDEX  head_get_type(HINDEX h){
     return h->type;
 }
 
+char* head_get_source(HINDEX h){
+    return h->name + h->namelen;
+}
 void    head_set_type(HINDEX h,HINDEX type){
     h->type = type;
 };
@@ -296,10 +329,32 @@ void    head_set_code(HINDEX h,TOKEN* code){
 
 
 void head_dump_one(HINDEX h){
-  sHeader*p = h;
+    sHeader*p = h;
+//printf("---%d [%s]\n",head_get_namelen(p),head_get_name(p));
   // next dad child type table
-  printf("%p (next)%p (dad)%p (child)%p type:%p ->:%8x parm:%d [%s]\n",
-         p,p->next,p->dad,p->child, p->type,(U32)p->pcode,p->parm,p->name);
+  printf("\33[1;32m     PTR      NAME     NEXT      DAD    CHILD     TYPE      CODE    PARM     BASE  ENTRIES\33[0;32m\n");
+  printf("%X ",(U32)p);
+  printf("%9.*s",head_get_namelen(p),head_get_name(p));
+  //         p,p->next,p->dad,p->child, p->type,(U32)p->pcode,p->parm,p->name);
+  if(p->next)
+    printf("%9.*s",head_get_namelen(p->next),head_get_name(p->next));
+  else
+    printf("     NONE");
+  if(p->dad)
+    printf("%9.*s",head_get_namelen(p->dad),head_get_name(p->dad));
+  else
+    printf("     ----");
+  // child
+  if(p->child)
+    printf("%9.*s",head_get_namelen(p->child),head_get_name(p->child));
+  else
+    printf("     NONE");
+  //type
+  if(p->type)
+    printf("%9.*s",head_get_namelen(p->type),head_get_name(p->type));
+  else
+    printf("     ----");
+  printf("\33[0m\n");
 }
 
 /* ============================================================================
@@ -348,6 +403,4 @@ exit(0);
     return 1;
 */    
 }
-/****************************
- * By convention, the first line contains a stack comment...
-*/
+

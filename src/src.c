@@ -11,6 +11,11 @@ extern sVar* var;
 FILE* hfile;  
 U32 lineno;
 
+typedef struct sSrcContext{
+    
+}sSrcContext;
+
+
 void src_reset(){
     if(hfile != stdin) fclose(hfile);
     hfile = stdin;                   //initial
@@ -45,13 +50,15 @@ void src_skip_line(){
  * ==========================================================================*/
 
 //TODO: add file support
-void src_line(){
+char* src_line(){
     if(NULL == fgets(var->src_base,SRC_BUF_SIZE,hfile)){
         src_reset();
         //printf("src_line: EOF\n");
     }
     var->src_ptr = var->src_base;
     lineno++;
+    return var->src_base;
+    
 }
 /*=============================================================================
  * is_ws

@@ -23,14 +23,6 @@ void lang_init(){
     H_0BRANCH = head_find_abs_or_die("core'0branch");
 }
 
-int lang_colon(){
-    //TODO: check for duplication...of string and of datatptr...
-    src_ws(); //TODO: check for immediate return case...
-    U32 cnt = strlen(var->src_ptr);
-    head_new(var->src_ptr,cnt, var->data_ptr,  H_PROC,T_NA, search_list[0]);
-    var->src_ptr +=cnt;
-    return 1;
-}
 int verify_ptr(U8* ptr){
     if ((ptr >= var->data_base) && (ptr < var->data_top))     return 1;
     if ((ptr >= var->table_base) && (ptr < var->table_top))   return 1;
@@ -84,6 +76,39 @@ int lang_q(){
   printf("\33[0;37m");
   return 1;
 }
+int lang_colon(){
+    //TODO: check for duplication...of string and of datatptr...
+    HINDEX h = head_new(var->data_ptr,  H_PROC,T_NA, search_list[0]);
+    src_ws(); //TODO: check for immediate return case...
+    head_append_source(h,var->src_ptr,0); //append this first line
+    //now read lines and append as source until a line containing only "end"
+    while(1){
+        char*psrc = src_line();         //a fresh line of source
+        U32 len = strlen(psrc);        
+//printf("lang_colon [%s] %d\n",psrc,len);
+        if((4==len)&&(0==strncmp("end\n",psrc,4))){
+ //           src_line();
+            break;
+        }
+        head_append_source(h,psrc,len);
+    }
+    head_commit(h);
+printf("lang_colon done...[%s]\n",head_get_source(h));
+      //compile.  Simply jam the source pointer at our head's source; on exit
+    //it will restore... for now.
+//src_reset();
+/*U8* q = lang_ql(head_get_source(h));
+    q = lang_ql(q);
+    q = lang_ql(q);
+    q = lang_ql(q);
+    q = lang_ql(q);
+    q = lang_ql(q);
+*/
+    var->src_ptr = head_get_source(h);
+    
+    return 1;
+}
+
 void dstack_push(U32 val){
     *(--var->sp_meow->DSP)=var->sp_meow->TOS;
     var->sp_meow->TOS = val;

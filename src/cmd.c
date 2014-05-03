@@ -203,7 +203,9 @@ int cmd_load(){
 int lang_var(){
      U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
-    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_U32,T_NA,search_list[0]);
+    HINDEX h = head_new(var->data_ptr,H_U32,T_NA,search_list[0]);
+    head_append_source(h,ptr,cnt);
+    head_commit(h);
     data_compile_U32(0);
     var->run_ptr = var->data_ptr;
     return 1;
@@ -211,7 +213,9 @@ int lang_var(){
 int lang_sysvar(){
     U32 cnt; char* ptr = src_word(&cnt);
     // create an entry
-    HINDEX h = head_new(ptr,cnt,var->data_ptr,H_U32,T_NA,search_list[0]);
+    HINDEX h = head_new(var->data_ptr,H_U32,T_NA,search_list[0]);
+    head_append_source(h,ptr,cnt);
+    head_commit(h);
     // parse the next value, that is the address of lang_sysvar
     ptr = src_word(&cnt);
  printf("lang_sysvar: parse [%s] %d\n",ptr,cnt);
@@ -229,8 +233,10 @@ int lang_sysvar(){
 int cmd_mkdir(){
      U32 cnt; char* ptr = src_word(&cnt);
      //careful, no pathing
-    HINDEX h = head_new(ptr,cnt,0,H_DIR,T_NA,search_list[0]);
-     
+    HINDEX h = head_new(0,H_DIR,T_NA,search_list[0]);
+    head_append_source(h,ptr,cnt);
+    head_commit(h);
+
 }
 
 //TODO: check error conditions, return...

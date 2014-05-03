@@ -25,16 +25,28 @@ HINDEX H_U32;
 
 
 void head_build(){
-//                         name     pcode,type  PARM      DAD
-         H_ROOT = head_new("",0,        0,0,      T_NA,         0); //type is DIR           
-  HINDEX H_TYPE = head_new("TYPE",4,    0,0,      T_NA,      H_ROOT);
-  
-         H_DIR =  head_new("DIR",3,     0,H_TYPE, T_NA,      H_TYPE); //dad is TYPE  
-         H_PROC = head_new("PROC",4,    0,H_TYPE, T_NA,      H_TYPE);
-         H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
+//                         code,        type    PARM         DAD
+         H_ROOT = head_new(0,           0,      T_NA,        0); //type is DIR
+  head_commit(H_ROOT);
+  HINDEX H_TYPE = head_new(0,           0,      T_NA,        H_ROOT);
+  head_commit(head_append_source(H_TYPE,"TYPE DIR // contains types",0));
+         H_DIR =  head_new(0,           0,      T_NA,        H_TYPE); //dad is TYPE 
+  head_commit(head_append_source(H_DIR,"DIR TYPE",0));       
+         H_PROC = head_new(0,           H_TYPE, T_NA,        H_TYPE);
+  head_commit(head_append_source(H_PROC,"PROC TYPE // procedure directory",0));
+         //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
+  head_set_type(H_ROOT,H_DIR);      
+  head_set_type(H_TYPE,H_DIR);      
+  head_set_type(H_DIR,H_TYPE);      
+
 //TODO: fixup type (DIR) for root and type...!
-printf("ROOT IS %p\n",H_ROOT);
-head_dump_one(H_ROOT);
+  head_dump_one(H_ROOT);
+  head_dump_one(H_TYPE);
+  head_dump_one(H_DIR);
+  head_dump_one(H_PROC);
+  
+    
+//head_dump_one(H_ROOT);
 }
 #include "interpret.h"
 

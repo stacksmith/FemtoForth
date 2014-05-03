@@ -6,6 +6,7 @@ HINDEX  head_get_child(HINDEX h);
 HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
 HINDEX  head_get_type(HINDEX h);
+char* head_get_source(HINDEX h);
 
 TOKEN*          head_get_code(HINDEX h);
 PARM            head_get_parm(HINDEX h);
@@ -15,7 +16,9 @@ void    head_set_type(HINDEX h,HINDEX type);
 void    head_set_parm(HINDEX h,PARM parm);
 void    head_set_code(HINDEX h,TOKEN* code);
 
-HINDEX  head_new(char* name,U32 cnt, U8* pcode,HINDEX type,PARM parm, HINDEX dad);
+HINDEX  head_new(U8* pcode,HINDEX type,PARM parm, HINDEX dad);
+HINDEX head_append_source(HINDEX h,char* buf,U32 cnt);
+HINDEX head_commit(HINDEX h);
 
 void    head_build();
 HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist);
