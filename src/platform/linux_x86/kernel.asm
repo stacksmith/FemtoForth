@@ -149,11 +149,17 @@ CODE "core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
 ;------------------------------------------------------------------------------
 ; else # (--)   unconditional jump to offset
 ;
-CODE "core'DSP // (--DSP) get DataStack pointer",DSP,T_NONE
+CODE "core'DSP // (--DSP) get the Data Stack Pointer",DSP,T_NONE
         DPUSH   eax
         mov     eax,DSP
         NEXT
 .x:
+CODE "core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_NONE
+        DPUSH   eax
+        mov     eax,esp
+        NEXT
+.x:
+
 ;------------------------------------------------------------------------------
 ;
 CODE "core'dup // (n -- n n) Duplicates the top stack item.",dup,T_NONE

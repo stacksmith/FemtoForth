@@ -47,7 +47,8 @@ PROC ctell // (ptr,cnt--)
   drop ;
 }
 end
-
+PROC space { $20 emit ; }
+end
 PROC cr { $D emit $A emit ; }
 end
 PROC tab { 9 emit ; }
@@ -92,7 +93,14 @@ PROC splash
   splashp color'white cr ; }
 end
 // ============================================ 
-// error test
+// sys
+// ============================================ 
+
+PROC osys {
+color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
+dup . space over . space DSP 4+ . space RSP . space cr ;
+ }
+end
 
 PROC tester {
  "tester" ctell cr
