@@ -1,3 +1,22 @@
+;******************************************************************************
+; Copyright 2014 Victor Yurkovsky
+;
+; This file is part of the FemtoForth project.
+;
+; FPGAsm is free software: you can redistribute it and/or modify
+; it under the terms of the GNU General Public License as published by
+; the Free Software Foundation, either version 3 of the License, or
+; (at your option) any later version.
+;
+; FemtoForth is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+; GNU General Public License for more details.
+;
+; You should have received a copy of the GNU General Public License
+; along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
+;
+;*****************************************************************************
 ; kernel.asm
 ;
 ; used do build the kernel for meow-meow.
@@ -8,6 +27,8 @@
 include "../kernel_common.s"
 
 ; Register usage:
+
+ERR equ r5
 
 IP equ r6
 IP! equ r6!
@@ -139,15 +160,48 @@ CODE "sys'gettimeofday // (--Sec,uSec)",sys_gettimeofday,T_NONE
         mov     r0,r1
         NEXT
 .x:
+;==============================================================================
+; error handling
+;
+; On x86, we are out of registers, so we will keep the error frame in RAM...
 
+;---------------------------------------------
+; continue execution after saving the frame...
+CODE "core'error'catch // (--0) set up error handling",errset,T_NONE
+        DPUSH   r0
+        RPUSH   IP              ;preserve IP (just after catch!)
+        RPUSH   ERR             ;preserve error frame
+        mov     ERR,sp          ;and frame it
+        mov     r0,0            ;returning 0
+        NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'clear // (--) restore previous handler",errclr,T_NONE
+        mov     sp,ERR          ;magically restore stack pointer
+        ldr     ERR,[sp],8      ;and previous error frame; skip IP
+        NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
+        mov     sp,ERR          ;magically restore stack pointer
+        RPOP    ERR             ;previous error
+        RPOP    IP              ;and prepare to reenter
+        NEXT
+.x:  
 ;==============================================================================
 ; FORTH basics
 ;------------------------------------------------------------------------------
-; else # // (--)   unconditional jump to offset
-;
-CODE "core'DSP // (--DSP) get DataStack pointer",DSP,T_NONE
+CODE "core'DSP // (--DSP) get the Data Stack Pointer",DSP,T_NONE
         DPUSH   r0
         mov     r0,DSP
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_NONE
+        DPUSH   r0
+        mov     r0,RSP
         NEXT
 .x:
 ;------------------------------------------------------------------------------

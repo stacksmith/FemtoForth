@@ -1,3 +1,22 @@
+/******************************************************************************
+Copyright 2014 Victor Yurkovsky
+
+This file is part of the FemtoForth project.
+
+FPGAsm is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FemtoForth is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
+
+*****************************************************************************/
 #include  <stdio.h>// printf
 #include <stdlib.h>
 
@@ -43,12 +62,7 @@ void head_build(){
   head_set_type(H_TYPE,H_DIR);      
   head_set_type(H_DIR,H_TYPE);      
 
-//TODO: fixup type (DIR) for root and type...!
-  head_dump_one(H_ROOT);
-  head_dump_one(H_TYPE);
-  head_dump_one(H_DIR);
-  head_dump_one(H_PROC);
-  head_dump_one(H_U32);
+//  head_dump_one(H_ROOT);
   
     
 //head_dump_one(H_ROOT);
@@ -102,10 +116,10 @@ void kernel_load(){
     printf("kernel_load:file is %p\n",f);
     exit(0);
   }
-printf("kernel_load 1\n");
+//printf("kernel_load 1\n");
   while(kernel_load_record(f)) {};
   fclose(f);
-printf("kernel_load done\n");
+//printf("kernel_load done\n");
 }
 
 
@@ -169,9 +183,9 @@ printf("\33[0;40m");
 //---------------------------------------------------------------------
      
         head_build();
-  printf("data pointer is now at %p\n",var->data_ptr);
+//  printf("data pointer is now at %p\n",var->data_ptr);
         kernel_load();
-  printf("data pointer is now at %p\n",var->data_ptr);
+//  printf("data pointer is now at %p\n",var->data_ptr);
   
         cmd_init();
         lang_init();
