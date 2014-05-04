@@ -2,7 +2,7 @@
 TODO:
 - fix table dump to print full path, no comment
 - DONE convert heads to a linear format, for easy saving.
-- ' ' fails    
+- DONE ' ' fails    
     
 
 WATCH OUT:

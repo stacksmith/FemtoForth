@@ -1,4 +1,4 @@
-/*============================================================================
+/******************************************************************************
 Copyright 2014 Victor Yurkovsky
 
 This file is part of the FemtoForth project.
@@ -15,7 +15,8 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
-============================================================================*/
+
+*****************************************************************************/
 #include <string.h>
 #include "global.h"
 #include "header.h"

@@ -1,3 +1,22 @@
+/******************************************************************************
+Copyright 2014 Victor Yurkovsky
+
+This file is part of the FemtoForth project.
+
+FPGAsm is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FemtoForth is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
+
+*****************************************************************************/
 #include "global.h"
 #include "header.h"
 #include "src.h"
@@ -11,6 +30,7 @@ extern HINDEX H_U32;
 extern HINDEX H_DIR;
 extern HINDEX H_ROOT;
 extern HINDEX H_TYPE;
+#include "color.h"
 /* ============================================================================
 *  initialize
 * 
@@ -30,25 +50,33 @@ void cmd_init(){
 extern sVar* var;
 
 
+/*=============================================================================
+  ls
+
+=============================================================================*/
 
 cmd_ls(HINDEX dir){
 //printf("ls in %d\n",dir);
   HINDEX h = head_get_child(dir);
   while(h){
-    printf("\33[0;32m"); //green
+    color(COLOR_RESET); color(FORE_GREEN);
+//    printf("\33[0;32m"); //green
     int dir = (head_get_child(h) != 0);        //TODO:
-    if(dir) printf("\33[1;32m"); //directory is bright
+    if(dir) {
+        color(COLOR_BRIGHT); color(FORE_GREEN);
+    }
     printf("%.*s ",head_get_namelen(h),head_get_name(h));
     // type
     HINDEX type = head_get_type(h);
-    printf("\t\33[2;37m%.*s\t",head_get_namelen(type),head_get_name(type));
-//    if(dir) printf("\33[0;37m");
+    color(COLOR_NORMAL); color(FORE_WHITE);
+    printf("\t%.*s\t",head_get_namelen(type),head_get_name(type));
     //now the comment part
     U32 comlen; char* com = head_get_comments(h,&comlen);
-    printf("\t\33[0;33m %.*s\n",comlen,com);
+    color(COLOR_RESET); color(FORE_YELLOW);
+    printf("\t\%.*s\n",comlen,com);
     h=head_get_next(h);
   } 
-  printf("\33[0;37m");
+  color(COLOR_RESET); color(FORE_WHITE);
 }
 //
 // cd

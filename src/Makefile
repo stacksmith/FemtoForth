@@ -31,8 +31,8 @@ endif
 APP := main
 
 
-$(APP):  main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o kernel.bin
-	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o
+$(APP):  main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o color.o kernel.bin
+	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o color.o
 
 kernel.bin: platform/$(PLATFORM)/kernel.asm
 	$(FASM) -s kernel.dat platform/$(PLATFORM)/kernel.asm kernel.bin
@@ -68,9 +68,12 @@ src.o: src.c src.h global.h
 cmd.o: cmd.c global.h src.h cmd.h table.h lang.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) cmd.c -o cmd.o 
 
-lang.o: lang.c global.h header.h src.h interpret.h cmd.h data.h
+lang.o: lang.c lang.h global.h header.h src.h interpret.h cmd.h data.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) lang.c -o lang.o 
-	
+
+color.o: color.c color.h global.h
+	$(CC) -c $(INCLUDE) $(CFLAGS) color.c -o color.o 
+
 clean:
 	@rm -f $(APP).lst $(APP) *.o *.lst *.dat *.bin	
 	
