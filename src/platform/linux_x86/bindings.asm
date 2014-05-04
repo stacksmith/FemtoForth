@@ -32,6 +32,7 @@ meow_invoke:
     add         esp,8                   ;ER
     pop         edi                     ;EDI=interp
     ; invoke
+ mov ebx,0x04000000
    jmp         edi
 
 ;and in reverse.. interpreter is already on the stack!
