@@ -156,19 +156,19 @@ int interpret_def_source(HINDEX h){
         head_append_source(h,psrc,len);
     }
     head_commit(h);
-printf("lang_colon done...[%s]\n",head_get_source(h));
+//printf("interpret_def_source done...[%s]\n",head_get_source(h));
 
 }
 int interpret_def_PROC(HINDEX h){
-    var->src_ptr = head_get_source(h);
+    src_set(head_get_source(h));
 }
 int interpret_def_U32(HINDEX h){
     var->data_ptr +=4;
-printf("interpret_def_U32 [%s]\n",var->src_ptr);
+//printf("interpret_def_U32 [%s]\n",var->src_ptr);
 }
 
 int interpret_def_type(HINDEX htype){
-printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
+//printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
     HINDEX h = head_new(var->data_ptr,  htype,T_NA, search_list[0]);
 

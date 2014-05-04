@@ -1,93 +1,13 @@
 cd io
 U32 HIN
+end
 0 into HIN
+
 U32 HOUT
+end
 1 into HOUT
 // ---
-: emit (c--)
+PROC emit // (c--)
 {  HOUT putc ; }
-end
-
-: key (--n)
-{ HIN getc ; }
-end
-
-: hexd (hexd--ascii) convert a hex digit to ascii
-{ 
-  $F and '0' +
-  if( $39 over < ) 
-    7 + 
-  thanx ; 
-}
-end
-
-: hexp (val,nybcnt--)
-{
-  times (
-    28 ror
-    dup hexd emit
-  )
-  drop ;
-}
-end
-
-: . (val--)
-{
-  8 hexp ;
-}
-end
-
-
-: ctell (ptr,cnt--)
-{ times (
-    c@++ emit
-  )
-  drop ;
-}
-end
-
-: cr { $D emit $A emit ; }
-end
-: tab { 9 emit ; }
-end
-
-// ============================================ 
-: color (col--)
-{  $1B emit
-   "[0;3" ctell
-   '0' + emit // output as ascii digit
-   'm' emit
-   ;
-}
-end
-
-cd color
-: red { 1 color ; }
-end
-: green { 2 color ; }
-end
-: yellow { 3 color ; }
-end
-: blue { 4 color ; }
-end
-: magenta { 4 color ; }
-end
-: cyan { 6 color ; }
-end
-: white { 7 color ; }
-end
-
-cd io
-: splashp
-{ color'blue 4 times (
-  "-+|+-- -- - - -- -" ctell
-  ) cr ;
-}
-end
-: splash
-{ splashp 
-  tab tab color'yellow " FemtoForth" ctell 
-  tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
-  splashp color'white cr ; }
 end
 

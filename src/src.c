@@ -10,6 +10,7 @@ extern sVar* var;
 //char* src_ptr;
 FILE* hfile;  
 U32 lineno;
+char* src_errbuf; //buffer starts here
 
 typedef struct sSrcContext{
     
@@ -21,6 +22,7 @@ void src_reset(){
     hfile = stdin;                   //initial
     *var->src_base=0;                         //will trigger initial src_line!
      var->src_ptr = var->src_base;
+    src_errbuf = var->src_ptr;
     lineno = 0;
 }
 
@@ -31,6 +33,11 @@ void src_init(){
 //printf("SOURCE RESET\n");
 }
 
+void src_set(char* buf){
+    var->src_ptr = buf;
+    src_errbuf = var->src_ptr;
+    lineno = 0; //???    
+}
 void src_skip_line(){
     char c;
     while(1){
@@ -57,6 +64,7 @@ char* src_line(){
     }
     var->src_ptr = var->src_base;
     lineno++;
+    src_errbuf = var->src_ptr; //for error reporting
     return var->src_base;
     
 }
@@ -144,14 +152,22 @@ char* src_word(U32* pcnt){
  * ==========================================================================*/
 void src_error(char* msg){
     printf("\33[0;31mERROR %s\33[0;37m (%d)\n",msg,lineno);
-    int i = var->src_ptr - var->src_base; //how far into the file are we in?
+    int i = var->src_ptr - src_errbuf; //how far into the file are we in?
+    printf("\33[2;31m");
     if(i>=0){
-        printf("%s",var->src_base);         //print entire line
+        char*p = src_errbuf;
+        while(i){ putchar(*p++); i--;}
+        
+/*           
+        printf("%s",src_errbuf);         //print entire line
         printf("\33[1;31m");
         while(i-- >0 ) printf("_");     //print error point
         printf("|\33[0;37m\n");
-        src_reset();
+*/
     }
+    src_reset();
+    printf("\33[0m");
+  
 }
 /*=============================================================================
  * src_file

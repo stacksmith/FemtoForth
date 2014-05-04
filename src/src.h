@@ -12,3 +12,5 @@ void src_skip_line();
 char* src_word(U32* pcnt);
 
 char* src_line();
+
+void src_set(char* buf);
