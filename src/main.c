@@ -43,13 +43,15 @@ HINDEX H_DIR;
 HINDEX H_U32;
 HINDEX H_TYPE;
 HINDEX H_SYSVAR;
-
+HINDEX H_SYSTEM;
 
 void head_build(){
 //                         code,        type    PARM         DAD
          H_ROOT = head_new(0,           0,      T_NA,        0); //type is DIR
   head_commit(H_ROOT);
-         H_TYPE = head_new(0,           0,      T_NA,        H_ROOT);
+         H_SYSTEM = head_new(0,         0,      T_NA,        H_ROOT);
+  head_commit(head_append_source(H_SYSTEM,"system // system internals",0));
+         H_TYPE = head_new(0,           0,      T_NA,        H_SYSTEM);
   head_commit(head_append_source(H_TYPE,"TYPE // contains types",0));
          H_DIR =  head_new(0,           0,      T_NA,        H_TYPE); //dad is TYPE 
   head_commit(head_append_source(H_DIR,"DIR ",0));       
@@ -61,7 +63,8 @@ void head_build(){
   head_commit(head_append_source(H_SYSVAR,"SYSVAR // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
   
-  head_set_type(H_ROOT,H_DIR);      
+  head_set_type(H_ROOT,H_DIR);  
+  head_set_type(H_SYSTEM,H_DIR);
   head_set_type(H_TYPE,H_DIR);      
   head_set_type(H_DIR,H_TYPE);      
 
@@ -119,8 +122,11 @@ void kernel_load(){
     printf("kernel_load:file is %p\n",f);
     exit(0);
   }
-//printf("kernel_load 1\n");
-  while(kernel_load_record(f)) {};
+printf("kernel_load 1\n");
+  while(kernel_load_record(f)) {
+      fprintf(stderr,".");
+  };
+  
   fclose(f);
 //printf("kernel_load done\n");
 }
@@ -186,6 +192,7 @@ printf("\33[0;40m");
 //---------------------------------------------------------------------
      
         head_build();
+     
 //  printf("data pointer is now at %p\n",var->data_ptr);
         kernel_load();
 //  printf("data pointer is now at %p\n",var->data_ptr);

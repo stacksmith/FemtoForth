@@ -60,10 +60,10 @@ void interpret_init(){
     var->sp_meow = p;
     // On another note, initialize some useful tokens
     //TODO: error-check that these are found!
-    hleave = head_find_abs_or_die("core'leave");
-    hU8  = head_find_abs_or_die("core'U8");
-    hU16 = head_find_abs_or_die("core'U16");
-    hU32 = head_find_abs_or_die("core'U32");
+    hleave = head_find_abs_or_die("system'core'leave");
+    hU8  = head_find_abs_or_die("system'core'U8");
+    hU16 = head_find_abs_or_die("system'core'U16");
+    hU32 = head_find_abs_or_die("system'core'U32");
     
 }
 /* ============================================================================
@@ -126,7 +126,7 @@ int interpret_literal_c(char* ptr,U32 cnt){
 int interpret_literal_str(char*ptr,U32 cnt){
     var->src_ptr = ptr; //cnt is not valid, back up truck
 //printf("interpret_literal_str [%s] %d\n",ptr,cnt);
-    data_compile_token(head_find_abs_or_die("core'STR8"));
+    data_compile_token(head_find_abs_or_die("system'core'STR8"));
     //TODO: add escape sequences
     U8* pcnt = data_compile_U8(0); //will fixup later
     cnt = 0;
@@ -254,10 +254,10 @@ int interpret_compone(char* ptr,U32 cnt){
         if(type==H_PROC)
             return data_compile_token(h);                  //compile a token...
         if(type==H_U32){
-            return data_ref_style(h,"TYPE'U32'fetch");
+            return data_ref_style(h,"system'TYPE'U32'fetch");
         }
         if(type==H_SYSVAR){
-            return data_ref_style(h,"TYPE'U32'fetch");
+            return data_ref_style(h,"system'TYPE'U32'fetch");
         }
    }
     //--------------------------------------------------------------

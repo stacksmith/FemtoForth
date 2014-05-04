@@ -37,10 +37,10 @@ extern HINDEX H_TYPE;
 *  Call this after the dictionary has been loaded
 */
 void cmd_init(){
-    search_list[0] = head_find_abs_or_die("test");    //wd
+    search_list[0] = head_find_abs_or_die("system'test");    //wd
     search_list[1] = H_TYPE;    //
-    search_list[2] = head_find_abs_or_die("core");    //
-    search_list[3] = head_find_abs_or_die("io");    //
+    search_list[2] = head_find_abs_or_die("system'core");    //
+    search_list[3] = head_find_abs_or_die("system'io");    //
     search_list[4] = H_ROOT;    //
     
 }

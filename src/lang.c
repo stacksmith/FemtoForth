@@ -19,8 +19,8 @@ extern HINDEX H_PROC;           //initilization code set this...
 HINDEX H_0BRANCH;
 HINDEX H_BRANCH;
 void lang_init(){
-    H_BRANCH = head_find_abs_or_die("core'branch");
-    H_0BRANCH = head_find_abs_or_die("core'0branch");
+    H_BRANCH = head_find_abs_or_die("system'core'branch");
+    H_0BRANCH = head_find_abs_or_die("system'core'0branch");
 }
 
 int verify_ptr(U8* ptr){
@@ -107,11 +107,11 @@ U32 dstack_read(){
  * pop count off the return stack.
  * ==========================================================================*/
 int lang_times(){
-   HINDEX hpush = head_find_abs_or_die("core'push");
+   HINDEX hpush = head_find_abs_or_die("system'core'push");
    data_compile_token(hpush);
    dstack_push((U32)var->data_ptr);       //save loop target on stack
    interpret_one();                     //compile expression
-   HINDEX htimes = head_find_abs_or_die("core'times");
+   HINDEX htimes = head_find_abs_or_die("system'core'times");
    data_compile_token(htimes);
    data_compile_off_S8(dstack_pop());
    
@@ -129,7 +129,7 @@ int lang_t(){
 */
 int lang_ref_p(HINDEX htarget){
     if(!htarget) return 0; //TODO: error
-    HINDEX href = head_find_absolute("core'REF",8); //TODO:pre-find
+    HINDEX href = head_find_absolute("system'core'REF",8); //TODO:pre-find
     if(!href) return 0;
     data_compile_token(href);
     data_compile_token(htarget);
@@ -216,13 +216,13 @@ int lang_ptr(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     //now compile as a tabled variable, to allow for relocation   
-    return data_ref_style(h,"core'REF");
+    return data_ref_style(h,"system'core'REF");
 }
 int lang_head(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     //compile a reference to the head...
-    HINDEX hreftok = head_find_absolute("core'REF",8); //
+    HINDEX hreftok = head_find_absolute("system'core'REF",8); //
     if(!hreftok) {
         printf("lang_head: can't find [core'REF]\n");
         return 0;

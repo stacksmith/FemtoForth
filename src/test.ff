@@ -1,4 +1,7 @@
-cd io
+// ============================================ 
+// system'io stuff
+//
+cd system'io
 U32 HIN
 |
 0 into HIN
@@ -79,7 +82,7 @@ PROC cyan { 6 color ; }
 PROC white { 7 color ; }
 |
 
-cd io
+cd system'io
 PROC splashp
 { color'blue 4 times (
   "-+|+-- -- - - -- -" ctell
@@ -93,22 +96,22 @@ PROC splash
   splashp color'white cr ; }
 |
 
-cd core
+cd system'core
 mkdir head cd head
 $04000018 SYSVAR ptr
 |
-cd core
+cd system'core
 mkdir dic cd dic
 $04000008 SYSVAR ptr
 |
-cd core
+cd system'core
 mkdir run cd run
 $0400000C SYSVAR ptr
 |
 // ============================================ 
 // sys
 // ============================================ 
-cd core
+cd system'core
 PROC osys {
 color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
   dup . space over . space DSP 4+ . space RSP . space
