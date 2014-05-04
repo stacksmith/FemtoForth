@@ -105,11 +105,11 @@ PROC protected {
  error'catch 0= if
    "OK, inside" ctell cr
    tester
+   error'clear
  else
    "ERRORer out" ctell cr
  thanx
  "outside now" ctell cr
- error'clear
  ;
 }
 end

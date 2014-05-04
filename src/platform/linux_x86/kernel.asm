@@ -140,8 +140,7 @@ CODE "core'error'clear // (--) restore previous handler",errclr,T_NONE
 ; revoke error handler and re-establish previous one
 CODE "core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
     mov         esp,[ebx+ERROR_FRAME]       ;restore stack
-;    pop         dword[ebx+ERROR_FRAME]      ;restore error frame
-    add esp,4
+    pop         dword[ebx+ERROR_FRAME]      ;restore error frame
     pop         esi                     ;go to catch
     NEXT
 .x:    
