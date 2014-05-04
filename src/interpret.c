@@ -1,3 +1,21 @@
+/*============================================================================
+Copyright 2014 Victor Yurkovsky
+
+This file is part of the FemtoForth project.
+
+FPGAsm is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FemtoForth is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
+============================================================================*/
 #include <string.h>
 #include "global.h"
 #include "header.h"
@@ -91,14 +109,18 @@ int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
     
     return 1;
 }
+/*=============================================================================
+ * 'c' character literal
+ * Note that a ' ' literal has the wrong count!
+ * ==========================================================================*/
 int interpret_literal_c(char* ptr,U32 cnt){
 //printf("interpret_literal_c [%s] %x %d\n",ptr,ptr,cnt);
-    if((cnt==3)&&('\''==*(ptr+2))){ //sanity check
-        data_compile_token(hU8);
-        data_compile_U8(*(ptr+1));
-        return 1;
-    }
-    return 0;
+    data_compile_token(hU8);
+    data_compile_U8(*(ptr+1));  //literal value...
+    //handle the ' ' problem
+    if(1==cnt) 
+        var->src_ptr+=2;
+    return 1;
 }
 int interpret_literal_str(char*ptr,U32 cnt){
     var->src_ptr = ptr; //cnt is not valid, back up truck
@@ -190,10 +212,17 @@ int interpret_def_type(HINDEX htype){
 
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
-    //check for 'x' literals, they will break head_find!
-    if(('\''==*ptr)&&('\'')==*ptr+2) return  interpret_literal_c(ptr,cnt);
+    //--------------------------------------------------------------
+    // 'x' char literals. Note: ' ' breaks the pattern as the count
+    // is 1 due to the space following the initial quote.  Luckily,
+    // a ' ' sequence must always represent a literal...
+    if(('\''==*ptr)&&('\'')==*ptr+2) 
+        return  interpret_literal_c(ptr,cnt);
+    //--------------------------------------------------------------
+    // language constructs (compiling words)
     if(lang(ptr,cnt)) return 1;
-
+    //--------------------------------------------------------------
+    // regular words
     HINDEX h = head_find(ptr, cnt,search_list);
     if(h) {
         //simple type dispatch.  Real language dispatches better..
@@ -206,6 +235,8 @@ int interpret_compone(char* ptr,U32 cnt){
             return data_ref_style(h,"TYPE'U32'prim'compile");
         }
     }
+    //--------------------------------------------------------------
+    // numeric literal
     return interpret_literal(ptr,cnt);        //finally try literal
 }
 
