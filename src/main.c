@@ -48,6 +48,7 @@ void head_build(){
   head_dump_one(H_TYPE);
   head_dump_one(H_DIR);
   head_dump_one(H_PROC);
+  head_dump_one(H_U32);
   
     
 //head_dump_one(H_ROOT);

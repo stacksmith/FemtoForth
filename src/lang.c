@@ -76,61 +76,7 @@ int lang_q(){
   printf("\33[0;37m");
   return 1;
 }
-/* copy the source into the entry
-*/
-int lang_colon_source(HINDEX h){
-    src_ws(); //
-    head_append_source(h,var->src_ptr,0); //append this first line
-    //now read lines and append as source until a line containing only "end"
-    while(1){
-        char*psrc = src_line();         //a fresh line of source
-        U32 len = strlen(psrc);        
-//printf("lang_colon [%s] %d\n",psrc,len);
-        if((4==len)&&(0==strncmp("end\n",psrc,4))){
-            var->src_ptr += len;
-            break;
-        }
-        head_append_source(h,psrc,len);
-    }
-    head_commit(h);
-printf("lang_colon done...[%s]\n",head_get_source(h));
 
-}
-int lang_colon_PROC(HINDEX h){
-    var->src_ptr = head_get_source(h);
-}
-int lang_colon_U32(HINDEX h){
-    var->data_ptr +=4;
-printf("lang_colon_U32 [%s]\n",var->src_ptr);
-}
-extern HINDEX H_TYPE; //created by main.c
-extern HINDEX H_U32;
-int lang_colon(){
-    //TODO: check for duplication...of string and of datatptr...
-    HINDEX h = head_new(var->data_ptr,  H_PROC,T_NA, search_list[0]);
-    //extract the type
-    U32 tcnt; char* tname = src_word(&tcnt);
-    //find in type directory
-    HINDEX htype = head_locate(H_TYPE,tname,tcnt);
-    if(!htype){
-        printf("lang_colon: type %.*s cannot be found\n",tcnt,tname);
-        return 0;
-    }
-    head_set_type(h,htype);
-    lang_colon_source(h); //in any event, append source and commit entry
-//printf("lang_colon: type %.*s %d \n",head_get_namelen(htype),head_get_name(htype));
-    //dispatch on type! Note: tcnt and tname are not valid, as source has changed
-    int ret=0;
-    if(htype == H_PROC)
-        ret = lang_colon_PROC(h);
-    else if(htype == H_U32)
-        ret = lang_colon_U32(h);
-    //if compile OK, commit the data
-    if(ret)
-        var->run_ptr = var->data_ptr;
-    return ret;
-}
- 
 
 void dstack_push(U32 val){
     *(--var->sp_meow->DSP)=var->sp_meow->TOS;
@@ -279,7 +225,6 @@ int lang_p(char* ptr,U32 cnt){
 //            if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
 //            if(0==strncmp(ptr,"&",1)) { return lang_ref); }
             if(0==strncmp(ptr,";",1)) { return lang_return(); }
-            if(0==strncmp(ptr,":",1)) { return lang_colon(); }
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }
             if(0==strncmp(ptr,"t",1)) { return lang_t(); }
             if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}

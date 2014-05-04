@@ -10,6 +10,20 @@ HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
 extern HINDEX H_U32;
 extern HINDEX H_DIR;
 extern HINDEX H_ROOT;
+extern HINDEX H_TYPE;
+/* ============================================================================
+*  initialize
+* 
+*  Call this after the dictionary has been loaded
+*/
+void cmd_init(){
+    search_list[0] = head_find_abs_or_die("test");    //wd
+    search_list[1] = H_TYPE;    //
+    search_list[2] = head_find_abs_or_die("core");    //
+    search_list[3] = head_find_abs_or_die("io");    //
+    search_list[4] = H_ROOT;    //
+    
+}
 
 /******************************************************************/
 
@@ -201,36 +215,6 @@ int cmd_load(){
     return src_file("test.ff");
 }
 
-int lang_var(){
-     U32 cnt; char* ptr = src_word(&cnt);
-    // create an entry
-    HINDEX h = head_new(var->data_ptr,H_U32,T_NA,search_list[0]);
-    head_append_source(h,ptr,cnt);
-    head_commit(h);
-    data_compile_U32(0);
-    var->run_ptr = var->data_ptr;
-    return 1;
-}
-int lang_sysvar(){
-    U32 cnt; char* ptr = src_word(&cnt);
-    // create an entry
-    HINDEX h = head_new(var->data_ptr,H_U32,T_NA,search_list[0]);
-    head_append_source(h,ptr,cnt);
-    head_commit(h);
-    // parse the next value, that is the address of lang_sysvar
-    ptr = src_word(&cnt);
- printf("lang_sysvar: parse [%s] %d\n",ptr,cnt);
-    char* endptr;
-    TOKEN* target = (TOKEN*)strtol(ptr,&endptr,16);
- printf("lang_sysvar: setting to %p\n",target);
-    if(endptr != ptr+cnt){
-        src_error("unable to parse target of sysvar\n");
-        return 0;
-    }
-    //TODO: this is bull
-    head_set_code(h,target);
-    return 1;
-}
 int cmd_mkdir(){
      U32 cnt; char* ptr = src_word(&cnt);
      //careful, no pathing
@@ -267,7 +251,6 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
-            if(0==strncmp(ptr,"U32",3)) { return lang_var(); }
             break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
@@ -276,23 +259,8 @@ int command(char* ptr,U32 cnt){
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
-        case 6:
-            if(0==strncmp(ptr,"sysvar",6)) { return lang_sysvar(); }
             break;
-            
     }
     return 0;
 }
 
-/* ============================================================================
-*  initialize
-* 
-*  Call this after the dictionary has been loaded
-*/
-void cmd_init(){
-    search_list[0] = head_find_abs_or_die("test");    //wd
-    search_list[1] = head_find_abs_or_die("core");    //
-    search_list[2] = head_find_abs_or_die("io");    //
-    search_list[3] = H_ROOT;    //
-    
-}

@@ -137,9 +137,56 @@ extern int lang(char*ptr,U32 cnt);
  */
 extern HINDEX H_PROC;
 extern HINDEX H_U32;
+extern HINDEX H_TYPE;
 //TODO refprim...
 
+//defining
+int interpret_def_source(HINDEX h){
+    src_ws(); //
+    head_append_source(h,var->src_ptr,0); //append this first line
+    //now read lines and append as source until a line containing only "end"
+    while(1){
+        char*psrc = src_line();         //a fresh line of source
+        U32 len = strlen(psrc);        
+//printf("lang_colon [%s] %d\n",psrc,len);
+        if((4==len)&&(0==strncmp("end\n",psrc,4))){
+            var->src_ptr += len;
+            break;
+        }
+        head_append_source(h,psrc,len);
+    }
+    head_commit(h);
+printf("lang_colon done...[%s]\n",head_get_source(h));
 
+}
+int interpret_def_PROC(HINDEX h){
+    var->src_ptr = head_get_source(h);
+}
+int interpret_def_U32(HINDEX h){
+    var->data_ptr +=4;
+printf("interpret_def_U32 [%s]\n",var->src_ptr);
+}
+
+int interpret_def_type(HINDEX htype){
+printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
+    //TODO: check for duplication...of string and of datatptr...
+    HINDEX h = head_new(var->data_ptr,  htype,T_NA, search_list[0]);
+
+    interpret_def_source(h); //in any event, append source and commit entry
+//printf("interpret_def: src [%s]\n",var->src_ptr);
+//printf("lang_colon: type %.*s %d \n",head_get_namelen(htype),head_get_name(htype));
+    //dispatch on type! Note: tcnt and tname are not valid, as source has changed
+    int ret=0;
+    if(htype == H_PROC)
+        ret = interpret_def_PROC(h);
+    else if(htype == H_U32)
+        ret = interpret_def_U32(h);
+    //if compile OK, commit the data
+    if(ret)
+        var->run_ptr = var->data_ptr;
+    return ret;
+    
+}
 
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
@@ -151,6 +198,8 @@ int interpret_compone(char* ptr,U32 cnt){
     if(h) {
         //simple type dispatch.  Real language dispatches better..
         HINDEX type = head_get_type(h);
+        if(type==H_TYPE)
+            return interpret_def_type(h);
         if(type==H_PROC)
             return data_compile_token(h);                  //compile a token...
         if(type==H_U32){
