@@ -91,4 +91,25 @@ PROC splash
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
 end
+// ============================================ 
+// error test
 
+PROC tester {
+ "tester" ctell cr
+ $99 error'throw
+;
+}
+end
+
+PROC protected {
+ error'catch 0= if
+   "OK, inside" ctell cr
+   tester
+ else
+   "ERRORer out" ctell cr
+ thanx
+ "outside now" ctell cr
+ error'clear
+ ;
+}
+end

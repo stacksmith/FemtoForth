@@ -2,6 +2,7 @@
 SP_C       equ 0
 SP_MEOW    equ 4
 
+ERROR_FRAME equ 80
 ;DATA_BASE  equ 0
 ;DATA_TOP   equ 4
 ;TABLE_BASE equ 8

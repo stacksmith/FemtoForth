@@ -46,7 +46,7 @@ CODE "core'leave // exit to outer host ",leave,T_NONE
  ;and in reverse.. interpreter is already on the stack!
     
     push        edi                     ;vm pointer
-    push        ecx                     ;dat TODO:*** THIS SUCKS
+    push        ecx                     ;
     push        DWORD 0                 ;er
     push        ebp                     ;DSP
     push        esi                     ;IP
@@ -113,7 +113,38 @@ CODE "sys'gettimeofday // (--Sec,uSec)",sys_gettimeofday,T_NONE
     DPUSH       ecx
     NEXT
 .x:
+;==============================================================================
+; error handling
+;
+; On x86, we are out of registers, so we will keep the error frame in RAM...
 
+;---------------------------------------------
+; continue execution after saving the frame...
+CODE "core'error'catch // (--0) set up error handling",errset,T_NONE
+    DPUSH       eax
+    push        esi     ;preserve IP (just after catch!)
+    push        dword[ebx+ERROR_FRAME]
+    mov         [ebx+ERROR_FRAME],esp
+    xor         eax,eax         ;returning 0
+    NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'clear // (--) restore previous handler",errclr,T_NONE
+    mov         esp,[ebx+ERROR_FRAME]
+    pop         dword[ebx+ERROR_FRAME]      ;restore error frame
+    add         esp,4                   ;skip IP - we don't need it
+    NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
+    mov         esp,[ebx+ERROR_FRAME]       ;restore stack
+;    pop         dword[ebx+ERROR_FRAME]      ;restore error frame
+    add esp,4
+    pop         esi                     ;go to catch
+    NEXT
+.x:    
 ;==============================================================================
 ; FORTH basics
 ;------------------------------------------------------------------------------
@@ -572,6 +603,12 @@ CODE "core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_NONE
     NEXT
 .x:
 
+;------------------------------------------------------------------------------
+CODE "test'dbase ",dbase,T_NONE
+    DPUSH eax
+    mov eax,ebx
+    NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 CODE "test'nop ",nop,T_NONE
