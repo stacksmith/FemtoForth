@@ -38,7 +38,7 @@ HINDEX head_get_root(){
     return (HINDEX)var->head_base;
 }
 U32 head_size(HINDEX h){
-    return sizeof(sHeader) + h->srclen+1;
+    return sizeof(sHeader) + h->srclen;
 }
 /*
     Create a new header.  Sequence:
@@ -282,6 +282,8 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
                 best_hindex=h;
             }
         }
+        //step to next head
+
         h = (HINDEX)(head_size(h) + (U32)h);
     }
     //finally, return the best match

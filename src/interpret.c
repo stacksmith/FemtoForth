@@ -161,6 +161,7 @@ extern int lang(char*ptr,U32 cnt);
 extern HINDEX H_PROC;
 extern HINDEX H_U32;
 extern HINDEX H_TYPE;
+extern HINDEX H_SYSVAR;
 //TODO refprim...
 
 /* ==========================================================
@@ -188,11 +189,19 @@ int interpret_def_source(HINDEX h){
 }
 int interpret_def_PROC(HINDEX h){
     src_set(head_get_source(h));
+    return 1;
 }
 int interpret_def_U32(HINDEX h){
     var->data_ptr +=4;
 //printf("interpret_def_U32 [%s]\n",var->src_ptr);
+    return 1;
 }
+int interpret_def_SYSVAR(HINDEX h){
+    //run the code that follows, should initialize...//TODO: force initialization?
+    src_set(head_get_source(h));
+    return 1;
+}
+
 
 int interpret_def_type(HINDEX htype){
 //printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
@@ -208,6 +217,9 @@ int interpret_def_type(HINDEX htype){
         ret = interpret_def_PROC(h);
     else if(htype == H_U32)
         ret = interpret_def_U32(h);
+    else if(htype == H_SYSVAR)
+        ret = interpret_def_SYSVAR(h);
+    
     //if compile OK, commit the data
     if(ret)
         var->run_ptr = var->data_ptr;
@@ -239,7 +251,10 @@ int interpret_compone(char* ptr,U32 cnt){
         if(type==H_U32){
             return data_ref_style(h,"TYPE'U32'prim'compile");
         }
-    }
+        if(type==H_SYSVAR){
+            return data_ref_style(h,"TYPE'U32'prim'compile");
+        }
+   }
     //--------------------------------------------------------------
     // numeric literal
     return interpret_literal(ptr,cnt);        //finally try literal

@@ -643,7 +643,6 @@ CODE "test'nop ",nop,T_NONE
 ;==============================================================================
 ; variable
 ;------------------------------------------------------------------------------
-;------------------------------------------------------------------------------
 CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
     DPUSH       eax          
      xor         eax,eax
@@ -671,6 +670,34 @@ CODE "TYPE'U32'prim'into // (val--)",var_storep,T_NONE
     ;
     mov         edx,[ecx+edx*4]         ;address of variable
     mov         [edx],eax
+    DPOP        eax
+    NEXT
+.x:
+;==============================================================================
+; sysvar
+;
+; Sysvars are 32-bit variables inside the dictionary.  Since it's relocatable,
+; we cannot rely on absolute addresses, and offset from a runtime base value
+; passed to us id ebx.
+;
+; sysvar types stored as indices (system multiplies them by 4 to access)
+;
+; sysvars are compiled as <sysvar'prim'compile><index> for optimal speed
+;------------------------------------------------------------------------------
+CODE "TYPE'SYSVAR'prim'compile // (--val)",sysvar_fetchp,T_NONE
+    DPUSH       eax          
+     xor         eax,eax
+     mov         al,[esi]        ;next token
+     add         esi,1
+    mov         eax,[ebx+eax*4]  ;load value
+    NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_NONE
+     xor         ecx,ecx
+     mov         cl,[esi]        ;next token
+     add         esi,1
+    mov         [ebx+ecx*4],eax  ;store
     DPOP        eax
     NEXT
 .x:

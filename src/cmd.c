@@ -67,7 +67,7 @@ cmd_ls(HINDEX dir){
     printf("%-10.*s ",head_get_namelen(h),head_get_name(h));
     // type
     HINDEX type = head_get_type(h);
-    color(COLOR_NORMAL); color(FORE_WHITE);
+    color(COLOR_RESET); color(FORE_WHITE);
     printf("%-6.*s",head_get_namelen(type),head_get_name(type));
     //now the comment part
     U32 comlen; char* com = head_get_comments(h,&comlen);
@@ -178,22 +178,31 @@ int cmd_save(){
 TOKEN* see_one(TOKEN*p){
     PTOKEN* base = table_base(p);
     U8 token = *p;
+    //return?
     if(!token){
-        printf("\33[2m<\33[0;32m;\33[0;2m>\33[0m");
+        color(COLOR_DIM);  color(FORE_WHITE);printf("<");
+        color(COLOR_RESET);color(FORE_GREEN);printf(";");
+        color(COLOR_DIM); color(FORE_WHITE); printf(">");
+        color(COLOR_RESET);
         return(p++);
     }
-    
+
+    color(COLOR_DIM);color(FORE_WHITE);printf("%p ",p);
     
     //print token
     PTOKEN target = base[*p];
     U32 off;
     HINDEX head = head_resolve(target,&off);
-    //dim the brackets; token is green
-    printf("\33[2m<\33[0;32m%.*s\33[0;2m>\33[0m",head_get_namelen(head),head_get_name(head));
+//printf("see_one %p [%s]\n",head,head_get_name(head));
+    //dim the brackets; token is gree
+    color(COLOR_DIM);color(FORE_WHITE);printf("<");color(COLOR_RESET); color(FORE_GREEN);    
+    printf("%.*s",head_get_namelen(head),head_get_name(head));
+    color(COLOR_DIM);color(FORE_WHITE);printf(">");color(COLOR_RESET);     
     p++;
     U32 type=head_get_parm(head);
     if(T_NA != type){
-        printf("\33[2m<\33[0;33m");      //dim brace, reddish consts
+        color(COLOR_DIM);  color(FORE_WHITE);printf("<");
+        color(COLOR_RESET); color(FORE_YELLOW);
         switch(type){
             case T_NA:
 
@@ -222,14 +231,14 @@ TOKEN* see_one(TOKEN*p){
                 break;
             default:
                 printf("UNIMPLEMENTED type in decompiler %d\n",type);
-                printf("\33[0m");
+                color(COLOR_RESET); color(FORE_WHITE);
                 exit(0);
         }
-        printf("\33[0;2m>\33[0m"); //crap background
+        color(COLOR_DIM);  color(FORE_WHITE);printf(">");
     }
- 
+    color(COLOR_RESET); color(FORE_WHITE);
     
-//    printf("\n");
+    printf("\n");
     return p;
 }
 int cmd_see(){
@@ -242,7 +251,6 @@ int cmd_see(){
 //   TOKEN* ptr = h-
     
     
-    
     TOKEN* ptr = (TOKEN*)dstack_pop();
     //validate token
     if ((ptr < var->data_base) || (ptr > var->data_top)){
@@ -250,12 +258,12 @@ int cmd_see(){
         return 0;
     }
     int i;
-    printf("%p ",ptr);
     for(i=0;i<15;i++){
         ptr = see_one(ptr);
     }
     printf("\n");
     dstack_push(ptr);
+    color(COLOR_RESET);
 }
 
 int cmd_load(){
@@ -269,6 +277,14 @@ int cmd_mkdir(){
     head_append_source(h,ptr,cnt);
     head_commit(h);
 
+}
+int cmd_anus(){
+    HINDEX h = head_get_root();
+   while(h < (HINDEX)var->head_ptr){
+printf("anus: h is %p\n",h);
+       head_dump_one(h);
+        h = (HINDEX)(head_size(h) + (U32)h);
+    }
 }
 
 //TODO: check error conditions, return...
@@ -304,6 +320,7 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"list",4)) {return cmd_list();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
+            if(0==strncmp(ptr,"anus",4)) {return cmd_anus();}
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}

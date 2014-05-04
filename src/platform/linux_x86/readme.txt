@@ -2,16 +2,16 @@ X86-32-linux notes
 
 Register usage:
 
-REG             VM              KERNEL          DESC
+REG             VM              KERNEL          Preserve?
 =========================================================
 eax             -               TOS
-ebx             -               DATA 
+ebx             -               DATA            YES
 ecx             -               
 edx             tok             scratch         
-esi             IP                   
-edi             vmptr              
-ebp             -               DSP
-esp             SP              SP
+esi             IP                              YES
+edi             vmptr                           YES
+ebp             -               DSP             YES
+esp             SP              SP              YES
 
 
 ;=================================================================================================

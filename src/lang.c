@@ -57,12 +57,12 @@ U8* lang_ql(U8*p){
 int lang_q(){
   printf("\33[0;32m");
 
-  U32 cnt = src_one();
+/*  U32 cnt = src_one();
   char* ptr = var->src_ptr;
   var->src_ptr += cnt;
   U8* address = (U8*)strtol(ptr,NULL,16);
-
-//    U8* address = (U8*)(var->sp_meow->TOS);
+*/
+    U8* address = (U8*)(var->sp_meow->TOS);
     if(!verify_ptr(address+64)){
         src_error("q: illegal address\n");
         return 0;
@@ -211,12 +211,18 @@ int lang_oper(char* opname,U32 oplen){
     //compile a reference-style sequence
     return data_ref_style_p(h,operation);
 }
+
+int lang_head(){
+    U32 cnt; char* ptr = src_word(&cnt);        //next
+    HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
+    //now compile as a tabled variable, to allow for relocation   
+    return data_ref_style(h,"core'REF");
+}
 int lang_p(char* ptr,U32 cnt){
 // printf("lang_p: [%.*s] %d\n", cnt,ptr,cnt);
    
-    
-    // If a word starts with a &, get the address of it...
-    // and compile it 
+    //--------------------------------------------------
+    // address of operator
     if((cnt>1)&&('&'==*ptr)){
         return lang_ref(ptr+1,cnt-1);
     }
@@ -242,6 +248,7 @@ int lang_p(char* ptr,U32 cnt){
         case 4:
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }
              if(0==strncmp(ptr,"into",4)) { return lang_oper("into",4); }
+             if(0==strncmp(ptr,"head",4)) { return lang_head(); }
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }

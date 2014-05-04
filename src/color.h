@@ -28,6 +28,6 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #define FORE_WHITE 37
 #define COLOR_RESET 0
 #define COLOR_BRIGHT 1
-#define COLOR_NORMAL 2
+#define COLOR_DIM 2
 
 void color(U32 col);

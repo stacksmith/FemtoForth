@@ -42,6 +42,7 @@ HINDEX H_PROC;
 HINDEX H_DIR;
 HINDEX H_U32;
 HINDEX H_TYPE;
+HINDEX H_SYSVAR;
 
 
 void head_build(){
@@ -56,6 +57,8 @@ void head_build(){
   head_commit(head_append_source(H_PROC,"PROC // procedure directory",0));
          H_U32 =  head_new(0,           H_TYPE, T_NA,        H_TYPE);
   head_commit(head_append_source(H_U32,"U32 // procedure directory",0));
+      H_SYSVAR =  head_new(0,           H_TYPE, T_NA,        H_TYPE);
+  head_commit(head_append_source(H_SYSVAR,"SYSVAR // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
   
   head_set_type(H_ROOT,H_DIR);      
