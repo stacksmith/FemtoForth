@@ -92,13 +92,30 @@ PROC splash
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
 |
+
+cd core
+mkdir head cd head
+$04000018 SYSVAR ptr
+|
+cd core
+mkdir dic cd dic
+$04000008 SYSVAR ptr
+|
+cd core
+mkdir run cd run
+$0400000C SYSVAR ptr
+|
 // ============================================ 
 // sys
 // ============================================ 
-
+cd core
 PROC osys {
 color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
-dup . space over . space DSP 4+ . space RSP . space cr ;
+  dup . space over . space DSP 4+ . space RSP . space
+  dic'ptr . space
+  run'ptr . space
+
+cr ;
  }
 |
 

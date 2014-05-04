@@ -66,37 +66,37 @@ typedef struct sVar {
             sRegsMM* sp_meow;           //our context
 /* 08  8 */ 
             TOKEN* data_ptr;
-/* 0C 16 */ 
+/* 0C 12 */ 
             TOKEN* run_ptr;
-/* 10 20 */ 
+/* 10 16 */ 
             PTOKEN* run_table;          //preserving table during run
-/* 14 24 */ 
+/* 14 20 */ 
             char*  src_ptr;
-/* 18 28 */ 
+/* 18 24 */ 
             U8* head_ptr; 
-/* 1C 32 */ 
+/* 1C 28 */ 
             U8* data_base;                
-/* 20 36 */ 
+/* 20 32 */ 
             U8* data_top;
-/* 24 40 */ 
+/* 24 36 */ 
             U8* table_base;
-/* 28 44 */ 
+/* 28 40 */ 
             U8* table_top;
-/* 2C 48 */ 
+/* 2C 44 */ 
             U8* dsp_base;
-/* 30 52 */ 
+/* 30 48 */ 
             U8* dsp_top;
-/* 34 56 */  
+/* 34 52 */  
             U8* rsp_base;
-/* 38 60 */ 
+/* 38 56 */ 
             U8* rsp_top; 
-/* 3C 64 */ 
+/* 3C 60 */ 
             U8* head_base; 
-/* 40 68 */           
+/* 40 64 */           
             U8* head_top; 
-/* 44 72 */           
+/* 44 68 */           
             char* src_base; 
-/* 48 76 */           
+/* 48 72 */           
             char* src_top;             
 
 
