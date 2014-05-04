@@ -218,14 +218,16 @@ HINDEX head_find_down(HINDEX dir, char* ptr,U32 ulen){
 */
 HINDEX head_find_initial(char* ptr,U32 len,HINDEX* searchlist){
 //printf("head_find_initial [%s] %d\n",ptr,len);
-  HINDEX dir;
-  while(dir=*searchlist++){
-//printf("head_find[%s] trying directory %s \n",ptr,head_get_name(dir));
     HINDEX ret;
+    if(ret=head_locate(var->wd,ptr,len))
+        return ret;
+    HINDEX dir;
+    while(dir=*searchlist++){
+    //printf("head_find[%s] trying directory %s \n",ptr,head_get_name(dir));
     if(ret=head_locate(dir,ptr,len))
-      return ret;
-  }
-  return 0;
+        return ret;
+    }
+    return 0;
 }
 /* ============================================================================
 *  Find using a searchlist

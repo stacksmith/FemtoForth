@@ -122,9 +122,9 @@ void kernel_load(){
     printf("kernel_load:file is %p\n",f);
     exit(0);
   }
-printf("kernel_load 1\n");
+//printf("kernel_load 1\n");
   while(kernel_load_record(f)) {
-      fprintf(stderr,".");
+   //   fprintf(stderr,".");
   };
   
   fclose(f);

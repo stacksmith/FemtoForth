@@ -115,7 +115,7 @@ cd system'core
 PROC osys {
 color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
   dup . space over . space DSP 4+ . space RSP . space
-  dic'ptr . space
+  head'ptr . space
   run'ptr . space
 
 cr ;
