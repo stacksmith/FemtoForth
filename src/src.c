@@ -81,6 +81,12 @@ int src_is_ws(char c){
  * 
  * skip ws, reloading as necessary
  * ==========================================================================*/
+char* src_ws_p(char* p){
+  while(1) {
+    char c = *p++;
+    if(!c || src_is_ws(c)) return p;
+  }
+}
 void src_ws(){
   while(1){
     char c = *var->src_ptr++;
@@ -102,14 +108,16 @@ void src_ws(){
  * 
  * Count the word at var->src_ptr, using ws
  * ==========================================================================*/
-U32 src_cnt(){
+U32 src_cnt_p(char*p){
   U32 cnt=0;
-  char*p = var->src_ptr;
   while(1){
     char c = *p++;
     if( (0==c) || src_is_ws(c))  return cnt;
     cnt++;
   }
+}
+U32 src_cnt(){
+  return src_cnt_p(var->src_ptr);
 }
 /*=============================================================================
  * src_one

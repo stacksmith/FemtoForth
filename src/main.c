@@ -22,19 +22,23 @@ HINDEX H_ROOT;
 HINDEX H_PROC;
 HINDEX H_DIR;
 HINDEX H_U32;
+HINDEX H_TYPE;
 
 
 void head_build(){
 //                         code,        type    PARM         DAD
          H_ROOT = head_new(0,           0,      T_NA,        0); //type is DIR
   head_commit(H_ROOT);
-  HINDEX H_TYPE = head_new(0,           0,      T_NA,        H_ROOT);
-  head_commit(head_append_source(H_TYPE,"TYPE DIR // contains types",0));
+         H_TYPE = head_new(0,           0,      T_NA,        H_ROOT);
+  head_commit(head_append_source(H_TYPE,"TYPE // contains types",0));
          H_DIR =  head_new(0,           0,      T_NA,        H_TYPE); //dad is TYPE 
-  head_commit(head_append_source(H_DIR,"DIR TYPE",0));       
+  head_commit(head_append_source(H_DIR,"DIR ",0));       
          H_PROC = head_new(0,           H_TYPE, T_NA,        H_TYPE);
-  head_commit(head_append_source(H_PROC,"PROC TYPE // procedure directory",0));
+  head_commit(head_append_source(H_PROC,"PROC // procedure directory",0));
+         H_U32 =  head_new(0,           H_TYPE, T_NA,        H_TYPE);
+  head_commit(head_append_source(H_U32,"U32 // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
+  
   head_set_type(H_ROOT,H_DIR);      
   head_set_type(H_TYPE,H_DIR);      
   head_set_type(H_DIR,H_TYPE);      

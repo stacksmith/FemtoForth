@@ -317,6 +317,21 @@ HINDEX  head_get_type(HINDEX h){
 char* head_get_source(HINDEX h){
     return h->src + h->namelen;
 }
+//by convention, first line contains comments...
+U32 head_linelen(char*p){
+    char* pend = strpbrk(p,"\n\r\0");
+    if(!pend) pend=p+strlen(p);
+    return (pend-p);
+    
+}
+char* head_get_comments(HINDEX h,U32* len){
+    char* ret = head_get_source(h);
+    if(len) 
+        *len = head_linelen(ret);
+    return ret;
+    
+}
+
 void    head_set_type(HINDEX h,HINDEX type){
     h->type = type;
 };

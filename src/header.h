@@ -7,6 +7,8 @@ HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
 HINDEX  head_get_type(HINDEX h);
 char* head_get_source(HINDEX h);
+char* head_get_comments(HINDEX h,U32* len);
+
 
 TOKEN*          head_get_code(HINDEX h);
 PARM            head_get_parm(HINDEX h);

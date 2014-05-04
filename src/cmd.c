@@ -30,7 +30,8 @@ cmd_ls(HINDEX dir){
     printf("\t\33[2;37m%.*s\t",head_get_namelen(type),head_get_name(type));
 //    if(dir) printf("\33[0;37m");
     //now the comment part
-    printf("\t\33[0;33m %s\n",head_get_name(h)+head_get_namelen(h));
+    U32 comlen; char* com = head_get_comments(h,&comlen);
+    printf("\t\33[0;33m %.*s\n",comlen,com);
     h=head_get_next(h);
   } 
   printf("\33[0;37m");
