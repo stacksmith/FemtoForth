@@ -154,9 +154,9 @@ CODE "core'over // (n1 n2 -- n1 n2 n1) Makes a copy of the second item and pushe
 ;------------------------------------------------------------------------------
 ;
 CODE "core'rot // (a b c -- b c a) Rotates the third item to the top.",rot,T_NONE
-        DPOP    ebx             ;ebx=n2
+        DPOP    edx             ;edx=n2
         DPOP    ecx             ;ecx=n1
-        DPUSH   ebx
+        DPUSH   edx
         DPUSH   eax
         mov     eax,ecx
         NEXT
@@ -164,11 +164,11 @@ CODE "core'rot // (a b c -- b c a) Rotates the third item to the top.",rot,T_NON
 ;------------------------------------------------------------------------------
 ;
 CODE "core'-rot // (a b c -- c a b) rotate the first item to third.",minusrot,T_NONE
-        DPOP    ebx             ;ebx=b
+        DPOP    edx             ;edx=b
         DPOP    ecx             ;ecx=a
         DPUSH   eax
         DPUSH   ecx
-        mov     eax,ebx
+        mov     eax,edx
         NEXT
 .x:
 ;------------------------------------------------------------------------------
@@ -212,120 +212,120 @@ CODE "core'+ // (a,b--sum)",add,T_NONE
 .x:
 ;------------------------------------------------------------------------------
 CODE "core'- // (a,b--(a-b))",sub,T_NONE
-    mov         ebx,[ebp]       ;ebx = a
-    sub         ebx,eax
+    mov         edx,[ebp]       ;edx = a
+    sub         edx,eax
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x:
 ;------------------------------------------------------------------------------
 CODE "core'* // (a,b--a*b)",mul,T_NONE
-    DPOP        ebx
-    imul        ebx
+    DPOP        edx
+    imul        edx
     NEXT
 .x:
 ;==============================================================================
 ; FORTH comparisons
 ;------------------------------------------------------------------------------
 CODE "core'= // (n1 n2 -- flag)   True if n1 = n2",cmp_eq,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         eax,[ebp]
-    setz        bl
+    setz        dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'<> // (n1 n2 -- flag)  \ True if n1 <> n2",cmp_ne,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         eax,[ebp]
-    setne        bl
+    setne        dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'< // (n1 n2 -- flag)  \ True if n1 < n2",cmp_lt,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         [ebp],eax
-    setl        bl
+    setl        dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'> // (n1 n2 -- flag)  \ True if n1 > n2",cmp_gt,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         [ebp],eax
-    setg       bl
+    setg        dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'<= // (n1 n2 -- flag)  \ True if n1 <= n2",cmp_le,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         [ebp],eax
-    setle       bl
+    setle       dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'>= // (n1 n2 -- flag)  \ True if n1 > n2",cmp_ge,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     cmp         [ebp],eax
-    setge       bl
+    setge       dl
     add         ebp,4
-    mov         eax,ebx
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0= // (n1 -- flag)  \ True if n1 is 0",cmp_zr,T_NONE
-    xor         ebx,ebx
-    cmp         ebx,eax
-    sete        bl
-    mov         eax,ebx
+    xor         edx,edx
+    cmp         edx,eax
+    sete        dl
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0<> // (n1 -- flag)  \ True if n1 is not 0",cmp_nz,T_NONE
-    xor         ebx,ebx
-    cmp         ebx,eax
-    setne       bl
-    mov         eax,ebx
+    xor         edx,edx
+    cmp         edx,eax
+    setne       dl
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0< // (n1 -- flag)  \ True if n1 is less than 0",cmp_ltz,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     test        eax,eax
-    setl        bl
-    mov         eax,ebx
+    setl        dl
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0> // (n1 -- flag)  \ True if n1 is greater than 0",cmp_gtz,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     test        eax,eax
-    setg        bl
-    mov         eax,ebx
+    setg        dl
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0<= // (n1 -- flag)  \ True if n1 is less then or equal to 0",cmp_lez,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     test        eax,eax
-    setle        bl
-    mov         eax,ebx
+    setle       dl
+    mov         eax,edx
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'0>= // (n1 -- flag)  \ True if n1 is greater then or equal to 0",cmp_gez,T_NONE
-    xor         ebx,ebx
+    xor         edx,edx
     test        eax,eax
-    setge        bl
-    mov         eax,ebx
+    setge       dl
+    mov         eax,edx
     NEXT
 .x: 
 ;==============================================================================
@@ -335,11 +335,11 @@ CODE "core'if'> // (n1 n2 -- n1) conditionally execute the following expression"
     xor         ecx,ecx                 ;offset
     cmp         [ebp],eax               ;compare n1,n2
      setle       cl                      ;if n1 <= n2
-    movsx       ebx,byte[esi]           ;ebx is offset
+    movsx       edx,byte[esi]           ;edx is offset
      sub         ecx,1                   ;if n1 <= n2, 0.  if n1>n2, 0xFFFF
     add         esi,1
-     and         ebx,ecx
- ;   add         esi,ebx                 ;add offset or 0
+     and         edx,ecx
+ ;   add         esi,edx                 ;add offset or 0
     DPOP        eax
     NEXT
 .x:
@@ -408,9 +408,9 @@ CODE "core'@ // (addr -- val)  \ fetch val from addr",fetch,T_NONE
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'! // (val addr --)  \ store val at addr",store,T_NONE
-    mov         ebx,[ebp]
+    mov         edx,[ebp]
     add         ebp,4
-    mov         [eax],ebx
+    mov         [eax],edx
     DPOP        eax
     NEXT
 .x: 
@@ -421,20 +421,20 @@ CODE "core'c@ // (addr -- val)  \ fetch val from addr",cfetch,T_NONE
 .x: 
 ;------------------------------------------------------------------------------
 CODE "core'c! // (val addr --)  \ store val at addr",cstore,T_NONE
-    mov         ebx,[ebp]
+    mov         edx,[ebp]
     add         ebp,4
-    mov         [eax],bl
+    mov         [eax],dl
     DPOP        eax
     NEXT
 .x: 
 
 ;------------------------------------------------------------------------------
 CODE "core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_NONE
-        mov     ebx,eax
+        mov     edx,eax
         xor     eax,eax
-        mov     al,[ebx]
-        add     ebx,1
-        DPUSH   ebx
+        mov     al,[edx]
+        add     edx,1
+        DPUSH   edx
         NEXT
 .x:
         
@@ -442,9 +442,9 @@ CODE "core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_NON
 ;
 CODE "core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_NONE
         xchg    eax,[ebp+4]     ;a,d,c,b
-        mov     ebx,[ebp]
-        xchg    ebx,[ebp+8]     ;c,d,a,b
-        mov     [ebp],ebx
+        mov     edx,[ebp]
+        xchg    edx,[ebp+8]     ;c,d,a,b
+        mov     [ebp],edx
         NEXT
 .x:
 
@@ -526,19 +526,19 @@ CODE "core'STR8 // (--str,cnt) fetch a string pointer.  String follows inline",S
 ; branch
 ;
 CODE "core'branch // (--) branch by signed U8 offset",branchU8,T_OFF
-    movsx       ebx,byte[esi]
+    movsx       edx,byte[esi]
     add         esi,1
-    add         esi,ebx
+    add         esi,edx
     NEXT
 .x:    
 ;condition-code 0BRANCH OFFSET true-part rest-code
 CODE "core'0branch // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
-    movsx       ebx,byte[esi]           ;ebx is offset
+    movsx       edx,byte[esi]           ;edx is offset
     add         esi,1
     and         eax,1
     dec         eax                     ;0->FFFFFFFF, 1->0
-    and         ebx,eax
-    add         esi,ebx                 ;add offset or 0
+    and         edx,eax
+    add         esi,edx                 ;add offset or 0
     DPOP        eax
     NEXT
 .x:
@@ -549,9 +549,9 @@ CODE "core'0branch // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
 CODE "core'times // (--) execute expression that follows cnt times",times,T_OFF
         sub         DWORD[esp],1
         jz          .z
-        movsx       ebx,byte[esi]
+        movsx       edx,byte[esi]
         add         esi,1
-        add         esi,ebx
+        add         esi,edx
         NEXT
 .z:     add         esi,1               ;skip offset
         add         esp,4               ;get rid of the 0 on rsp
@@ -563,13 +563,13 @@ CODE "core'times // (--) execute expression that follows cnt times",times,T_OFF
 
 ;------------------------------------------------------------------------------
 CODE "core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_NONE
-    mov         ebx,[ebp+4]       ;ebx = al
-    sub         ebx,eax
-    mov         eax,ebx           ;low done
-    mov         ebx,[ebp+8]       ;ebx = ah
-    sbb         ebx,[ebp]
+    mov         edx,[ebp+4]       ;edx = al
+    sub         edx,eax
+    mov         eax,edx           ;low done
+    mov         edx,[ebp+8]       ;edx = ah
+    sbb         edx,[ebp]
     add         ebp,12    
-    mov         [ebp],ebx
+    mov         [ebp],edx
     NEXT
 .x:
 
@@ -603,15 +603,15 @@ CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
 CODE "TYPE'U32'prim'into // (val--)",var_storep,T_NONE
-     xor         ebx,ebx
-     mov         bl,[esi]        ;next token
+     xor         edx,edx
+     mov         dl,[esi]        ;next token
      add         esi,1
     mov         ecx,esi         ;calculate table base ***
     shr         ecx,4
     shl         ecx,2
     ;
-    mov         ebx,[ecx+ebx*4]         ;address of variable
-    mov         [ebx],eax
+    mov         edx,[ecx+edx*4]         ;address of variable
+    mov         [edx],eax
     DPOP        eax
     NEXT
 .x:

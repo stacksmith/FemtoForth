@@ -36,14 +36,14 @@ meow_invoke:
 
 ;and in reverse.. interpreter is already on the stack!
     push        edi                     ;vm pointer
-    push        DWORD $01000000         ;dat TODO:*** THIS SUCKS
+    push        DWORD $04000000         ;dat TODO:*** THIS SUCKS
     push        DWORD 0                 ;er
     push        ebp                     ;DSP
     push        esi                     ;IP
     push        eax                     ;TOS
     mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
 
-    mov         ecx,DWORD $01000000;    ;TODO:*** THIS SUCKS
+    mov         ecx,DWORD $04000000;    ;TODO:*** THIS SUCKS
     mov         esp,[ecx+SP_C]          ;restore c stack
     pop         edi
     pop         esi

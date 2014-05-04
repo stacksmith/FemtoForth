@@ -5,8 +5,8 @@ Register usage:
 REG             VM              KERNEL          DESC
 =========================================================
 eax             -               TOS
-ebx             -                
-ecx             -               DATA
+ebx             -               DATA 
+ecx             -               
 edx             tok             scratch         
 esi             IP                   
 edi             vmptr              
