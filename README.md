@@ -15,18 +15,18 @@ This is very much work in progress, and is barely implemented, so don't expect t
 
 ---TEMPORARY---
 Once up and running, type 'load' to load 'test.ff'.  Things to try:
--1 2 + .
--cd 'system'core
--pwd
--ls
--sys
--list splash
--ptr splash see
--PROC test { 1 2 + ; }
+- 1 2 + .
+- cd 'system'core
+- pwd
+- ls
+- sys
+- list splash
+- ptr splash see
+- PROC test { 1 2 + ; }
 |
 Note: the vertical bar as the only thing on a line terminates the definition
--test
--list test
+- test
+- list test
 
 See lang.c, cmd.c and kernel.asm too get a sense of what commands are availabse...
 
