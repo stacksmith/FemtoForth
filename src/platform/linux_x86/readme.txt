@@ -6,10 +6,10 @@ REG             VM              KERNEL          DESC
 =========================================================
 eax             -               TOS
 ebx             -                
-ecx             -               scratch
+ecx             -               DATA
 edx             tok             scratch         
-esi             IP              scratch     
-edi             vm              
+esi             IP                   
+edi             vmptr              
 ebp             -               DSP
 esp             SP              SP
 
@@ -41,3 +41,35 @@ inner:
     jnz       .inner_loop            ;continue threading
     call      esi                   ;call assembly subroutine that follows
     jmp       return                ;thanks for catching a bug, KSM
+
+;==============================================================================
+; error handling
+;
+; On x86, we are out of registers, so we will keep the error frame in RAM...
+
+;---------------------------------------------
+; continue execution after saving the frame...
+CODE "core'error'catch // (--0) set up error handling",errset,T_NONE
+    DPUSH       eax
+    push        esi     ;preserve IP
+    push        dword[ERROR_FRAME]
+    mov         [ERROR_FRAME],esp
+    xor         eax,eax         ;returning 0
+    NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'clear // (--) restore previous handler",errclr,T_NONE
+    mov         esp,[ERROR_FRAME]
+    pop         dword[ERROR_FRAME]      ;restore error frame
+    add         esp,4                   ;skip IP - we don't need it
+    NEXT
+.x:    
+;---------------------------------------------
+; revoke error handler and re-establish previous one
+CODE "core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
+    mov         esp,[ERROR_FRAME]       ;restore stack
+    pop         dword[ERROR_FRAME]      ;restore error frame
+    pop         esi                     ;go to catch
+    NEXT
+.x:    
