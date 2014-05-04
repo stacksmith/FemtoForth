@@ -44,7 +44,6 @@ __#name:
 ; return to C
 CODE "core'leave // exit to outer host ",leave,T_NONE 
  ;and in reverse.. interpreter is already on the stack!
-    mov         ecx,DWORD $04000000;    ;TODO:DATA!*** THIS SUCKS
     
     push        edi                     ;vm pointer
     push        ecx                     ;dat TODO:*** THIS SUCKS
@@ -52,9 +51,9 @@ CODE "core'leave // exit to outer host ",leave,T_NONE
     push        ebp                     ;DSP
     push        esi                     ;IP
     push        eax                     ;TOS
-    mov         DWORD[ecx+SP_MEOW],esp  ;save meow stack pointer
+    mov         DWORD[ebx+SP_MEOW],esp  ;save meow stack pointer
 
-    mov         esp,[ecx+SP_C]          ;restore c stack
+    mov         esp,[ebx+SP_C]          ;restore c stack
     pop         edi
     pop         esi
     pop         ebp

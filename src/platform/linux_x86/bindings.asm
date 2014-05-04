@@ -14,7 +14,7 @@ SP_MEOW    equ 4
 public meow_invoke
 meow_invoke:
 
-    mov         ecx,[esp+4]             ;get database off the stack
+    mov         ebx,[esp+4]             ;get database off the stack
     ;preserve C registers
     push        ebx
     push        ecx
@@ -22,17 +22,16 @@ meow_invoke:
     push        esi
     push        edi
     
-    mov         DWORD[ecx+SP_C],esp     ;save c stack
+    mov         DWORD[ebx+SP_C],esp     ;save c stack
     ;load meow registers from structure passed to this function.
     ;I am thinking of multithreading etc.
-    mov         esp,[ecx+SP_MEOW]       ;load meow stack
+    mov         esp,[ebx+SP_MEOW]       ;load meow stack
     pop         eax                     ;TOS
     pop         esi                     ;IP
     pop         ebp                     ;DSP
     add         esp,8                   ;ER
     pop         edi                     ;EDI=interp
     ; invoke
- mov ebx,0x04000000
    jmp         edi
 
 ;and in reverse.. interpreter is already on the stack!
