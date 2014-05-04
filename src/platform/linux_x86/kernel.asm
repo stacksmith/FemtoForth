@@ -627,14 +627,14 @@ CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'test'dbase ",dbase,T_NONE
+CODE "test'dbase ",dbase,T_NONE
     DPUSH eax
     mov eax,ebx
     NEXT
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'test'nop ",nop,T_NONE
+CODE "test'nop ",nop,T_NONE
     sub         ebp,4
     mov         [ebp],eax
     mov         eax,$DEADDEAD

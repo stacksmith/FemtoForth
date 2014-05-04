@@ -37,12 +37,12 @@ extern HINDEX H_TYPE;
 *  Call this after the dictionary has been loaded
 */
 void cmd_init(){
-    search_list[0] = head_find_abs_or_die("system'test");    //wd
-    search_list[1] = H_TYPE;    //
-    search_list[2] = head_find_abs_or_die("system'core");    //
-    search_list[3] = head_find_abs_or_die("system'io");    //
-    search_list[4] = H_ROOT;    //
-    
+    search_list[0] = H_TYPE;   //wd
+    search_list[1] = head_find_abs_or_die("system'core");    //
+    search_list[2] = head_find_abs_or_die("system'io");      //
+    search_list[3] = H_ROOT;    //
+   //
+    var->wd = head_find_abs_or_die("test"); 
 }
 
 /******************************************************************/
@@ -86,15 +86,16 @@ int cmd_cd(){
   char* ptr = var->src_ptr;
   var->src_ptr += cnt;
   HINDEX x=head_get_root(); //root
-  // handle cd '  as cd to root...
+  // handle cd .. as one up
   if(  ((cnt==2)&&(*ptr=='.')&&(*(ptr+1)=='.') )){
-    x = head_get_dad(search_list[0]);
+    x = head_get_dad(var->wd);
   } else  
-  if( ! ((cnt==1)&&(*ptr=='\'')) )
-     x = head_find(ptr,cnt,search_list);
+    // all non '... entries are relative searches
+    if( ! ((cnt==1)&&(*ptr=='\'')) )
+        x = head_find(ptr,cnt,search_list);
   // handle cd .. as cd up
   if(x) {
-    search_list[0]=x;
+      var->wd = x;
     return 1;
   } else{
     printf("ERROR: cd could not cd to [%s]\n",ptr);
@@ -280,7 +281,7 @@ int cmd_load(){
 int cmd_mkdir(){
      U32 cnt; char* ptr = src_word(&cnt);
      //careful, no pathing
-    HINDEX h = head_new(0,H_DIR,T_NA,search_list[0]);
+    HINDEX h = head_new(0,H_DIR,T_NA,var->wd);
     head_append_source(h,ptr,cnt);
     head_commit(h);
 
@@ -312,12 +313,12 @@ int command(char* ptr,U32 cnt){
             break;
            
         case 2:
-            if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
+            if(0==strncmp(ptr,"ls",2)) { cmd_ls(var->wd);return 1; }
             if(0==strncmp(ptr,"cd",2)) { cmd_cd(); return 1;  };
             if(0==strncmp(ptr,"ok",2)) { return 1;  };
             break;
         case 3:
-            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(search_list[0])); return 1;}
+            if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(var->wd)); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
             if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}

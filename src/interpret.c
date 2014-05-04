@@ -211,7 +211,7 @@ int interpret_def_SYSVAR(HINDEX h){
 int interpret_def_type(HINDEX htype){
 //printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
-    HINDEX h = head_new(var->data_ptr,  htype,T_NA, search_list[0]);
+    HINDEX h = head_new(var->data_ptr,  htype,T_NA, var->wd);
 
     interpret_def_source(h); //in any event, append source and commit entry
 //printf("interpret_def: src [%s]\n",var->src_ptr);

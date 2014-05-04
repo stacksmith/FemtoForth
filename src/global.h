@@ -52,7 +52,7 @@ typedef struct sRegsMM {
     U32 lr;      //interpreter pointer
 } sRegsMM;
 
-
+struct sHeader;
 //=======================================================
 //System variable structure.  It is placed at the bottom
 // of the data section, and used by both compiler and
@@ -98,6 +98,8 @@ typedef struct sVar {
             char* src_base; 
 /* 48 72 */           
             char* src_top;             
+/* 4C 76 */
+            struct sHeader* wd;
 
 
 } sVar;

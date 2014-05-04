@@ -77,7 +77,7 @@ mov r0,0xDEAD
         bx      lr
 .x:
 
-CODE "system'test'a",testa,T_NONE 
+CODE "test'a",testa,T_NONE 
 
  mov r1,'a'
         push    {r0-r7,r11,lr}
@@ -89,7 +89,7 @@ CODE "system'test'a",testa,T_NONE
         pop     {r0-r7,r11,lr}
         bx      lr
 .x:  
-CODE "system'test'b",testb,T_NONE 
+CODE "test'b",testb,T_NONE 
  mov r0,'b'
         push    {r0-r7,r11,lr}
         mov     r0,1                            ;stdout
