@@ -11,3 +11,84 @@ PROC emit // (c--)
 {  HOUT putc ; }
 end
 
+PROC key // (--n)
+{ HIN getc ; }
+end
+PROC hexd // (hexd--ascii) convert a hex digit to ascii
+{ 
+  $F and '0' +
+  if( $39 over < ) 
+    7 + 
+  thanx ; 
+}
+end
+
+PROC hexp // (val,nybcnt--)
+{
+  times (
+    28 ror
+    dup hexd emit
+  )
+  drop ;
+}
+end
+
+PROC . // (val--)
+{
+  8 hexp ;
+}
+end
+
+
+PROC ctell // (ptr,cnt--)
+{ times (
+    c@++ emit
+  )
+  drop ;
+}
+end
+
+PROC cr { $D emit $A emit ; }
+end
+PROC tab { 9 emit ; }
+end
+// ============================================ 
+PROC color // (col--)
+{  $1B emit
+   "[0;3" ctell
+   '0' + emit // output as ascii digit
+   'm' emit
+   ;
+}
+end
+
+cd color
+PROC red { 1 color ; }
+end
+PROC green { 2 color ; }
+end
+PROC yellow { 3 color ; }
+end
+PROC blue { 4 color ; }
+end
+PROC magenta { 4 color ; }
+end
+PROC cyan { 6 color ; }
+end
+PROC white { 7 color ; }
+end
+
+cd io
+PROC splashp
+{ color'blue 4 times (
+  "-+|+-- -- - - -- -" ctell
+  ) cr ;
+}
+end
+PROC splash
+{ splashp 
+  tab tab color'yellow " FemtoForth" ctell 
+  tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
+  splashp color'white cr ; }
+end
+

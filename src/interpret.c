@@ -102,7 +102,7 @@ int interpret_literal_c(char* ptr,U32 cnt){
 }
 int interpret_literal_str(char*ptr,U32 cnt){
     var->src_ptr = ptr; //cnt is not valid, back up truck
-printf("interpret_literal_str [%s] %d\n",ptr,cnt);
+//printf("interpret_literal_str [%s] %d\n",ptr,cnt);
     data_compile_token(head_find_abs_or_die("core'STR8"));
     //TODO: add escape sequences
     U8* pcnt = data_compile_U8(0); //will fixup later
