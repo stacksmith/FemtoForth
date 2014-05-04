@@ -254,10 +254,10 @@ int interpret_compone(char* ptr,U32 cnt){
         if(type==H_PROC)
             return data_compile_token(h);                  //compile a token...
         if(type==H_U32){
-            return data_ref_style(h,"TYPE'U32'prim'compile");
+            return data_ref_style(h,"TYPE'U32'fetch");
         }
         if(type==H_SYSVAR){
-            return data_ref_style(h,"TYPE'U32'prim'compile");
+            return data_ref_style(h,"TYPE'U32'fetch");
         }
    }
     //--------------------------------------------------------------

@@ -196,15 +196,15 @@ int lang_oper(char* opname,U32 oplen){
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     if(!h) return 0;
     HINDEX type = head_get_type(h);
-    HINDEX prim = head_locate(type,"prim",4);
+/*    HINDEX prim = head_locate(type,"prim",4);
     if(!prim) {
         printf("lang_oper can't find TYPE'%.*s'prim directory\n",
                head_get_namelen(type),head_get_name(type));
         return 0;
     }
-    HINDEX operation = head_locate(prim,opname,oplen);
+*/    HINDEX operation = head_locate(type,opname,oplen);
     if(!operation){
-        printf("lang_oper can't find TYPE'%.*s'prim'%.*s directory\n",
+        printf("lang_oper can't find TYPE'%.*s'%.*s directory\n",
                head_get_namelen(type),head_get_name(type),oplen,opname);
         return 0;
     }

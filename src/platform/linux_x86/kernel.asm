@@ -643,7 +643,7 @@ CODE "test'nop ",nop,T_NONE
 ;==============================================================================
 ; variable
 ;------------------------------------------------------------------------------
-CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
+CODE "TYPE'U32'fetch // (--val)",var_fetchp,T_NONE
     DPUSH       eax          
      xor         eax,eax
      mov         al,[esi]        ;next token
@@ -660,7 +660,7 @@ CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
 ; store variable
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "TYPE'U32'prim'into // (val--)",var_storep,T_NONE
+CODE "TYPE'U32'into // (val--)",var_storep,T_NONE
      xor         edx,edx
      mov         dl,[esi]        ;next token
      add         esi,1
