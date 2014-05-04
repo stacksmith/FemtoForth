@@ -27,6 +27,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "data.h"
 #include "src.h"
 #include "lang.h"
+#include "color.h"
 
 sVar*   var;                    //system variables
 
@@ -136,7 +137,12 @@ void kernel_load(){
 
 int main(int argc, char **argv)
 {
-printf("\33[0;40m");	
+printf("\33[0;40;33m\n");	
+printf("    FemtoForth  Copyright (C) 2014 Victor Yurkovsky\n");
+printf("    This program comes with ABSOLUTELY NO WARRANTY'.\n");
+printf("    This is free software, and you are welcome to redistribute it\n");
+printf("    under certain conditions; type 'license' for details.\n\n");
+color(COLOR_RESET);color(FORE_WHITE);
 //---------------------------------------------------------------------
 // Data segment.  Houses var at the bottom...  
 //
