@@ -1,3 +1,43 @@
+FemtoForth
+==========
+
+This is an experimental language featuring Meow-Meow, a unique 8-bit token interpreter that uses a
+sliding-window algorithm to decode the tokens to full addresses.  The technology is 
+described in great detail at http://www.fpgarelated.com/showarticle/44.php.  The ultimate
+goal of the project is to create an FPGA-based CPU executing this bytecode directly.
+
+FemtoForth (it is not quite Forth, but is Forth-like in spirit)
+runs on ARM7 (Android console) and x86 (32-bit) linux.  It is easily portable to
+many other processors and can be used as an embedded development system, a Domain-Specific 
+language, or just a way to mess around with this weird tech.
+
+The system boots as a C application which allocates memory and provides basic language
+services (which are ideally replaced by native services after boot).  The rest of the
+system consists a binary image, and headers containing name and source (yes, source).
+
+Edit Makefile and uncomment the intended target line (x86-linux or ARM android).  In the
+src directory, make the project.  make run (or just run the executable).
+
+For Android (you may need a rooted device), using an adb shell, create a directory called
+/data/tmp.  The makefile will push the required files when you execute 'make install'. 
+You can run FemtoForth directly on the device in a terminal (an external keyboard helps), 
+or across ADB from your host.
+
+This is very much work in progress, and is barely implemented, so don't expect too much...
+
+---TEMPORARY---
+Once up and running, type 'load' to load 'test.ff'.  Things to try:
+1 2 + .
+cd 'system'core
+ls
+
+See lang.c, cmd.c and kernel.asm too get a sense of what commands are available...
+
+See the doc folder (I will be updating it often).
+
+
+
+
 
 TODO:
 - fix table dump to print full path, no comment
@@ -16,68 +56,3 @@ WATCH OUT:
 + hexd 
 { $F and '0' +
 $39 over <= if 7 + thanx ; }
-
-+--------+------------------------------+-------------+--------------------+
-|Instr   | Description                  | signed-ness | Flags              |
-+--------+------------------------------+-------------+--------------------+
-| JO     | Jump if overflow             |             | OF = 1             |
-+--------+------------------------------+-------------+--------------------+
-| JNO    | Jump if not overflow         |             | OF = 0             |
-+--------+------------------------------+-------------+--------------------+
-| JS     | Jump if sign                 |             | SF = 1             |
-+--------+------------------------------+-------------+--------------------+
-| JNS    | Jump if not sign             |             | SF = 0             |
-+--------+------------------------------+-------------+--------------------+
-| JE/    | Jump if equal                |             | ZF = 1             |
-| JZ     | Jump if zero                 |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JNE/   | Jump if not equal            |             | ZF = 0             |
-| JNZ    | Jump if not zero             |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JP/    | Jump if parity               |             | PF = 1             |
-| JPE    | Jump if parity even          |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JNP/   | Jump if no parity            |             | PF = 0             |
-| JPO    | Jump if parity odd           |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JCXZ/  | Jump if CX is zero           |             | CX = 0             |
-| JECXZ  | Jump if ECX is zero          |             | ECX = 0            |
-+--------+------------------------------+-------------+--------------------+
-
-Then the unsigned ones:
-
-+--------+------------------------------+-------------+--------------------+
-|Instr   | Description                  | signed-ness | Flags              |
-+--------+------------------------------+-------------+--------------------+
-| JB/    | Jump if below                | unsigned    | CF = 1             |
-| JNAE/  | Jump if not above or equal   |             |                    |
-| JC     | Jump if carry                |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JNB/   | Jump if not below            | unsigned    | CF = 0             |
-| JAE/   | Jump if above or equal       |             |                    |
-| JNC    | Jump if not carry            |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JBE/   | Jump if below or equal       | unsigned    | CF = 1 or ZF = 1   |
-| JNA    | Jump if not above            |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JA/    | Jump if above                | unsigned    | CF = 0 and ZF = 0  |
-| JNBE   | Jump if not below or equal   |             |                    |
-+--------+------------------------------+-------------+--------------------+
-
-And, finally, the signed ones:
-
-+--------+------------------------------+-------------+--------------------+
-|Instr   | Description                  | signed-ness | Flags              |
-+--------+------------------------------+-------------+--------------------+
-| JL/    | Jump if less                 | signed      | SF <> OF           |
-| JNGE   | Jump if not greater or equal |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JGE/   | Jump if greater or equal     | signed      | SF = OF            |
-| JNL    | Jump if not less             |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JLE/   | Jump if less or equal        | signed      | ZF = 1 or SF <> OF |
-| JNG    | Jump if not greater          |             |                    |
-+--------+------------------------------+-------------+--------------------+
-| JG/    | Jump if greater              | signed      | ZF = 0 and SF = OF |
-| JNLE   | Jump if not less or equal    |             |                    |
-+--------+------------------------------+-------------+--------------------+
