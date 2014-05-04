@@ -196,9 +196,14 @@ int interpret_def_U32(HINDEX h){
 //printf("interpret_def_U32 [%s]\n",var->src_ptr);
     return 1;
 }
+/* ==========================================================
+  Sysvar has no data allocated - it points to some other data...
+*/
 int interpret_def_SYSVAR(HINDEX h){
-    //run the code that follows, should initialize...//TODO: force initialization?
-    src_set(head_get_source(h));
+    //the pointer is on the datastack!
+    TOKEN* ptr = (TOKEN*)dstack_pop();
+    head_set_code(h,ptr);         
+   
     return 1;
 }
 
