@@ -51,10 +51,9 @@ extern sVar* var;
 
 
 /*=============================================================================
-  ls
+  ls   list entries in wd
 
 =============================================================================*/
-
 cmd_ls(HINDEX dir){
 //printf("ls in %d\n",dir);
   HINDEX h = head_get_child(dir);
@@ -65,23 +64,24 @@ cmd_ls(HINDEX dir){
     if(dir) {
         color(COLOR_BRIGHT); color(FORE_GREEN);
     }
-    printf("%.*s ",head_get_namelen(h),head_get_name(h));
+    printf("%-10.*s ",head_get_namelen(h),head_get_name(h));
     // type
     HINDEX type = head_get_type(h);
     color(COLOR_NORMAL); color(FORE_WHITE);
-    printf("\t%.*s\t",head_get_namelen(type),head_get_name(type));
+    printf("%-6.*s",head_get_namelen(type),head_get_name(type));
     //now the comment part
     U32 comlen; char* com = head_get_comments(h,&comlen);
     color(COLOR_RESET); color(FORE_YELLOW);
-    printf("\t\%.*s\n",comlen,com);
+    printf("%-64.*s\n",comlen,com);
     h=head_get_next(h);
   } 
   color(COLOR_RESET); color(FORE_WHITE);
 }
-//
-// cd
-//
-int interpret_cd(){
+/*=============================================================================
+  cd  change working directory, parse ahead
+
+=============================================================================*/
+int cmd_cd(){
   U32 cnt = src_one();
   char* ptr = var->src_ptr;
   var->src_ptr += cnt;
@@ -123,6 +123,25 @@ int cmd_sys(){
 //printf("%8d %8d\n",(table_end(var->data_ptr),(1+table_base(var->data_ptr))));  //table base
     
 }
+/*=============================================================================
+  list  list source of an entry
+
+=============================================================================*/
+int cmd_list(){
+  U32 cnt; char* ptr = src_word(&cnt);          //next word
+  HINDEX h = head_find(ptr,cnt,search_list);
+  if(!h) return 0;
+  //output type
+  HINDEX htype = head_get_type(h);
+  color(COLOR_RESET);
+  color(FORE_GREEN);
+  printf("%.*s ",head_get_namelen(htype),head_get_name(htype));
+  //now print the source
+  color(FORE_WHITE);
+  printf("%s\n",head_get_name(h));
+  
+}
+
 /*=============================================================================
  * save
  * 
@@ -271,7 +290,7 @@ int command(char* ptr,U32 cnt){
            
         case 2:
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(search_list[0]);return 1; }
-            if(0==strncmp(ptr,"cd",2)) { interpret_cd(); return 1;  };
+            if(0==strncmp(ptr,"cd",2)) { cmd_cd(); return 1;  };
             if(0==strncmp(ptr,"ok",2)) { return 1;  };
             break;
         case 3:
@@ -283,6 +302,7 @@ int command(char* ptr,U32 cnt){
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"save",4)) {return cmd_save();}
+            if(0==strncmp(ptr,"list",4)) {return cmd_list();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             break;
         case 5:
