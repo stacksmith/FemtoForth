@@ -229,6 +229,12 @@ TOKEN* see_one(TOKEN*p){
                 printf("\"%.*s\"",*(U8*)p,(char*)(p+1) );
                 p=p+(*(U8*)p)+1;
                 break;
+            case T_REF: // TODO:*** 
+                target = base[*p];
+                HINDEX head = head_resolve(target,&off);
+                printf("%.*s",head_get_namelen(head),head_get_name(head) );
+                p++;
+                break;
             default:
                 printf("UNIMPLEMENTED type in decompiler %d\n",type);
                 color(COLOR_RESET); color(FORE_WHITE);
@@ -259,9 +265,10 @@ int cmd_see(){
     }
     int i;
     for(i=0;i<15;i++){
+        if(ptr >= var->data_ptr)
+            break;
         ptr = see_one(ptr);
     }
-    printf("\n");
     dstack_push(ptr);
     color(COLOR_RESET);
 }

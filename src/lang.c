@@ -212,12 +212,25 @@ int lang_oper(char* opname,U32 oplen){
     return data_ref_style_p(h,operation);
 }
 
-int lang_head(){
+int lang_ptr(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     //now compile as a tabled variable, to allow for relocation   
     return data_ref_style(h,"core'REF");
 }
+int lang_head(){
+    U32 cnt; char* ptr = src_word(&cnt);        //next
+    HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
+    //compile a reference to the head...
+    HINDEX hreftok = head_find_absolute("core'REF",8); //
+    if(!hreftok) {
+        printf("lang_head: can't find [core'REF]\n");
+        return 0;
+    }
+    data_compile_token(hreftok);
+    //now the head pointer via table...
+    data_compile_token_p((U8*)h); //note the _p!
+    return 1; }
 int lang_p(char* ptr,U32 cnt){
 // printf("lang_p: [%.*s] %d\n", cnt,ptr,cnt);
    
@@ -244,6 +257,7 @@ int lang_p(char* ptr,U32 cnt){
             break;
         case 3:
             if(0==strncmp(ptr,"if(",3)) { return lang_if_paren(); }
+             if(0==strncmp(ptr,"ptr",3)) { return lang_ptr(); }
             break;
         case 4:
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }

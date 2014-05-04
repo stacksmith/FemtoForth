@@ -64,21 +64,10 @@ U8* data_compile_from_file(FILE* f,U32 cnt){
   return ret;
 }
 /* ============================================================================
- * compile_token...
- * 
- * 
- */
-
-int data_compile_token(HINDEX h){
-//printf("interpret_comp: %d %s \n",h,head_get_name(h))
-    //get table base for this location+1
-    //+4 since index 0 is used for 'code'
-//    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
+   compile_token, given a target address... Any target will work...
+*/    
+int data_compile_token_p(U8* target){
     U8**tbase = table_base(var->data_ptr);
-//printf("data_compile_token to: %08X, base %08X\n",var->data_ptr+1,tbase);
-    //now, in the range of 1-255, try to find the entry represented by
-    //HINDEX h...  
-    U8* target = head_get_code(h); //that's what HINDEX h targets...
     TOKEN tok = table_find_or_create(var->data_ptr,target);
     if(tok){
         *var->data_ptr++ = tok; //compile token
@@ -87,7 +76,20 @@ int data_compile_token(HINDEX h){
     // There was not a single empty slot in the reachable part of the table...
     printf("data_compile_token: ERROR - no empty space...\n");
     return 0;
-    
+/* ============================================================================
+   compile_token, given a head
+*/    
+}
+int data_compile_token(HINDEX h){
+//printf("interpret_comp: %d %s \n",h,head_get_name(h))
+    //get table base for this location+1
+    //+4 since index 0 is used for 'code'
+//    U8**tbase = (U8**)(((U32)(var->data_ptr+1) >>2) & 0xFFFFFFFC);
+//printf("data_compile_token to: %08X, base %08X\n",var->data_ptr+1,tbase);
+    //now, in the range of 1-255, try to find the entry represented by
+    //HINDEX h...  
+    U8* target = head_get_code(h); //that's what HINDEX h targets...
+    return data_compile_token_p(target);
 }
 /* ============================================================================
  * save
