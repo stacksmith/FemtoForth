@@ -612,7 +612,7 @@ CODE "core'times // (cnt--) execute expression that follows cnt times",times,T_O
 ; variable
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
+CODE "TYPE'U32'fetch // (--val)",var_fetchp,T_NONE
         DPUSH     r0
         ldrsb     r1,[IP],1             ;r1 is offset, IP++
         lsr       r2,IP,4               ;r2 is base ***
@@ -622,7 +622,7 @@ CODE "TYPE'U32'prim'compile // (--val)",var_fetchp,T_NONE
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "TYPE'U32'prim'into // (val--)",var_storep,T_NONE
+CODE "TYPE'U32'into // (val--)",var_storep,T_NONE
         ldrsb     r1,[IP],1             ;r1 is offset, IP++
         lsr       r2,IP,4               ;r2 is base ***
         lsls      r1,2                  ;r1 is tok*4, table offset
