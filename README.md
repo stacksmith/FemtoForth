@@ -23,8 +23,11 @@ Once up and running, type 'load' to load 'test.ff'.  Things to try:
 - list splash
 - ptr splash see
 - PROC test { 1 2 + ; }
+
 |
+
 Note: the vertical bar as the only thing on a line terminates the definition
+
 - test
 - list test
 
