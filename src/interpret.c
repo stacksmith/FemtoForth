@@ -35,8 +35,8 @@ extern HINDEX search_list[];
  sVar* var;
 
 /* ==========================================================
- * Initialize the register contexts...
- */
+  Initialize the register contexts...
+*/
 extern U32 inner_interpreter;
 char irpstr1[]="system';";
 char irpstr2[]="system'leave";
@@ -163,6 +163,9 @@ extern HINDEX H_U32;
 extern HINDEX H_TYPE;
 //TODO refprim...
 
+/* ==========================================================
+  handle source attachment
+*/
 //defining
 int interpret_def_source(HINDEX h){
     src_ws(); //
@@ -172,7 +175,8 @@ int interpret_def_source(HINDEX h){
         char*psrc = src_line();         //a fresh line of source
         U32 len = strlen(psrc);        
 //printf("lang_colon [%s] %d\n",psrc,len);
-        if((4==len)&&(0==strncmp("end\n",psrc,4))){
+        //terminate source with a line containing an |
+        if((2==len)&&('|'==*psrc)){
             var->src_ptr += len;
             break;
         }

@@ -1,19 +1,19 @@
 cd io
 U32 HIN
-end
+|
 0 into HIN
 
 U32 HOUT
-end
+|
 1 into HOUT
 // ---
 PROC emit // (c--)
 {  HOUT putc ; }
-end
+|
 
 PROC key // (--n)
 { HIN getc ; }
-end
+|
 PROC hexd // (hexd--ascii) convert a hex digit to ascii
 { 
   $F and '0' +
@@ -21,7 +21,7 @@ PROC hexd // (hexd--ascii) convert a hex digit to ascii
     7 + 
   thanx ; 
 }
-end
+|
 
 PROC hexp // (val,nybcnt--)
 {
@@ -31,13 +31,13 @@ PROC hexp // (val,nybcnt--)
   )
   drop ;
 }
-end
+|
 
 PROC . // (val--)
 {
   8 hexp ;
 }
-end
+|
 
 
 PROC ctell // (ptr,cnt--)
@@ -46,13 +46,13 @@ PROC ctell // (ptr,cnt--)
   )
   drop ;
 }
-end
+|
 PROC space { $20 emit ; }
-end
+|
 PROC cr { $D emit $A emit ; }
-end
+|
 PROC tab { 9 emit ; }
-end
+|
 // ============================================ 
 PROC color // (col--)
 {  $1B emit
@@ -61,23 +61,23 @@ PROC color // (col--)
    'm' emit
    ;
 }
-end
+|
 
 cd color
 PROC red { 1 color ; }
-end
+|
 PROC green { 2 color ; }
-end
+|
 PROC yellow { 3 color ; }
-end
+|
 PROC blue { 4 color ; }
-end
+|
 PROC magenta { 4 color ; }
-end
+|
 PROC cyan { 6 color ; }
-end
+|
 PROC white { 7 color ; }
-end
+|
 
 cd io
 PROC splashp
@@ -85,13 +85,13 @@ PROC splashp
   "-+|+-- -- - - -- -" ctell
   ) cr ;
 }
-end
+|
 PROC splash
 { splashp 
   tab tab color'yellow " FemtoForth" ctell 
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
-end
+|
 // ============================================ 
 // sys
 // ============================================ 
@@ -100,14 +100,14 @@ PROC osys {
 color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
 dup . space over . space DSP 4+ . space RSP . space cr ;
  }
-end
+|
 
 PROC tester {
  "tester" ctell cr
  $99 error'throw
 ;
 }
-end
+|
 
 PROC protected {
  error'catch 0= if
@@ -115,9 +115,9 @@ PROC protected {
    tester
    error'clear
  else
-   "ERRORer out" ctell cr
+   "ERRORer out" ctell cr 
  thanx
  "outside now" ctell cr
  ;
 }
-end
+|
