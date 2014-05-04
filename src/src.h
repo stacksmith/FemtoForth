@@ -26,7 +26,7 @@ char* src_ws_p(char*p);
 U32 src_cnt();
 U32 src_one();
 void src_error(char* msg);
-int src_file(char* fname);
+int src_file(char* fname,U32 cnt);
 void src_skip_line();
 char* src_word(U32* pcnt);
 

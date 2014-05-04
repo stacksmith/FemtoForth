@@ -194,8 +194,10 @@ void src_error(char* msg){
  * redirect input to a file
  * TODO:reentrancy for includes
  * ==========================================================================*/
-int src_file(char* fname){
-    hfile = fopen(fname,"r");
+int src_file(char* fname,U32 cnt){
+    char*p = strndup(fname,cnt);
+    hfile = fopen(p,"r");
+    free(p);
     if(!hfile) {
         src_error("File error\n");
         return 0;

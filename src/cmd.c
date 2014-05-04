@@ -275,7 +275,9 @@ int cmd_see(){
 }
 
 int cmd_load(){
-    return src_file("test.ff");
+    U32 cnt; char* ptr = src_word(&cnt);          //next word
+    
+    return src_file(ptr,cnt);
 }
 
 int cmd_mkdir(){
