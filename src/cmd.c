@@ -37,6 +37,7 @@ extern HINDEX H_TYPE;
 * 
 *  Call this after the dictionary has been loaded
 */
+//TODO: remove pre-searched stuff...
 void cmd_init(){
     search_list[0] = H_TYPE;   //wd
     search_list[1] = head_find_abs_or_die("system'core");    //
@@ -199,32 +200,62 @@ U32 cmd_img_load_p(FILE* f){
      //TODO: read an ID header...
     //---------------------------------------------
     //first read the header to determine the rest
-    sVar* newvar = (sVar*)malloc(HOST_RESERVED);
+    sMemLayout* newlay = (sMemLayout*)malloc(HOST_RESERVED);
     required = HOST_RESERVED;
+    total += ret = fread(newlay,1,required,f);
+    if(required != ret) return 0;
+printf("cmd_img_load_p read %d, total %d\n",ret,total);
+    sVar* newvar = (sVar*)malloc(SYS_RESERVED);
+    required = SYS_RESERVED;
     total += ret = fread(newvar,1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_load_p read %d, total %d\n",ret,total);
     //---------------------------------------------
-    // data.  Read using existing table
+    // check that the positions are adequate
+    if( (lay->data_base != newlay->data_base) ||
+        (lay->table_base != newlay->table_base) ||
+        (lay->head_base != newlay->head_base) ) {
+        printf("cmd_img_load_p: cannot load to a different address yet\n");
+    }
+    //for now, just load segments.
+    //---------------------------------------------
+    // rest of data
+    required = newvar->data_ptr - newlay->data_base - (HOST_RESERVED + SYS_RESERVED);
+    U8* dest = lay->data_base + HOST_RESERVED + SYS_RESERVED;
+    total += ret = fread(dest,1,required,f);
+printf("cmd_img_load_p DATA: read %d, required %d, total %d\n",ret,required,total);
+    if(required != ret) return 0;
+    //---------------------------------------------
+    // tabe
+    U8* table_end = ((U8*)table_base(newvar->data_ptr)) + 255;
+    required = table_end - newlay->table_base;
+    dest = lay->table_base;
+    total += ret = fread(dest,1,required,f);
+printf("cmd_img_load_p TABE: read %d, required %d, total %d\n",ret,required,total);
+    if(required != ret) return 0;
+    //---------------------------------------------
+    // head
+    required = newvar->head_ptr - newlay->head_base;
+    dest = lay->head_base;
+    total += ret = fread(dest,1,required,f);
+printf("cmd_img_load_p HEAD: read %d, required %d, total %d\n",ret,required,total);
+    if(required != ret) return 0;
+    //---------------------------------------------
+    // Now, adjust the pointers
+    
+    
+    
+        
 
-return 0;
+    return total;
 }
 int cmd_img_load(){
     char* fname = "femto.img";
-    FILE* f = fopen(fname,"w");
+    FILE* f = fopen(fname,"r");
     if(!f) return 0;
-    U32 ret = cmd_img_save_p(f);
+    U32 ret = cmd_img_load_p(f);
     fclose(f);
-    printf("img_save: read %d bytes from file %s\n",ret,fname);
-    return 1;
-    
-/*    FILE* f = fopen("femto_image.data","w");
-    data_save(f);
-    fclose(f);
-*/    
-    f = fopen("femto_image.head","r");
-    fclose(f);
-    
+    printf("img_load: read %d bytes from file %s\n",ret,fname);
     return 1;
 }
 
