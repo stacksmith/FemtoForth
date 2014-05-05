@@ -33,6 +33,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 extern HINDEX search_list[];
 
  sVar* var;
+sMemLayout* lay;
 
 /* ==========================================================
   Initialize the register contexts...
@@ -51,7 +52,7 @@ void interpret_init(){
 //printf("interpret_init: sp_meow at %08x \n",p);
     p->TOS  = 0x9ABC;
     p->IP  = 0;             //IP will be set for the call
-    p->DSP  = (U32*)var->dsp_top;  //DSP
+    p->DSP  = (U32*)lay->dsp_top;  //DSP
     p->ER  = 0;             //exception register
     p->DAT = (U32)var;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
@@ -78,10 +79,11 @@ void interpret_init(){
 // U32 __attribute__((cdecl)) meow_invoke(U32);
 
 void call_meow(U8* addr){
+ 
 //printf("call_meow will run: %08X\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
-  U32 ret=    meow_invoke(var); //var is in data!
+  U32 ret=    meow_invoke(lay->data_base); //var is in data!
 //printf("call_meow: %08X\n",ret);
 
 }

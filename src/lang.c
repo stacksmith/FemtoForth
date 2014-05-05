@@ -26,6 +26,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 
 #include "interpret.h"
 extern sVar* var;
+extern sMemLayout* lay;
 #include "cmd.h"
 extern HINDEX search_list[];
 #include "data.h"
@@ -43,11 +44,11 @@ void lang_init(){
 }
 
 int verify_ptr(U8* ptr){
-    if ((ptr >= var->data_base) && (ptr < var->data_top))     return 1;
-    if ((ptr >= var->table_base) && (ptr < var->table_top))   return 1;
-    if ((ptr >= var->dsp_base) && (ptr < var->dsp_top))       return 1;
-    if ((ptr >= var->rsp_base) && (ptr < var->rsp_top))     return 1;
-    if ((ptr >= var->head_base) && (ptr < var->head_top))     return 1;
+    if ((ptr >= lay->data_base) && (ptr < lay->data_top))     return 1;
+    if ((ptr >= lay->table_base) && (ptr < lay->table_top))   return 1;
+    if ((ptr >= lay->dsp_base) && (ptr < lay->dsp_top))       return 1;
+    if ((ptr >= lay->rsp_base) && (ptr < lay->rsp_top))     return 1;
+    if ((ptr >= lay->head_base) && (ptr < lay->head_top))     return 1;
     return 0;
 }
 /*=============================================================================

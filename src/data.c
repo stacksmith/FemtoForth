@@ -23,6 +23,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "header.h"
 
 extern sVar* var;
+extern sMemLayout* lay;
 void data_align4(void){
     while(0x3 & (U32)var->data_ptr)
         *var->data_ptr++ = 0xEE;
@@ -116,10 +117,7 @@ int data_compile_token(HINDEX h){
  * Data is pure, and has no pointers.  Except system variables at the bottom...
  */
 int data_save(FILE* f){
-    U32 size = var->data_ptr-var->data_base - RESERVED;
-    if(1 != fwrite(var->data_base+RESERVED,size,1,f))
         return 0;
-    return 1;
 }
 /* ============================================================================
  * load
@@ -128,9 +126,6 @@ int data_save(FILE* f){
  */
 
 int data_load(FILE* f,U32 size){
-    if(1 != fread(var->data_base+RESERVED,size,1,f))
-        return 0;
-    return 1;
 }
     
 int data_ref_style_p(HINDEX htarget,HINDEX hoperation){

@@ -21,6 +21,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "header.h"
 #include "src.h"
 extern sVar* var ;
+sMemLayout* lay;
 
 #include "cmd.h"
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};
@@ -155,22 +156,22 @@ U32 cmd_img_save_p(FILE* f){
     //TODO: write an ID header...
     //---------------------------------------------
     //first write the data, so that vars are first
-    required = var->data_ptr - var->data_base;
-    total += ret = fwrite(var->data_base,1,required,f);
+    required = var->data_ptr - lay->data_base;
+    total += ret = fwrite(lay->data_base,1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     //---------------------------------------------
     //now write the table 
     //for stability, write the entire reachable portion
     U8* table_end = ((U8*)table_base(var->data_ptr)) + 255;
-    required = table_end - var->table_base;
-    total += ret = fwrite(var->table_base, 1,required,f);
+    required = table_end - lay->table_base;
+    total += ret = fwrite(lay->table_base, 1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     
     //now write the headers
-    required = var->head_ptr - var->head_base;
-    total += ret = fwrite(var->head_base,1,required,f);
+    required = var->head_ptr - lay->head_base;
+    total += ret = fwrite(lay->head_base,1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     
@@ -186,8 +187,37 @@ int cmd_img_save(){
     printf("img_save: wrote %d bytes to file %s\n",ret,fname);
     return 1;
 }
+
+/*=============================================================================
+  load 
+  
+  load the current system as 3 segments: data,table and head.
+  
+ ==========================================================================*/
+U32 cmd_img_load_p(FILE* f){
+    size_t ret, required, total=0;
+     //TODO: read an ID header...
+    //---------------------------------------------
+    //first read the header to determine the rest
+    sVar* newvar = (sVar*)malloc(HOST_RESERVED);
+    required = HOST_RESERVED;
+    total += ret = fread(newvar,1,required,f);
+    if(required != ret) return 0;
+printf("cmd_img_load_p read %d, total %d\n",ret,total);
+    //---------------------------------------------
+    // data.  Read using existing table
+
+return 0;
+}
 int cmd_img_load(){
-    FILE* f;
+    char* fname = "femto.img";
+    FILE* f = fopen(fname,"w");
+    if(!f) return 0;
+    U32 ret = cmd_img_save_p(f);
+    fclose(f);
+    printf("img_save: read %d bytes from file %s\n",ret,fname);
+    return 1;
+    
 /*    FILE* f = fopen("femto_image.data","w");
     data_save(f);
     fclose(f);
@@ -283,7 +313,7 @@ int cmd_see(){
     
     TOKEN* ptr = (TOKEN*)dstack_pop();
     //validate token
-    if ((ptr < var->data_base) || (ptr > var->data_top)){
+    if ((ptr < lay->data_base) || (ptr > lay->data_top)){
         src_error("see: illegal address\n");
         return 0;
     }

@@ -23,8 +23,9 @@ format elf
 use32
 
 section '.text' executable
-SP_C       equ 0
-SP_MEOW    equ 4
+include "../kernel_common.s"
+;//SP_C       equ 0
+;SP_MEOW    equ 4
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter
@@ -51,7 +52,7 @@ meow_invoke:
     add         esp,8                   ;ER
     pop         edi                     ;EDI=interp
     ; invoke
-   jmp         edi
+    jmp         edi
 
 ;and in reverse.. interpreter is already on the stack!
     push        edi                     ;vm pointer

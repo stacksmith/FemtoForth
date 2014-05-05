@@ -22,6 +22,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "global.h"
 #include "header.h"
 extern sVar* var;
+extern sMemLayout* lay;
 /* ============================================================================
  * table_base
  * TODO:***
@@ -92,12 +93,12 @@ void table_wipe(TOKEN* start,TOKEN* end){
 }
 */
 void table_wipe(TOKEN* address){
-   memset(address,0,((U32)var->table_top - (U32)address));
+   memset(address,0,((U32)lay->table_top - (U32)address));
 }
 
 int table_ptr_verify(PTOKEN*p){
-    if(p < (PTOKEN*)var->table_base) return 0;
-    if(p >= (PTOKEN*)var->table_top) return 0;
+    if(p < (PTOKEN*)lay->table_base) return 0;
+    if(p >= (PTOKEN*)lay->table_top) return 0;
     return 1;
 }
 

@@ -26,6 +26,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #define SRC_BUF_SIZE 256
 //char* src_buf;
 extern sVar* var;
+sMemLayout* lay;
 //char* src_ptr;
 FILE* hfile;  
 U32 lineno;
@@ -37,20 +38,16 @@ typedef struct sSrcContext{
 
 
 void src_reset(){
-    if(hfile != stdin) fclose(hfile);
+    if(hfile && (hfile != stdin)) 
+        fclose(hfile);
+ 
     hfile = stdin;                   //initial
-    *var->src_base=0;                         //will trigger initial src_line!
-     var->src_ptr = var->src_base;
+     var->src_ptr = lay->src_base;
+    *var->src_ptr=0;                         //will trigger initial src_line!
     src_errbuf = var->src_ptr;
     lineno = 0;
 }
 
-void src_init(){
-    var->src_base = (char*)malloc(256);
-    hfile = stdin;
-    src_reset();
-//printf("SOURCE RESET\n");
-}
 
 void src_set(char* buf){
     var->src_ptr = buf;
@@ -77,14 +74,14 @@ void src_skip_line(){
 
 //TODO: add file support
 char* src_line(){
-    if(NULL == fgets(var->src_base,SRC_BUF_SIZE,hfile)){
+    if(NULL == fgets(lay->src_base,SRC_BUF_SIZE,hfile)){
         src_reset();
         //printf("src_line: EOF\n");
     }
-    var->src_ptr = var->src_base;
+    var->src_ptr = lay->src_base;
     lineno++;
     src_errbuf = var->src_ptr; //for error reporting
-    return var->src_base;
+    return lay->src_base;
     
 }
 /*=============================================================================

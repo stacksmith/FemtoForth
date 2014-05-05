@@ -30,6 +30,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "color.h"
 
 sVar*   var;                    //system variables
+sMemLayout* lay;                //memory layout for THIS system
 
 #define        DSP_SIZE 1024
 #define        RSP_SIZE 1024
@@ -153,26 +154,27 @@ color(COLOR_RESET);color(FORE_WHITE);
                  MAP_ANONYMOUS|MAP_PRIVATE|MAP_FIXED,
                  0,0);
         //var structure is placed into bottom RESERVED (512) bytes of data!
-        var = (sVar*)data_base;
-        var->data_ptr = data_base + RESERVED;
-
+        lay = (sMemLayout*)data_base;           // HOST_RESERVED bytes 
+        var = (sVar*)(data_base+HOST_RESERVED); // SYS_RESERVED bytes 
+        
         // install system var structure at bottom
-        var->data_base = data_base;
-        var->data_top = data_base + CODE_SIZE;
+        lay->data_base = data_base;
+        lay->data_top = data_base + CODE_SIZE;
+        //
+        var->data_ptr = lay->data_base + HOST_RESERVED + SYS_RESERVED;
 
-        printf("data at %p->%p ",var->data_base,var->data_top);
+        printf("data at %p->%p ",lay->data_base,lay->data_top);
 
 //---------------------------------------------------------------------
 // Table - runtime 
 //
-        U8*table_base = mmap((U8**)(CODE_ADDRESS/4),
+        lay->table_base = mmap((U8**)(CODE_ADDRESS/4),
                  sizeof(TINDEX)*TABLE_SIZE,
                  PROT_READ+PROT_WRITE+PROT_EXEC,
                  MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
                  0,0);
-        var->table_base = table_base;
-        printf("TABLE at %p ",var->table_base);
-        var->table_top = (U8*)var->table_base + sizeof(TINDEX)*TABLE_SIZE;
+        printf("TABLE at %p ",lay->table_base);
+        lay->table_top = (U8*)lay->table_base + sizeof(TINDEX)*TABLE_SIZE;
        // var->table_ptr = (U8**)var->table_base;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
       
@@ -180,23 +182,27 @@ color(COLOR_RESET);color(FORE_WHITE);
 // DSP
 //
 // 
-        var->dsp_base = (U8*)malloc(DSP_SIZE);
-        var->dsp_top = var->dsp_base + DSP_SIZE;
- printf("DSP at %p ",var->dsp_top);
+        lay->dsp_base = (U8*)malloc(DSP_SIZE);
+        lay->dsp_top = lay->dsp_base + DSP_SIZE;
+ printf("DSP at %p ",lay->dsp_top);
 //---------------------------------------------------------------------
 // RSP
-        var->rsp_base = (U8*)malloc(RSP_SIZE);
-        var->rsp_top = var->rsp_base + RSP_SIZE;
-        var->sp_meow = (sRegsMM*)var->rsp_top;
- printf("RSP at %p ",var->rsp_top);
+        lay->rsp_base = (U8*)malloc(RSP_SIZE);
+        lay->rsp_top = lay->rsp_base + RSP_SIZE;
+        var->sp_meow = (sRegsMM*)lay->rsp_top;
+ printf("RSP at %p ",lay->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
-        var->head_base = (U8*)malloc(HEAD_SIZE);
-        var->head_top = var->head_base + HEAD_SIZE;
-        var->head_ptr = var->head_base;
- printf("HEAD at %p \n",var->head_base);
+        lay->head_base = (U8*)malloc(HEAD_SIZE);
+        lay->head_top = lay->head_base + HEAD_SIZE;
+        var->head_ptr = lay->head_base;
+ printf("HEAD at %p \n",lay->head_base);
 //---------------------------------------------------------------------
-     
+// SRC 
+        lay->src_base =  (char*)malloc(256);
+        src_reset(); 
+        
+      
         head_build();
      
 //  printf("data pointer is now at %p\n",var->data_ptr);
@@ -211,8 +217,7 @@ color(COLOR_RESET);color(FORE_WHITE);
 
       
 // U32 qqq = xxx(0x3456,0x1234);
-// printf("bindings returns %x\n",qqq);
-    src_init();
+// printf("bindings returns %x\n",1);
     interpret_init();
 // src_error("ass");
 //  call_meow();

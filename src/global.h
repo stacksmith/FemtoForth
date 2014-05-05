@@ -51,7 +51,8 @@ typedef TOKEN* PTOKEN;
 #define CODE_SIZE    0x01000000
 #define HEAD_SIZE    0x00100000
 //bottom 512 bytes reserved for variables
-#define RESERVED     512        
+#define HOST_RESERVED    128    // 32 host-based pointers
+#define SYS_RESERVED     128    // 32 system pointers
 typedef struct sRegsC {
     U32 r4;
     U32 r5;
@@ -72,6 +73,34 @@ typedef struct sRegsMM {
     U32 DAT; //ar11;    //DAT
     U32 lr;      //interpreter pointer
 } sRegsMM;
+
+typedef struct sMemLayout {
+/* 00  0 */ 
+            U8* data_base;                
+/* 04  4 */ 
+            U8* data_top;
+/* 08  8 */ 
+            U8* table_base;
+/* 0C 12 */ 
+            U8* table_top;
+/* 10 16 */ 
+            U8* dsp_base;
+/* 14 20 */ 
+            U8* dsp_top;
+/* 18 24 */  
+            U8* rsp_base;
+/* 1C 28 */ 
+            U8* rsp_top; 
+/* 20 32 */ 
+            U8* head_base; 
+/* 24 36 */           
+            U8* head_top; 
+/* 28 40 */           
+            char* src_base; 
+/* 2C 44 */           
+            char* src_top;             
+} sMemLayout;
+
 
 struct sHeader;
 //=======================================================
@@ -96,32 +125,8 @@ typedef struct sVar {
 /* 18 24 */ 
             U8* head_ptr; 
 /* 1C 28 */ 
-            U8* data_base;                
-/* 20 32 */ 
-            U8* data_top;
-/* 24 36 */ 
-            U8* table_base;
-/* 28 40 */ 
-            U8* table_top;
-/* 2C 44 */ 
-            U8* dsp_base;
-/* 30 48 */ 
-            U8* dsp_top;
-/* 34 52 */  
-            U8* rsp_base;
-/* 38 56 */ 
-            U8* rsp_top; 
-/* 3C 60 */ 
-            U8* head_base; 
-/* 40 64 */           
-            U8* head_top; 
-/* 44 68 */           
-            char* src_base; 
-/* 48 72 */           
-            char* src_top;             
 /* 4C 76 */
             struct sHeader* wd;
-
 
 } sVar;
 

@@ -17,9 +17,14 @@
 ; along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 ;
 ;*****************************************************************************
-; structures
-SP_C       equ 0
-SP_MEOW    equ 4
+
+; reserved space at the bottom of the data area.  See global.h
+HOST_RESERVED equ 128
+SYS_RESERVED equ 128
+
+; in sVar structure located past HOST_RESERVED
+SP_C       equ HOST_RESERVED+0
+SP_MEOW    equ HOST_RESERVED+4
 
 ERROR_FRAME equ 80
 ;DATA_BASE  equ 0
