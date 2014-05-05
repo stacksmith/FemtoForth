@@ -113,10 +113,23 @@ int data_compile_token(HINDEX h){
 /* ============================================================================
  * save
  * 
- * Data is pure, and has no pointers (right?)
+ * Data is pure, and has no pointers.  Except system variables at the bottom...
  */
 int data_save(FILE* f){
-    if(1 != fwrite(var->data_base,var->data_ptr-var->data_base,1,f))
+    U32 size = var->data_ptr-var->data_base;
+    if(1 != fwrite(var->data_base,size,1,f))
+        return 0;
+    return 1;
+}
+int data_load(FILE* f){
+    //load the sVar to see
+    sVar fvar;
+  //  ret = fread(&fvar,sizeof(sVar),1,f);
+  //  if(1!= ret) return 0;
+    //verify base
+    
+    U32 size = var->data_ptr-var->data_base;
+    if(1 != fwrite(var->data_base,size,1,f))
         return 0;
     return 1;
 }

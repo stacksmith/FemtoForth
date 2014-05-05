@@ -152,9 +152,9 @@ color(COLOR_RESET);color(FORE_WHITE);
                  PROT_READ+PROT_WRITE+PROT_EXEC,
                  MAP_ANONYMOUS|MAP_PRIVATE|MAP_FIXED,
                  0,0);
-        //var structure is placed into TABLE!
+        //var structure is placed into bottom 512 bytes of data!
         var = (sVar*)data_base;
-        var->data_ptr = data_base + sizeof(sVar);
+        var->data_ptr = data_base + 512;
 
         // install system var structure at bottom
         var->data_base = data_base;
