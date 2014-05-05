@@ -305,7 +305,7 @@ CODE "system'core'2* // (n--n*2)",mul2,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'core'= // (n1 n2 -- flag)  \ True if n1 = n2",cmp_eq,T_NONE
+CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r0,r1
         moveq   r0,1
@@ -313,7 +313,7 @@ CODE "system'core'= // (n1 n2 -- flag)  \ True if n1 = n2",cmp_eq,T_NONE
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'<> // (n1 n2 -- flag)  \ True if n1 <> n2",cmp_ne,T_NONE
+CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r0,r1
         moveq   r0,0
@@ -321,7 +321,7 @@ CODE "system'core'<> // (n1 n2 -- flag)  \ True if n1 <> n2",cmp_ne,T_NONE
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'< // (n1 n2 -- flag)  \ True if n1 < n2",cmp_lt,T_NONE
+CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r1,r0
         movge   r0,0                    ;<              
@@ -329,7 +329,7 @@ CODE "system'core'< // (n1 n2 -- flag)  \ True if n1 < n2",cmp_lt,T_NONE
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'> // (n1 n2 -- flag)  \ True if n1 > n2",cmp_gt,T_NONE
+CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r0,r1
         movge   r0,0                    ;> // (r0 and r1 reversed)            
@@ -337,7 +337,7 @@ CODE "system'core'> // (n1 n2 -- flag)  \ True if n1 > n2",cmp_gt,T_NONE
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'<= // (n1 n2 -- flag)  \ True if n1 <= n2",cmp_le,T_NONE
+CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r0,r1
         movge   r0,1                    ;<              
@@ -345,7 +345,7 @@ CODE "system'core'<= // (n1 n2 -- flag)  \ True if n1 <= n2",cmp_le,T_NONE
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>= // (n1 n2 -- flag)  \ True if n1 > n2",cmp_ge,T_NONE
+CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_NONE
         DPOP    r1                      ;r1=n1
         cmp     r1,r0
         movge   r0,1                    ;<              
@@ -353,28 +353,28 @@ CODE "system'core'>= // (n1 n2 -- flag)  \ True if n1 > n2",cmp_ge,T_NONE
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0= // (n1 -- flag)  \ True if n1 is 0",cmp_zr,T_NONE
+CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_NONE
         cmp     r0,0
         moveq   r0,1
         movne   r0,0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<> // (n1 -- flag)  \ True if n1 is not 0",cmp_nz,T_NONE
+CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_NONE
         cmp     r0,0
         moveq   r0,1
         movne   r0,0
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'0< // (n1 -- flag)  \ True if n1 is less than 0",cmp_ltz,T_NONE
+CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_NONE
         cmp     r0,0
         movge   r0,1
         movlt   r0,0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0> // (n1 -- flag)  \ True if n1 is greater than 0",cmp_gtz,T_NONE
+CODE "system'core'0> // (n1 -- flag) True if n1 is greater than 0",cmp_gtz,T_NONE
         cmp     r0,0
         movgt   r0,1
         movle   r0,0
@@ -383,25 +383,25 @@ CODE "system'core'0> // (n1 -- flag)  \ True if n1 is greater than 0",cmp_gtz,T_
 ;==============================================================================
 ; FORTH logical 
 ;------------------------------------------------------------------------------
-CODE "system'core'and // (n1 n2 -- n1&n2)  \ logical and",log_and,T_NONE
+CODE "system'core'and // (n1 n2 -- n1&n2) logical and",log_and,T_NONE
         DPOP    r1              ;r1=n1
         and     r0,r1
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'or // (n1 n2 -- n1|n2)  \ logical or",log_or,T_NONE
+CODE "system'core'or // (n1 n2 -- n1|n2) logical or",log_or,T_NONE
         DPOP    r1              ;r1=n1
         orr     r0,r1
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'xor // (n1 n2 -- n1^n2)  \ logical xor",log_xor,T_NONE
+CODE "system'core'xor // (n1 n2 -- n1^n2) logical xor",log_xor,T_NONE
         DPOP    r1              ;r1=n1
         eor     r0,r1
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'invert // (n1 -- ~n2)  \ bitwise not",bit_not,T_NONE
+CODE "system'core'invert // (n1 -- ~n2) bitwise not",bit_not,T_NONE
         ;RSB     r0,0
         mvn     r0,r0
         NEXT
@@ -411,19 +411,19 @@ CODE "system'core'invert // (n1 -- ~n2)  \ bitwise not",bit_not,T_NONE
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'<< // (n1 n2 -- n1<<n2)  \ shift n1 left by n2 bits",lshift,T_NONE
+CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_NONE
         DPOP    r1              ;r1=n1
         lsl     r0,r1,r0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>> // (n1 n2 -- n1>>n2)  \ shift n1 right by n2 bits",rshift,T_NONE
+CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_NONE
         DPOP    r1              ;r1=n1
         lsr     r0,r1,r0
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'ror // (n1 n2 -- n)  \ rotate n1 right by n2 bits",rotr,T_NONE
+CODE "system'core'ror // (n1 n2 -- n) rotate n1 right by n2 bits",rotr,T_NONE
         DPOP    r1              ;r1=n1
         ror     r0,r1,r0
         NEXT
@@ -433,24 +433,24 @@ CODE "system'core'ror // (n1 n2 -- n)  \ rotate n1 right by n2 bits",rotr,T_NONE
 ; FORTH memory 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'@ // (addr -- val)  \ fetch val from addr",fetch,T_NONE
+CODE "system'core'@ // (addr -- val) fetch val from addr",fetch,T_NONE
         ldr     r0,[r0]
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'! // (val addr --)  \ store val at addr",store,T_NONE
+CODE "system'core'! // (val addr --) store val at addr",store,T_NONE
         DPOP    r1              ;val
         str     r1,[r0]
         DPOP    r0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c@ // (addr -- val)  \ fetch val from addr",cfetch,T_NONE
+CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_NONE
         ldrb    r0,[r0]
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c! // (val addr --)  \ store val at addr",cstore,T_NONE
+CODE "system'core'c! // (val addr --) store val at addr",cstore,T_NONE
         DPOP    r1              ;val
         strb    r1,[r0]
         DPOP    r0

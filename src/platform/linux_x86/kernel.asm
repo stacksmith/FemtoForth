@@ -280,7 +280,7 @@ CODE "system'core'* // (a,b--a*b)",mul,T_NONE
 ;==============================================================================
 ; FORTH comparisons
 ;------------------------------------------------------------------------------
-CODE "system'core'= // (n1 n2 -- flag)   True if n1 = n2",cmp_eq,T_NONE
+CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_NONE
     xor         edx,edx
     cmp         eax,[ebp]
     setz        dl
@@ -289,7 +289,7 @@ CODE "system'core'= // (n1 n2 -- flag)   True if n1 = n2",cmp_eq,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'<> // (n1 n2 -- flag)  \ True if n1 <> n2",cmp_ne,T_NONE
+CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_NONE
     xor         edx,edx
     cmp         eax,[ebp]
     setne        dl
@@ -298,7 +298,7 @@ CODE "system'core'<> // (n1 n2 -- flag)  \ True if n1 <> n2",cmp_ne,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'< // (n1 n2 -- flag)  \ True if n1 < n2",cmp_lt,T_NONE
+CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_NONE
     xor         edx,edx
     cmp         [ebp],eax
     setl        dl
@@ -307,7 +307,7 @@ CODE "system'core'< // (n1 n2 -- flag)  \ True if n1 < n2",cmp_lt,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'> // (n1 n2 -- flag)  \ True if n1 > n2",cmp_gt,T_NONE
+CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_NONE
     xor         edx,edx
     cmp         [ebp],eax
     setg        dl
@@ -316,7 +316,7 @@ CODE "system'core'> // (n1 n2 -- flag)  \ True if n1 > n2",cmp_gt,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'<= // (n1 n2 -- flag)  \ True if n1 <= n2",cmp_le,T_NONE
+CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_NONE
     xor         edx,edx
     cmp         [ebp],eax
     setle       dl
@@ -325,7 +325,7 @@ CODE "system'core'<= // (n1 n2 -- flag)  \ True if n1 <= n2",cmp_le,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>= // (n1 n2 -- flag)  \ True if n1 > n2",cmp_ge,T_NONE
+CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_NONE
     xor         edx,edx
     cmp         [ebp],eax
     setge       dl
@@ -334,7 +334,7 @@ CODE "system'core'>= // (n1 n2 -- flag)  \ True if n1 > n2",cmp_ge,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0= // (n1 -- flag)  \ True if n1 is 0",cmp_zr,T_NONE
+CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_NONE
     xor         edx,edx
     cmp         edx,eax
     sete        dl
@@ -342,7 +342,7 @@ CODE "system'core'0= // (n1 -- flag)  \ True if n1 is 0",cmp_zr,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<> // (n1 -- flag)  \ True if n1 is not 0",cmp_nz,T_NONE
+CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_NONE
     xor         edx,edx
     cmp         edx,eax
     setne       dl
@@ -350,7 +350,7 @@ CODE "system'core'0<> // (n1 -- flag)  \ True if n1 is not 0",cmp_nz,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0< // (n1 -- flag)  \ True if n1 is less than 0",cmp_ltz,T_NONE
+CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_NONE
     xor         edx,edx
     test        eax,eax
     setl        dl
@@ -358,7 +358,7 @@ CODE "system'core'0< // (n1 -- flag)  \ True if n1 is less than 0",cmp_ltz,T_NON
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0> // (n1 -- flag)  \ True if n1 is greater than 0",cmp_gtz,T_NONE
+CODE "system'core'0> // (n1 -- flag) True if n1 is greater than 0",cmp_gtz,T_NONE
     xor         edx,edx
     test        eax,eax
     setg        dl
@@ -366,7 +366,7 @@ CODE "system'core'0> // (n1 -- flag)  \ True if n1 is greater than 0",cmp_gtz,T_
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<= // (n1 -- flag)  \ True if n1 is less then or equal to 0",cmp_lez,T_NONE
+CODE "system'core'0<= // (n1 -- flag) True if n1 is less then or equal to 0",cmp_lez,T_NONE
     xor         edx,edx
     test        eax,eax
     setle       dl
@@ -374,7 +374,7 @@ CODE "system'core'0<= // (n1 -- flag)  \ True if n1 is less then or equal to 0",
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0>= // (n1 -- flag)  \ True if n1 is greater then or equal to 0",cmp_gez,T_NONE
+CODE "system'core'0>= // (n1 -- flag) True if n1 is greater then or equal to 0",cmp_gez,T_NONE
     xor         edx,edx
     test        eax,eax
     setge       dl
@@ -399,30 +399,30 @@ CODE "system'core'if'> // (n1 n2 -- n1) conditionally execute the following expr
 ;==============================================================================
 ; FORTH logical 
 ;------------------------------------------------------------------------------
-CODE "system'core'and // (n1 n2 -- n1&n2)  \ logical and",log_and,T_NONE
+CODE "system'core'and // (n1 n2 -- n1&n2) logical and",log_and,T_NONE
     and         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'or // (n1 n2 -- n1|n2)  \ logical or",log_or,T_NONE
+CODE "system'core'or // (n1 n2 -- n1|n2) logical or",log_or,T_NONE
     or         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'xor // (n1 n2 -- n1^n2)  \ logical xor",log_xor,T_NONE
+CODE "system'core'xor // (n1 n2 -- n1^n2) logical xor",log_xor,T_NONE
     xor         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'invert // (n1 -- ~n1)  \ bitwise not",bit_not,T_NONE
+CODE "system'core'invert // (n1 -- ~n1) bitwise not",bit_not,T_NONE
     not         eax
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'negate // (n1 -- 0-n1)  \ arithmetic negation",negate,T_NONE
+CODE "system'core'negate // (n1 -- 0-n1) arithmetic negation",negate,T_NONE
     neg         eax
     NEXT
 .x: 
@@ -431,21 +431,21 @@ CODE "system'core'negate // (n1 -- 0-n1)  \ arithmetic negation",negate,T_NONE
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'<< // (n1 n2 -- n1<<n2)  \ shift n1 left by n2 bits",lshift,T_NONE
+CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_NONE
     mov         ecx,eax
     DPOP        eax
     shl         eax,cl
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>> // (n1 n2 -- n1>>n2)  \ shift n1 right by n2 bits",rshift,T_NONE
+CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_NONE
     mov         ecx,eax
     DPOP        eax
     shr         eax,cl
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'ror // (n1 n2 -- n)  \ rotate n1 right by n2 bits",rotr,T_NONE
+CODE "system'core'ror // (n1 n2 -- n) rotate n1 right by n2 bits",rotr,T_NONE
     mov         ecx,eax
     DPOP        eax
     ror         eax,cl
@@ -455,12 +455,12 @@ CODE "system'core'ror // (n1 n2 -- n)  \ rotate n1 right by n2 bits",rotr,T_NONE
 ; FORTH memory 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'@ // (addr -- val)  \ fetch val from addr",fetch,T_NONE
+CODE "system'core'@ // (addr -- val) fetch val from addr",fetch,T_NONE
     mov         eax,[eax]
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'! // (val addr --)  \ store val at addr",store,T_NONE
+CODE "system'core'! // (val addr --) store val at addr",store,T_NONE
     mov         edx,[ebp]
     add         ebp,4
     mov         [eax],edx
@@ -468,12 +468,12 @@ CODE "system'core'! // (val addr --)  \ store val at addr",store,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c@ // (addr -- val)  \ fetch val from addr",cfetch,T_NONE
+CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_NONE
     mov         al,[eax]
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c! // (val addr --)  \ store val at addr",cstore,T_NONE
+CODE "system'core'c! // (val addr --) store val at addr",cstore,T_NONE
     mov         edx,[ebp]
     add         ebp,4
     mov         [eax],dl
@@ -517,7 +517,7 @@ CODE "system'core'pop // (--n) pop from return stack",pop,T_NONE
 ;==============================================================================
 ; Literals (from codestream)
 ;------------------------------------------------------------------------------
-; U8 (--U8)   load a U8 from codestream.
+; U8 (--U8) load a U8 from codestream.
 ;
 CODE "system'core'U8 // (--n) fetch a U8 that follows in the codestream",U8,T_U8
     DPUSH       eax
@@ -527,7 +527,7 @@ CODE "system'core'U8 // (--n) fetch a U8 that follows in the codestream",U8,T_U8
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-; U16 (--U16)  load a U16 from codestream.
+; U16 (--U16) load a U16 from codestream.
 ;
 CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T_U16
     DPUSH       eax
@@ -537,7 +537,7 @@ CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-; U32 (--U32)   load a 32 from codestream.
+; U32 (--U32) load a 32 from codestream.
 ;
 CODE "system'core'U32 // (--n) fetch a U32 that follows in the codestream",U32,T_U32
     DPUSH       eax
@@ -547,7 +547,7 @@ CODE "system'core'U32 // (--n) fetch a U32 that follows in the codestream",U32,T
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-; REF (--REF)   load a reference via table. ***TABLE
+; REF (--REF) load a reference via table. ***TABLE
 ;
 CODE "system'core'REF // (--n) fetch a REF that follows in the codestream",REF,T_REF
     DPUSH       eax             ;just like U32 fetch
