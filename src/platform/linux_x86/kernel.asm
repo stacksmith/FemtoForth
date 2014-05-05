@@ -59,7 +59,7 @@ db 0,0,0
 dd __#name#.x - __#name         ;DANGER: x86 d is 4 bytes,w is 2!
 __#name:
     ;RPOP IP
-}
+} 
 ; return to C
 CODE "system'core'leave // exit to outer host ",leave,T_NONE 
  ;and in reverse.. interpreter is already on the stack!
