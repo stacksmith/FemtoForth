@@ -37,7 +37,6 @@ extern HINDEX H_TYPE;
 * 
 *  Call this after the dictionary has been loaded
 */
-//TODO: remove pre-searched stuff...
 void cmd_init(){
     search_list[0] = H_TYPE;   //wd
     search_list[1] = head_find_abs_or_die("system'core");    //
@@ -242,11 +241,16 @@ printf("cmd_img_load_p HEAD: read %d, required %d, total %d\n",ret,required,tota
     if(required != ret) return 0;
     //---------------------------------------------
     // Now, adjust the pointers
+    interpret_init();   //set up registers and sp_meow...
+    //
+    var->data_ptr       = newvar->run_ptr;
+    var->run_ptr        = newvar->run_ptr;
+    var->run_table      = newvar->run_table;    //should eliminate
+    var->head_ptr       = newvar->head_ptr;
+    var->wd             = newvar->wd;
+    //initialize source
+    src_reset();        //this takes care of srcptr and more...
     
-    
-    
-        
-
     return total;
 }
 int cmd_img_load(){
