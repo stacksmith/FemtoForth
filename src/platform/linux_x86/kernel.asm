@@ -50,7 +50,7 @@ macro DPOP reg {
 ; The loader will prefix each code word with a 0, properly aligned!
 macro CODE str,name,parm {
   db .z2-.z1
-.z1: db str,0
+.z1: db str,$a,"CODE",$a,0
 align 4
 .z2:
 ; 

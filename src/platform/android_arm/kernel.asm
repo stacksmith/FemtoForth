@@ -64,6 +64,25 @@ macro DPOP reg {
 macro NEXT {
     bx lr
 }
+; Format:
+; 1 cnt   count of string, including null-term and padding
+; ? name
+; 1 parm  - tokenstream data 
+;
+; The loader will prefix each code word with a 0, properly aligned!
+macro CODE str,name,parm {
+  db .z2-.z1
+.z1: db str,$a,"CODE",$a,0
+align 4 
+.z2:
+; 
+db parm
+db 0,0,0
+dw __#name#.x - __#name
+__#name:
+;    RPOP IP
+}
+
 ; return to C
 CODE "system'core'leave exit to outer host ",leave,T_NONE 
         push    {r0,r6,r7,r9,r11,lr}

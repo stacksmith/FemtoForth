@@ -54,7 +54,7 @@ APP := main
 $(APP):  main.o  header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o color.o kernel.bin
 	$(CPP) $(LDFLAGS) -o $(APP) main.o header.o data.o table.o interpret.o bindings.o src.o cmd.o lang.o color.o
 
-kernel.bin: platform/$(PLATFORM)/kernel.asm
+kernel.bin: platform/$(PLATFORM)/kernel.asm platform/kernel_common.s
 	$(FASM) -s kernel.dat platform/$(PLATFORM)/kernel.asm kernel.bin
 	../tools/fasmlist kernel.dat kernel.lst
 ifeq ($(PLATFORM),android_arm)
