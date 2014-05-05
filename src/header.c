@@ -396,49 +396,53 @@ void head_dump_one(HINDEX h){
 }
 
 /* ============================================================================
- * save
- * 
+   save
+ 
+ Now that the header space has been linearized, saving it is as simple as 
+ dumping the whole RAM to disk...  Since the headers refer to each other,
+ there are pointers involved, but these are at very specific locations and
+ can be fixed up.
+*/
+/* ============================================================================
+  To facilitate fixup, the header file is prefixed by
  * format:
- * -32-bit count
- * 
- * -sheader
- * -32-bit text length
- * -text
- * ...
+ * -32-bit size of header segment
+ * -32-bit base address (all pointers are true to that base)
  */
+typedef struct sHeadFileHeader {
+    U32 size;
+    U32 base;
+} sHeadFileHeader;
 
-int head_save_one(FILE* f,HINDEX h){
-    //TODO:
-printf("head_save_one NOT IMPLEMENTED\n");
-exit(0);
-/*    U32 ret = 0;
-    ret+=fwrite(&HEAD[h], sizeof(sHeader)-4, 1, f );
-    U32 textlen = strlen(h->name)+1;
-    ret+=fwrite(&textlen,4,1,f);
-    ret+=fwrite(h->name,textlen,1,f);
-    return (ret==3)?1:0;
-*/ 
-}
-
-
-int head_load_one(FILE* f,HINDEX h){
-    //TODO:
-printf("head_load_one NOT IMPLEMENTED\n");
-exit(0);
-   
-    
-}
-int head_save(FILE* f){
-    //TODO:
-printf("head_save NOT IMPLEMENTED\n");
-exit(0);
-/*    U32 cnt = hindex_last;
-    if(1 != fwrite(&cnt,4,1,f)) return 0;
-    int i;
-    for(i=0;i<cnt;i++){
-        if(1 != head_save_one(f,i)) return 0;
-    }
+int head_save(FILE*f){
+    sHeadFileHeader buf;
+    buf.size = (U32)var->head_ptr - (U32)var->head_base;
+    buf.base = (U32)var->head_base;
+    //now write it
+    size_t ret;
+    ret = fwrite(&buf,sizeof(buf),1,f);
+    if(1!=ret) return 0;
+    //write data
+    ret = fwrite((char*)buf.base,buf.size,1,f);
+    if(1!=ret) return 0;
     return 1;
-*/    
+}
+int head_load(FILE*f){
+    sHeadFileHeader buf;
+    //read header
+    size_t ret;
+    ret = fread(&buf,sizeof(buf),1,f);
+    if(1!=ret) return 0;
+    if(var->head_base != (U8*)buf.base){
+        printf("head_load: header segment is at %p, but saved data is expecting %p\n",
+               var->head_base,(U8*)buf.base);
+        src_error("head_load requires fixup\n");
+    }
+    //read data
+    ret = fread((char*)buf.base,buf.size,1,f);
+    if(1!=ret) return 0;
+    //update pointers
+    var->head_ptr = (U8*)buf.base + buf.size;
+    return 1;
 }
 

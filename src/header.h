@@ -51,4 +51,5 @@ HINDEX head_find_abs_or_die( char* path);
 HINDEX head_resolve(TOKEN* ptr,U32* poffset);
 
 void head_dump_one(HINDEX h);
+
 int head_save(FILE* f);

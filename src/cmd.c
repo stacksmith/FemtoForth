@@ -144,38 +144,37 @@ int cmd_list(){
 }
 
 /*=============================================================================
- * save
- * 
- * save the current system.
- * 
- * Data Section
- * ------------
- * The contents are bytecode or pure data.  There are no pointers to be fixed.
- * 
- * Headers
- * -------
- * Internal header structural references are all indices, no fixup.
- * References into data section are actual pointers...
- * 
- * Table
- * -----
- * A list of pure pointers.  
- * -The low 8 pointers are filled out by loader...
- * -5 pointers follow, that require special care.
- * 
- * CONTEXT
- * ==========================================================================*/
-int cmd_save(){
-    FILE* f = fopen("femto_image.data","w");
+ * save 
+* save the current system.
+  
+ ==========================================================================*/
+int cmd_imgsave(){
+    FILE* f;
+/*    FILE* f = fopen("femto_image.data","w");
     data_save(f);
     fclose(f);
-    
+*/    
     f = fopen("femto_image.head","w");
     head_save(f);
     fclose(f);
     
     return 1;
 }
+
+int cmd_imgload(){
+    FILE* f;
+/*    FILE* f = fopen("femto_image.data","w");
+    data_save(f);
+    fclose(f);
+*/    
+    f = fopen("femto_image.head","r");
+    head_load(f);
+    fclose(f);
+    
+    return 1;
+}
+
+
 TOKEN* see_one(TOKEN*p){
     PTOKEN* base = table_base(p);
     U8 token = *p;
@@ -327,13 +326,16 @@ int command(char* ptr,U32 cnt){
             break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
-            if(0==strncmp(ptr,"save",4)) {return cmd_save();}
             if(0==strncmp(ptr,"list",4)) {return cmd_list();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
             if(0==strncmp(ptr,"anus",4)) {return cmd_anus();}
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
+            break;
+        case 7:
+            if(0==strncmp(ptr,"imgsave",7)) {return cmd_imgsave();}
+            if(0==strncmp(ptr,"imgload",7)) {return cmd_imgload();}
             break;
     }
     return 0;
