@@ -14,7 +14,7 @@ For Android (you may need a rooted device), using an adb shell, create a directo
 This is very much work in progress, and is barely implemented, so don't expect too much...
 
 ---TEMPORARY---
-Once up and running, type 'load' to load 'test.ff'.  Things to try:
+Once up and running, type 'load test.ff'.  Things to try:
 ```
 1 2 + .
 cd 'system'core
