@@ -24,7 +24,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 extern sVar* var;
 /* ============================================================================
  * table_base
- * 
+ * TODO:***
  * Determine the accessible base for a pointer
  */
 

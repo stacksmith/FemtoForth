@@ -50,6 +50,8 @@ typedef TOKEN* PTOKEN;
 #define CODE_ADDRESS 0x04000000
 #define CODE_SIZE    0x01000000
 #define HEAD_SIZE    0x00100000
+//bottom 512 bytes reserved for variables
+#define RESERVED     512        
 typedef struct sRegsC {
     U32 r4;
     U32 r5;

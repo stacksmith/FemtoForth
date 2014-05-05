@@ -144,31 +144,55 @@ int cmd_list(){
 }
 
 /*=============================================================================
- * save 
-* save the current system.
+  save 
+  
+  save the current system as 3 segments: data,table and head.
   
  ==========================================================================*/
-int cmd_imgsave(){
-    FILE* f;
-/*    FILE* f = fopen("femto_image.data","w");
-    data_save(f);
-    fclose(f);
-*/    
-    f = fopen("femto_image.head","w");
-    head_save(f);
-    fclose(f);
+U32 cmd_img_save_p(FILE* f){
+    size_t ret, required, total;
+    total = 0;
+    //TODO: write an ID header...
+    //---------------------------------------------
+    //first write the data, so that vars are first
+    required = var->data_ptr - var->data_base;
+    total += ret = fwrite(var->data_base,1,required,f);
+    if(required != ret) return 0;
+printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
+    //---------------------------------------------
+    //now write the table 
+    //for stability, write the entire reachable portion
+    U8* table_end = ((U8*)table_base(var->data_ptr)) + 255;
+    required = table_end - var->table_base;
+    total += ret = fwrite(var->table_base, 1,required,f);
+    if(required != ret) return 0;
+printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     
-    return 1;
+    //now write the headers
+    required = var->head_ptr - var->head_base;
+    total += ret = fwrite(var->head_base,1,required,f);
+    if(required != ret) return 0;
+printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
+    
+    return total;
 }
 
-int cmd_imgload(){
+int cmd_img_save(){
+    char* fname = "femto.img";
+    FILE* f = fopen(fname,"w");
+    if(!f) return 0;
+    U32 ret = cmd_img_save_p(f);
+    fclose(f);
+    printf("img_save: wrote %d bytes to file %s\n",ret,fname);
+    return 1;
+}
+int cmd_img_load(){
     FILE* f;
 /*    FILE* f = fopen("femto_image.data","w");
     data_save(f);
     fclose(f);
 */    
     f = fopen("femto_image.head","r");
-    head_load(f);
     fclose(f);
     
     return 1;
@@ -333,9 +357,9 @@ int command(char* ptr,U32 cnt){
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
             break;
-        case 7:
-            if(0==strncmp(ptr,"imgsave",7)) {return cmd_imgsave();}
-            if(0==strncmp(ptr,"imgload",7)) {return cmd_imgload();}
+        case 8:
+            if(0==strncmp(ptr,"img_save",8)) {return cmd_img_save();}
+            if(0==strncmp(ptr,"img_load",8)) {return cmd_img_load();}
             break;
     }
     return 0;
