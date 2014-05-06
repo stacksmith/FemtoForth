@@ -77,7 +77,7 @@ printf("table_end ERROR: no room intable!\n");
     return ptr+1;
 }
 /* ============================================================================
- * table_wipe
+ * table_cleanse
  * 
  * When a block of code is deleted, we can't just wipe the table (for a number
  * of reasons - entries may be used by previous code, etc). 
@@ -91,11 +91,11 @@ void table_wipe(TOKEN* start,TOKEN* end){
     PTOKEN* highest = table_base(end)+255;
     memset(address,0,((U32)var->table_top - (U32)address));
 }
-*/
+
 void table_wipe(TOKEN* address){
    memset(address,0,((U32)lay->table_top - (U32)address));
 }
-
+*/
 int table_ptr_verify(PTOKEN*p){
     if(p < (PTOKEN*)lay->table_base) return 0;
     if(p >= (PTOKEN*)lay->table_top) return 0;
