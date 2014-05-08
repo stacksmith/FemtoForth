@@ -92,10 +92,11 @@ void table_wipe(TOKEN* start,TOKEN* end){
     memset(address,0,((U32)var->table_top - (U32)address));
 }
 
+*/
 void table_wipe(TOKEN* address){
    memset(address,0,((U32)lay->table_top - (U32)address));
 }
-*/
+
 int table_ptr_verify(PTOKEN*p){
     if(p < (PTOKEN*)lay->table_base) return 0;
     if(p >= (PTOKEN*)lay->table_top) return 0;
