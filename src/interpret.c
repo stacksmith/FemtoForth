@@ -213,7 +213,7 @@ int interpret_def_SYSVAR(HINDEX h){
 int interpret_def_type(HINDEX htype){
 //printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
-    HINDEX h = head_new(var->data_ptr,  htype,T_NA, var->wd);
+    HINDEX h = head_new(var->data_ptr,  htype,0, var->wd);
 
     interpret_def_source(h); //in any event, append source and commit entry
 //printf("interpret_def: src [%s]\n",var->src_ptr);
@@ -249,8 +249,9 @@ int interpret_compone(char* ptr,U32 cnt){
     // regular words
     HINDEX h = head_find(ptr, cnt,search_list);
     if(h) {
+        //COMPILING!
         //simple type dispatch.  Real language dispatches better..
-        HINDEX type = head_get_type(h);
+        HINDEX type = head_get_type(h); //TYPE encountered? define!
         if(type==H_TYPE)
             return interpret_def_type(h);
         if(type==H_PROC)

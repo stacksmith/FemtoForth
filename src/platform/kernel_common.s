@@ -40,7 +40,7 @@ ERROR_FRAME equ 80
 ;RUN_PTR  equ 36
 ;RUN_PTR    equ 40
 ; parsing parameter types
-T_NONE  equ 0
+T_PROC  equ 0
 T_U8    equ 1
 T_U16   equ 2
 T_U32   equ 3
@@ -48,5 +48,6 @@ T_OFF   equ 4
 T_STR8   equ 5
 T_REF   equ 6
 
-TYPE_PROC equ 3
+T_DIR equ 255
+
 

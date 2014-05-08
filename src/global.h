@@ -35,14 +35,15 @@ typedef U8  PARM ;         //token stream parameter
 typedef unsigned char TOKEN;
 typedef TOKEN* PTOKEN;
 
-#define T_NA    0     
+#define T_PROC  0     
 #define T_U8    1
 #define T_U16   2
 #define T_U32   3
 #define T_OFF   4
 #define T_STR8  5
 #define T_REF   6
-
+#define T_DIR   255
+// must match kernel definitions
 
 //=======================================================
 //GLOBAL SETTINGS

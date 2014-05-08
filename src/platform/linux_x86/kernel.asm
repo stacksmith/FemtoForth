@@ -61,7 +61,7 @@ __#name:
     ;RPOP IP
 } 
 ; return to C
-CODE "system'core'leave // exit to outer host ",leave,T_NONE 
+CODE "system'core'leave // exit to outer host ",leave,T_PROC 
  ;and in reverse.. interpreter is already on the stack!
     
     push        edi                     ;vm pointer
@@ -83,7 +83,36 @@ CODE "system'core'leave // exit to outer host ",leave,T_NONE
 
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'io'putc // (c,handle--)",putc1,T_NONE                      ;(c --)
+; 
+CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU16 // procedure that parses a U16",type_PU16,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU32 // procedure that parses a U32",type_PU32,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'POFF // procedure that parses an 8-bit offset",type_POFF,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
+    db 0;
+.x:
+
+
+;------------------------------------------------------------------------------
+CODE "system'io'putc // (c,handle--)",putc1,T_PROC                      ;(c --)
     pusha
     mov         eax,4                   ;fwrite
     mov         ebx,[esp+28]            ;handle in TOS
@@ -96,7 +125,7 @@ CODE "system'io'putc // (c,handle--)",putc1,T_NONE                      ;(c --)
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'io'getc // (handle--c)",getc1,T_NONE                      ;(c --)
+CODE "system'io'getc // (handle--c)",getc1,T_PROC                      ;(c --)
     DPUSH       eax
     pusha
     mov         eax,3                   ;fread
@@ -110,7 +139,7 @@ CODE "system'io'getc // (handle--c)",getc1,T_NONE                      ;(c --)
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'sys'time",sys_time,T_NONE
+CODE "system'sys'time",sys_time,T_PROC
     DPUSH       eax
     pusha                               ;eax,ecx,edx,ebx,?,ebp,esi,edi
     mov         eax,0x0D                ;sys_time
@@ -121,7 +150,7 @@ CODE "system'sys'time",sys_time,T_NONE
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'sys'gettimeofday // (--Sec,uSec)",sys_gettimeofday,T_NONE
+CODE "system'sys'gettimeofday // (--Sec,uSec)",sys_gettimeofday,T_PROC
     DPUSH       eax
     pusha
     mov         eax,78                  ;sys_timeofday
@@ -139,7 +168,7 @@ CODE "system'sys'gettimeofday // (--Sec,uSec)",sys_gettimeofday,T_NONE
 
 ;---------------------------------------------
 ; continue execution after saving the frame...
-CODE "system'core'error'catch // (--0) set up error handling",errset,T_NONE
+CODE "system'core'error'catch // (--0) set up error handling",errset,T_PROC
     DPUSH       eax
     push        esi     ;preserve IP (just after catch!)
     push        dword[ebx+ERROR_FRAME]
@@ -149,7 +178,7 @@ CODE "system'core'error'catch // (--0) set up error handling",errset,T_NONE
 .x:    
 ;---------------------------------------------
 ; revoke error handler and re-establish previous one
-CODE "system'core'error'clear // (--) restore previous handler",errclr,T_NONE
+CODE "system'core'error'clear // (--) restore previous handler",errclr,T_PROC
     mov         esp,[ebx+ERROR_FRAME]
     pop         dword[ebx+ERROR_FRAME]      ;restore error frame
     add         esp,4                   ;skip IP - we don't need it
@@ -157,7 +186,7 @@ CODE "system'core'error'clear // (--) restore previous handler",errclr,T_NONE
 .x:    
 ;---------------------------------------------
 ; revoke error handler and re-establish previous one
-CODE "system'core'error'throw // (id--) execute active catch, with id",errthrow,T_NONE
+CODE "system'core'error'throw // (id--) execute active catch, with id",errthrow,T_PROC
     mov         esp,[ebx+ERROR_FRAME]       ;restore stack
     pop         dword[ebx+ERROR_FRAME]      ;restore error frame
     pop         esi                     ;go to catch
@@ -166,13 +195,13 @@ CODE "system'core'error'throw // (id--) execute active catch, with id",errthrow,
 ;==============================================================================
 ; FORTH basics
 ;------------------------------------------------------------------------------
-CODE "system'core'DSP // (--DSP) get the Data Stack Pointer",DSP,T_NONE
+CODE "system'core'DSP // (--DSP) get the Data Stack Pointer",DSP,T_PROC
         DPUSH   eax
         mov     eax,DSP
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_NONE
+CODE "system'core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_PROC
         DPUSH   eax
         mov     eax,esp
         NEXT
@@ -180,33 +209,33 @@ CODE "system'core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_NONE
 
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'dup // (n -- n n) Duplicates the top stack item.",dup,T_NONE
+CODE "system'core'dup // (n -- n n) Duplicates the top stack item.",dup,T_PROC
         DPUSH   eax
         NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'drop // (n --) Discards the top stack item.",drop,T_NONE
+CODE "system'core'drop // (n --) Discards the top stack item.",drop,T_PROC
         DPOP    eax
         NEXT
 .x:
 
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'swap // (n1 n2 -- n2 n1) Reverses the top two stack items.",swap,T_NONE
+CODE "system'core'swap // (n1 n2 -- n2 n1) Reverses the top two stack items.",swap,T_PROC
         xchg    eax,[ebp]
         NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'over // (n1 n2 -- n1 n2 n1) Makes a copy of the second item and pushes it on top.",over,T_NONE
+CODE "system'core'over // (n1 n2 -- n1 n2 n1) Makes a copy of the second item and pushes it on top.",over,T_PROC
         DPUSH   eax
         mov     eax,[ebp+4]
         NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'rot // (a b c -- b c a) Rotates the third item to the top.",rot,T_NONE
+CODE "system'core'rot // (a b c -- b c a) Rotates the third item to the top.",rot,T_PROC
         DPOP    edx             ;edx=n2
         DPOP    ecx             ;ecx=n1
         DPUSH   edx
@@ -216,7 +245,7 @@ CODE "system'core'rot // (a b c -- b c a) Rotates the third item to the top.",ro
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'-rot // (a b c -- c a b) rotate the first item to third.",minusrot,T_NONE
+CODE "system'core'-rot // (a b c -- c a b) rotate the first item to third.",minusrot,T_PROC
         DPOP    edx             ;edx=b
         DPOP    ecx             ;ecx=a
         DPUSH   eax
@@ -226,7 +255,7 @@ CODE "system'core'-rot // (a b c -- c a b) rotate the first item to third.",minu
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",conddup,T_NONE
+CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",conddup,T_PROC
         test     eax,eax
         jz      .done
         DPUSH   eax
@@ -234,37 +263,37 @@ CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",con
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'1+ // (a -- a+1) increment",incr,T_NONE
+CODE "system'core'1+ // (a -- a+1) increment",incr,T_PROC
         inc     eax
 .done:  NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'1- // (a -- a-1) decrement",decr,T_NONE
+CODE "system'core'1- // (a -- a-1) decrement",decr,T_PROC
         dec     eax
 .done:  NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'4+ // (a -- a+4) increment by 4",incr4,T_NONE
+CODE "system'core'4+ // (a -- a+4) increment by 4",incr4,T_PROC
         add     eax,4
 .done:  NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'4- // (a -- a-14) decrement by 4",decr4,T_NONE
+CODE "system'core'4- // (a -- a-14) decrement by 4",decr4,T_PROC
         sub     eax,4
 .done:  NEXT
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'core'+ // (a,b--sum)",add,T_NONE
+CODE "system'core'+ // (a,b--sum)",add,T_PROC
     add         eax,[ebp]
     add         ebp,4
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'- // (a,b--(a-b))",sub,T_NONE
+CODE "system'core'- // (a,b--(a-b))",sub,T_PROC
     mov         edx,[ebp]       ;edx = a
     sub         edx,eax
     add         ebp,4
@@ -272,7 +301,7 @@ CODE "system'core'- // (a,b--(a-b))",sub,T_NONE
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'* // (a,b--a*b)",mul,T_NONE
+CODE "system'core'* // (a,b--a*b)",mul,T_PROC
     DPOP        edx
     imul        edx
     NEXT
@@ -280,7 +309,7 @@ CODE "system'core'* // (a,b--a*b)",mul,T_NONE
 ;==============================================================================
 ; FORTH comparisons
 ;------------------------------------------------------------------------------
-CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_NONE
+CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_PROC
     xor         edx,edx
     cmp         eax,[ebp]
     setz        dl
@@ -289,7 +318,7 @@ CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_NONE
+CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_PROC
     xor         edx,edx
     cmp         eax,[ebp]
     setne        dl
@@ -298,7 +327,7 @@ CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_NONE
+CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_PROC
     xor         edx,edx
     cmp         [ebp],eax
     setl        dl
@@ -307,7 +336,7 @@ CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_NONE
+CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_PROC
     xor         edx,edx
     cmp         [ebp],eax
     setg        dl
@@ -316,7 +345,7 @@ CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_NONE
+CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_PROC
     xor         edx,edx
     cmp         [ebp],eax
     setle       dl
@@ -325,7 +354,7 @@ CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_NONE
+CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_PROC
     xor         edx,edx
     cmp         [ebp],eax
     setge       dl
@@ -334,7 +363,7 @@ CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_NONE
+CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
     xor         edx,edx
     cmp         edx,eax
     sete        dl
@@ -342,7 +371,7 @@ CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_NONE
+CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_PROC
     xor         edx,edx
     cmp         edx,eax
     setne       dl
@@ -350,7 +379,7 @@ CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_NONE
+CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_PROC
     xor         edx,edx
     test        eax,eax
     setl        dl
@@ -358,7 +387,7 @@ CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0> // (n1 -- flag) True if n1 is greater than 0",cmp_gtz,T_NONE
+CODE "system'core'0> // (n1 -- flag) True if n1 is greater than 0",cmp_gtz,T_PROC
     xor         edx,edx
     test        eax,eax
     setg        dl
@@ -366,7 +395,7 @@ CODE "system'core'0> // (n1 -- flag) True if n1 is greater than 0",cmp_gtz,T_NON
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<= // (n1 -- flag) True if n1 is less then or equal to 0",cmp_lez,T_NONE
+CODE "system'core'0<= // (n1 -- flag) True if n1 is less then or equal to 0",cmp_lez,T_PROC
     xor         edx,edx
     test        eax,eax
     setle       dl
@@ -374,7 +403,7 @@ CODE "system'core'0<= // (n1 -- flag) True if n1 is less then or equal to 0",cmp
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0>= // (n1 -- flag) True if n1 is greater then or equal to 0",cmp_gez,T_NONE
+CODE "system'core'0>= // (n1 -- flag) True if n1 is greater then or equal to 0",cmp_gez,T_PROC
     xor         edx,edx
     test        eax,eax
     setge       dl
@@ -384,7 +413,7 @@ CODE "system'core'0>= // (n1 -- flag) True if n1 is greater then or equal to 0",
 ;==============================================================================
 ;==============================================================================
 ; special conditionals.  RHS is destroyed, but not lhs!
-CODE "system'core'if'> // (n1 n2 -- n1) conditionally execute the following expression",if_gt,T_NONE
+CODE "system'core'if'> // (n1 n2 -- n1) conditionally execute the following expression",if_gt,T_PROC
     xor         ecx,ecx                 ;offset
     cmp         [ebp],eax               ;compare n1,n2
      setle       cl                      ;if n1 <= n2
@@ -399,30 +428,30 @@ CODE "system'core'if'> // (n1 n2 -- n1) conditionally execute the following expr
 ;==============================================================================
 ; FORTH logical 
 ;------------------------------------------------------------------------------
-CODE "system'core'and // (n1 n2 -- n1&n2) logical and",log_and,T_NONE
+CODE "system'core'and // (n1 n2 -- n1&n2) logical and",log_and,T_PROC
     and         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'or // (n1 n2 -- n1|n2) logical or",log_or,T_NONE
+CODE "system'core'or // (n1 n2 -- n1|n2) logical or",log_or,T_PROC
     or         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'xor // (n1 n2 -- n1^n2) logical xor",log_xor,T_NONE
+CODE "system'core'xor // (n1 n2 -- n1^n2) logical xor",log_xor,T_PROC
     xor         eax,[ebp]
     add         ebp,4
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'invert // (n1 -- ~n1) bitwise not",bit_not,T_NONE
+CODE "system'core'invert // (n1 -- ~n1) bitwise not",bit_not,T_PROC
     not         eax
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'negate // (n1 -- 0-n1) arithmetic negation",negate,T_NONE
+CODE "system'core'negate // (n1 -- 0-n1) arithmetic negation",negate,T_PROC
     neg         eax
     NEXT
 .x: 
@@ -431,21 +460,21 @@ CODE "system'core'negate // (n1 -- 0-n1) arithmetic negation",negate,T_NONE
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_NONE
+CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_PROC
     mov         ecx,eax
     DPOP        eax
     shl         eax,cl
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_NONE
+CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_PROC
     mov         ecx,eax
     DPOP        eax
     shr         eax,cl
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'ror // (n1 n2 -- n) rotate n1 right by n2 bits",rotr,T_NONE
+CODE "system'core'ror // (n1 n2 -- n) rotate n1 right by n2 bits",rotr,T_PROC
     mov         ecx,eax
     DPOP        eax
     ror         eax,cl
@@ -455,12 +484,12 @@ CODE "system'core'ror // (n1 n2 -- n) rotate n1 right by n2 bits",rotr,T_NONE
 ; FORTH memory 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'@ // (addr -- val) fetch val from addr",fetch,T_NONE
+CODE "system'core'@ // (addr -- val) fetch val from addr",fetch,T_PROC
     mov         eax,[eax]
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'! // (val addr --) store val at addr",store,T_NONE
+CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
     mov         edx,[ebp]
     add         ebp,4
     mov         [eax],edx
@@ -468,12 +497,12 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_NONE
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_NONE
+CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_PROC
     mov         al,[eax]
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'c! // (val addr --) store val at addr",cstore,T_NONE
+CODE "system'core'c! // (val addr --) store val at addr",cstore,T_PROC
     mov         edx,[ebp]
     add         ebp,4
     mov         [eax],dl
@@ -482,7 +511,7 @@ CODE "system'core'c! // (val addr --) store val at addr",cstore,T_NONE
 .x: 
 
 ;------------------------------------------------------------------------------
-CODE "system'core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_NONE
+CODE "system'core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_PROC
         mov     edx,eax
         xor     eax,eax
         mov     al,[edx]
@@ -493,7 +522,7 @@ CODE "system'core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc
         
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_NONE
+CODE "system'core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_PROC
         xchg    eax,[ebp+4]     ;a,d,c,b
         mov     edx,[ebp]
         xchg    edx,[ebp+8]     ;c,d,a,b
@@ -502,13 +531,13 @@ CODE "system'core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "system'core'push // (n--) push n onto ReturnStack",push,T_NONE
+CODE "system'core'push // (n--) push n onto ReturnStack",push,T_PROC
         push    eax
         DPOP    eax
         NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'pop // (--n) pop from return stack",pop,T_NONE
+CODE "system'core'pop // (--n) pop from return stack",pop,T_PROC
         DPUSH   eax
         pop     eax
         NEXT
@@ -615,7 +644,7 @@ CODE "system'core'times // (--) execute expression that follows cnt times",times
 ;==============================================================================
 
 ;------------------------------------------------------------------------------
-CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_NONE
+CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
     mov         edx,[ebp+4]       ;edx = al
     sub         edx,eax
     mov         eax,edx           ;low done
@@ -627,14 +656,14 @@ CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_NONE
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "test'dbase ",dbase,T_NONE
+CODE "test'dbase ",dbase,T_PROC
     DPUSH eax
     mov eax,ebx
     NEXT
 .x:
 
 ;------------------------------------------------------------------------------
-CODE "test'nop ",nop,T_NONE
+CODE "test'nop ",nop,T_PROC
     sub         ebp,4
     mov         [ebp],eax
     mov         eax,$DEADDEAD
@@ -643,7 +672,7 @@ CODE "test'nop ",nop,T_NONE
 ;==============================================================================
 ; variable
 ;------------------------------------------------------------------------------
-CODE "system'TYPE'U32'fetch // (--val)",var_fetchp,T_NONE
+CODE "system'TYPE'U32'fetch // (--val)",var_fetchp,T_PROC
     DPUSH       eax          
      xor         eax,eax
      mov         al,[esi]        ;next token
@@ -660,7 +689,7 @@ CODE "system'TYPE'U32'fetch // (--val)",var_fetchp,T_NONE
 ; store variable
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'TYPE'U32'into // (val--)",var_storep,T_NONE
+CODE "system'TYPE'U32'into // (val--)",var_storep,T_PROC
      xor         edx,edx
      mov         dl,[esi]        ;next token
      add         esi,1
@@ -684,7 +713,7 @@ CODE "system'TYPE'U32'into // (val--)",var_storep,T_NONE
 ;
 ; sysvars are compiled as <sysvar'prim'compile><index> for optimal speed
 ;------------------------------------------------------------------------------
-CODE "system'TYPE'SYSVAR'prim'compile // (--val)",sysvar_fetchp,T_NONE
+CODE "system'TYPE'SYSVAR'prim'compile // (--val)",sysvar_fetchp,T_PROC
     DPUSH       eax          
      xor         eax,eax
      mov         al,[esi]        ;next token
@@ -693,7 +722,7 @@ CODE "system'TYPE'SYSVAR'prim'compile // (--val)",sysvar_fetchp,T_NONE
     NEXT
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_NONE
+CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_PROC
      xor         ecx,ecx
      mov         cl,[esi]        ;next token
      add         esi,1
@@ -703,3 +732,10 @@ CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_NONE
 .x:
 ;------------------------------------------------------------------------------
 db 0    ;an empty record to terminate load process
+
+;==============================================================================
+; type dispatchables
+;
+
+
+

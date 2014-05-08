@@ -263,7 +263,7 @@ int cmd_img_load(){
     return 1;
 }
 
-
+/*
 TOKEN* see_one(TOKEN*p){
     PTOKEN* base = table_base(p);
     U8 token = *p;
@@ -288,8 +288,9 @@ TOKEN* see_one(TOKEN*p){
     printf("%.*s",head_get_namelen(head),head_get_name(head));
     color(COLOR_DIM);color(FORE_WHITE);printf(">");color(COLOR_RESET);     
     p++;
-    U32 type=head_get_parm(head);
-    if(T_NA != type){
+    HINDEX type=head_get_type(head);
+
+    if(T != type){
         color(COLOR_DIM);  color(FORE_WHITE);printf("<");
         color(COLOR_RESET); color(FORE_YELLOW);
         switch(type){
@@ -361,7 +362,7 @@ int cmd_see(){
     dstack_push(ptr);
     color(COLOR_RESET);
 }
-
+*/
 int cmd_load(){
     U32 cnt; char* ptr = src_word(&cnt);          //next word
     
@@ -371,7 +372,7 @@ int cmd_load(){
 int cmd_mkdir(){
      U32 cnt; char* ptr = src_word(&cnt);
      //careful, no pathing
-    HINDEX h = head_new(0,H_DIR,T_NA,var->wd);
+    HINDEX h = head_new(0,H_DIR,0,var->wd);
     head_append_source(h,ptr,cnt);
     head_commit(h);
 
@@ -410,7 +411,7 @@ int command(char* ptr,U32 cnt){
         case 3:
             if(0==strncmp(ptr,"pwd",3)) { printf("%s\n",head_get_name(var->wd)); return 1;}
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
-            if(0==strncmp(ptr,"see",3)) {return cmd_see();}
+//            if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
             break;
         case 4:

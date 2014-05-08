@@ -143,7 +143,7 @@ HINDEX head_find_or_create(char* path){
     HINDEX found = head_locate(dir,name,strlen(name));
     if(!found) {
 //printf("head_find_or_create  CREATING [%s] in dir %p\n",name,dir);
-      dir = head_new(0,H_PROC,T_NA,dir);
+      dir = head_new(0,H_PROC,0,dir);
       head_append_source(dir,name,0);
       head_commit(dir);
 //head_dump_one(dir);

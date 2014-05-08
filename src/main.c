@@ -49,19 +49,19 @@ HINDEX H_SYSTEM;
 
 void head_build(){
 //                         code,        type    PARM         DAD
-         H_ROOT = head_new(0,           0,      T_NA,        0); //type is DIR
+         H_ROOT = head_new(0,           0,      0,        0); //type is DIR
   head_commit(H_ROOT);
-         H_SYSTEM = head_new(0,         0,      T_NA,        H_ROOT);
+         H_SYSTEM = head_new(0,         0,      0,        H_ROOT);
   head_commit(head_append_source(H_SYSTEM,"system // system internals",0));
-         H_TYPE = head_new(0,           0,      T_NA,        H_SYSTEM);
+         H_TYPE = head_new(0,           0,      0,        H_SYSTEM);
   head_commit(head_append_source(H_TYPE,"TYPE // contains types",0));
-         H_DIR =  head_new(0,           0,      T_NA,        H_TYPE); //dad is TYPE 
+         H_DIR =  head_new(0,           0,      0,        H_TYPE); //dad is TYPE 
   head_commit(head_append_source(H_DIR,"DIR ",0));       
-         H_PROC = head_new(0,           H_TYPE, T_NA,        H_TYPE);
+         H_PROC = head_new(0,           H_TYPE, 0,        H_TYPE);
   head_commit(head_append_source(H_PROC,"PROC // procedure directory",0));
-         H_U32 =  head_new(0,           H_TYPE, T_NA,        H_TYPE);
+         H_U32 =  head_new(0,           H_TYPE, 0,        H_TYPE);
   head_commit(head_append_source(H_U32,"U32 // procedure directory",0));
-      H_SYSVAR =  head_new(0,           H_TYPE, T_NA,        H_TYPE);
+      H_SYSVAR =  head_new(0,           H_TYPE, 0,        H_TYPE);
   head_commit(head_append_source(H_SYSVAR,"SYSVAR // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
   
@@ -97,7 +97,7 @@ int kernel_load_record(FILE* f){
 //*** DEBUG END
     //create a header...
     HINDEX h = head_find_or_create(buf);          //create header
-    // Read parameter code
+    // Read parameter code.  Now  used as type specifier.
     PARM parm;
     fread(&parm,1,1,f);
     // skip 3 bytes
@@ -110,8 +110,22 @@ int kernel_load_record(FILE* f){
   data_compile_U8(0);                           //code token
   U8* data = data_compile_from_file(f,datalen);
   // And update the head
-  head_set_type(h,H_PROC);        //it was created as DIR originally...
-  head_set_parm(h,parm);          //from file...
+  // set type based on param...
+  HINDEX mytype;
+  switch(parm){
+      case T_PROC: mytype = head_find_abs_or_die("system'TYPE'PROC"); break;
+      case T_U8:   mytype = head_find_abs_or_die("system'TYPE'PU8");break;
+      case T_U16:  mytype = head_find_abs_or_die("system'TYPE'PU16");break;
+      case T_U32:  mytype = head_find_abs_or_die("system'TYPE'PU32");break;
+      case T_OFF:  mytype = head_find_abs_or_die("system'TYPE'POFF");break;
+      case T_STR8: mytype = head_find_abs_or_die("system'TYPE'PSTR8");break;
+      case T_REF:  mytype = head_find_abs_or_die("system'TYPE'PREF");break;
+      case T_DIR:  mytype = head_find_abs_or_die("system'TYPE'DIR");break;
+      default: printf("kernel_load_record: invalid type %d\n",parm);
+        return 0;
+  }   
+  head_set_type(h,mytype);        //it was created as DIR originally...
+
   head_set_code(h,data-1);       //point at 0 (code) token
 //interpret_ql(data);
     return 1;
