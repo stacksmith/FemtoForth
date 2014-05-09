@@ -268,6 +268,13 @@ CODE "system'core'dbl'drop // (a b --) Discards 2 items.",dbl_drop,T_PROC
         add     ebp,8
         NEXT
 .x:
+CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
+        mov     ecx,[ebx]       ;ecx=a
+        sub     ebp,8           ;room for 2 more
+        mov     [ebp+4],eax     ;ab?b
+        mov     [ebp],ecx
+        NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 ;
@@ -746,18 +753,7 @@ CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_PROC
     DPOP        eax
     NEXT
 .x:
-;==============================================================================
-; some useful things:
-;
-CODE "system'table'base // (addr--tbase) determine table base for this address",table_base,T_PROC
-;------------------------------------------------------------------------------
-    add         eax,1          ;calculate table base ***
-    shr         eax,4
-    shl         eax,2
-    NEXT
-.x:    
-    
-    
+
 db 0    ;an empty record to terminate load process
 
 

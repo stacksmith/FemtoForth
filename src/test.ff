@@ -1,146 +1,18 @@
-// /******************************************************************************
-// Copyright 2014 Victor Yurkovsky
+cd 'test
 // 
-// This file is part of the FemtoForth project.
-// 
-// FemtoForth is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// FemtoForth is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
-// 
-// *****************************************************************************/
-// ============================================ 
-// system'io stuff
-//
-cd system'io
-U32 HIN
-|
-0 into HIN
 
-U32 HOUT
-|
-1 into HOUT
-// ---
-PROC emit // (c--)
-{  HOUT putc ; }
-|
-
-PROC key // (--n)
-{ HIN getc ; }
-|
-PROC hexd // (hexd--ascii) convert a hex digit to ascii
+PROC xxx // (refptr--head) find the head for this reference
 { 
-  $F and '0' +
-  if( $39 over < ) 
-    7 + 
-  thanx ; 
+  table'runptr // refptr, tbl
+  begin
+    if( dup table'bottom = ) 
+      dbl'drop 0 ; 
+    thanx
+    if( dbl'dup @ = )
+    
+    dup . cr
+    4-
+  again
+  
 }
 |
-
-PROC hexp // (val,nybcnt--)
-{
-  times (
-    28 ror
-    dup hexd emit
-  )
-  drop ;
-}
-|
-
-PROC . // (val--)
-{
-  8 hexp ;
-}
-|
-
-
-PROC ctell // (ptr,cnt--)
-{ times (
-    c@++ emit
-  )
-  drop ;
-}
-|
-PROC space { $20 emit ; }
-|
-PROC cr { $D emit $A emit ; }
-|
-PROC tab { 9 emit ; }
-|
-// ============================================ 
-PROC color // (col--)
-{  $1B emit
-   "[0;3" ctell
-   '0' + emit // output as ascii digit
-   'm' emit
-   ;
-}
-|
-
-cd color
-PROC red { 1 color ; }
-|
-PROC green { 2 color ; }
-|
-PROC yellow { 3 color ; }
-|
-PROC blue { 4 color ; }
-|
-PROC magenta { 4 color ; }
-|
-PROC cyan { 6 color ; }
-|
-PROC white { 7 color ; }
-|
-
-cd system'io
-PROC splashp
-{ color'blue 4 times (
-  "-+|+-- -- - - -- -" ctell
-  ) cr ;
-}
-|
-PROC splash
-{ splashp 
-  tab tab color'yellow " FemtoForth" ctell 
-  tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
-  splashp color'white cr ; }
-|
-
-cd system'core
-mkdir head cd head
-$04000018 SYSVAR ptr
-|
-cd system'core
-mkdir dic cd dic
-$04000008 SYSVAR ptr
-|
-cd system'core
-mkdir run cd run
-$0400000C SYSVAR ptr
-|
-// ============================================ 
-// sys
-// ============================================ 
-cd system'core
-PROC osys {
-color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENTRIES" ctell cr 
-  dup . space over . space DSP 4+ . space RSP . space
-  head'ptr . space
-  run'ptr . space
-
-cr ;
- }
-|
-
-
-
-

@@ -251,16 +251,11 @@ int lang_ptr(){
 int lang_head(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
-    //compile a reference to the head...
-    HINDEX hreftok = head_find_absolute("system'core'REF",8); //
-    if(!hreftok) {
-        printf("lang_head: can't find [core'REF]\n");
-        return 0;
-    }
-    data_compile_token(hreftok);
-    //now the head pointer via table...
-    data_compile_token_p((U8*)h); //note the _p!
-    return 1; }
+    //compile a reference to the actual header (not its data...)
+    data_compile_token(head_find_abs_or_die("system'core'REF")); //
+    data_compile_ref((U8*)h);   
+    return 1;
+}
 int lang_p(char* ptr,U32 cnt){
 // printf("lang_p: [%.*s] %d\n", cnt,ptr,cnt);
    

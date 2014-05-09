@@ -86,7 +86,7 @@ U8* data_compile_from_file(FILE* f,U32 cnt){
 /* ============================================================================
    compile_token, given a target address... Any target will work...
 */    
-int data_compile_token_p(U8* target){
+int data_compile_ref(U8* target){
     U8**tbase = table_base(var->data_ptr);
     TOKEN tok = table_find_or_create(var->data_ptr,target);
     if(tok){
@@ -109,7 +109,7 @@ int data_compile_token(HINDEX h){
     //now, in the range of 1-255, try to find the entry represented by
     //HINDEX h...  
     U8* target = head_get_code(h); //that's what HINDEX h targets...
-    return data_compile_token_p(target);
+    return data_compile_ref(target);
 }
 /* ============================================================================
  * save

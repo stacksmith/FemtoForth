@@ -62,6 +62,7 @@ PROC . // (val--)
 |
 
 
+
 PROC ctell // (ptr,cnt--)
 { times (
     c@++ emit
@@ -70,6 +71,10 @@ PROC ctell // (ptr,cnt--)
 }
 |
 PROC space { $20 emit ; }
+|
+PROC spaces // (i--) Print i spaces
+{
+    times ( space ) ;
 |
 PROC cr { $D emit $A emit ; }
 |
@@ -116,7 +121,7 @@ PROC splash
 |
 // ==============================================================
 // TABLE
-cd system'core
+cd system
 mkdir table cd table
 $04000000 $8 + SYSVAR bottom
 |
@@ -124,9 +129,15 @@ $04000000 $C + SYSVAR top
 |
 $04000080 $10 + SYSVAR runptr // used to preserve table for cleanup after running
 |
+PROC base // {ptr--base} get table base for pointer
+{
+    1+ 4 >> 2 << ; // 16:1
+}
+|
+
 PROC detokenize // (ptr--pointer corresponding to token at ptr)
 {
-   dup system'table'base // ptr,table
+   dup table'base // ptr,table
    swap c@ 4* + @        // reference
    ;
 }
@@ -140,6 +151,12 @@ $04000000 $20 + SYSVAR bottom
 $04000000 $24 + SYSVAR top
 |
 $04000080 $18 + SYSVAR ptr
+|
+
+PROC name // (e--name,cnt) //from entry pointer, get name/cnt
+{
+    23 + c@++ ;
+}
 |
 
 
@@ -163,7 +180,8 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
   dup . space over . space DSP 4+ . space RSP . space
   head'ptr . space
   run'ptr . space
-  run'ptr system'table'base . space
+  run'ptr table'base . space
+  table'runptr -( run'ptr table'base ) 2 >> .
 
 cr ;
  }
