@@ -22,6 +22,8 @@
 format elf
 
 section '.text' executable
+include "../kernel_common.s"
+
 RDAT equ r11
 RSP equ sp
 
@@ -34,8 +36,8 @@ macro RPOP reg {
 }
 
 ;UPDATE THESE WHEN sVar changes!
-SP_C       equ 0
-SP_MEOW    equ 4
+;//SP_C       equ 0
+;SP_MEOW    equ 4
 
 ;------------------------------------------------------------------------------
 ; invoke  the meow-meow interpreter
@@ -43,9 +45,9 @@ SP_MEOW    equ 4
 ; r0 = var
 public meow_invoke
 meow_invoke:
-
        push    {r4-r11,lr}              ;preserve C context on C stack...
-       str     sp,[r0,SP_C]             ;save C sp in data area..
+       mov     RDAT,r0
+       str     sp,[RDAT,SP_C]             ;save C sp in data area..
        ldr     sp,[r0,SP_MEOW]
        pop     {r0,r6,r7,r9,r11,lr}     ;restore meow registers...
        bx lr                            ;and jump into the interpreter

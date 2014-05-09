@@ -52,7 +52,7 @@ typedef TOKEN* PTOKEN;
 #define CODE_SIZE    0x01000000
 #define HEAD_SIZE    0x00100000
 //bottom 512 bytes reserved for variables
-#define HOST_RESERVED    128    // 32 host-based pointers
+#define HOST_RESERVED    128    // 32 host-based pointers (lay
 #define SYS_RESERVED     128    // 32 system pointers
 typedef struct sRegsC {
     U32 r4;

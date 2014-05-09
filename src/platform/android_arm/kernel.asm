@@ -122,24 +122,46 @@ CODE "test'b",testb,T_PROC
 .x:  
         
 
-CODE "system'system'irp1",irp1,T_PROC
-.1: ldrb    r12,[IP],1               ;2; fetch a token
-        lsls    r12,2                    ;1; r3 = table index; set Z if code.
-        bxeq    IP                      ;2; 0=CODE! 
-        RPUSH   IP
-        lsr     IP,IP,4                 ;1; create a 16-byte range address
-        ldr     IP,[r12,IP,LSL 2]        ;2; r2 is return IP // (dereference table)
-        b       .1                  ;1;
+;CODE "system'irp1",irp1,T_PROC
+;.1: ldrb    r12,[IP],1               ;2; fetch a token
+;        lsls    r12,2                    ;1; r3 = table index; set Z if code.
+;        bxeq    IP                      ;2; 0=CODE! 
+;        RPUSH   IP
+;        lsr     IP,IP,4                 ;1; create a 16-byte range address
+;        ldr     IP,[r12,IP,LSL 2]        ;2; r2 is return IP // (dereference table)
+;        b       .1                  ;1;
 ; Observations:
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
-.x:
+;.x:
 
 ;------------------------------------------------------------------------------
-;CODE "system'core'; // (--) return",return,T_PROC
-;    RPOP        IP
-;;mov r0,0xDEAD
-;    bx          lr
-;.x:
+; 
+CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU16 // procedure that parses a U16",type_PU16,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU32 // procedure that parses a U32",type_PU32,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'POFF // procedure that parses an 8-bit offset",type_POFF,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
+    db 0;
+.x:
+
 ;------------------------------------------------------------------------------
 CODE "system'io'putc // (c,handle--)",putc1,T_PROC                      ;(c --)
         push    {r0-r7,lr}

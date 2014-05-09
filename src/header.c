@@ -349,6 +349,7 @@ char* head_get_comments(HINDEX h,U32* len){
     char* ret = head_get_source(h);
     if(len) 
         *len = head_linelen(ret);
+//printf("head_get_comments: length is %d [%.*s]\n",head_linelen(ret),head_linelen(ret),ret);
     return ret;
     
 }

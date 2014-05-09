@@ -54,7 +54,7 @@ void interpret_init(){
     p->IP  = 0;             //IP will be set for the call
     p->DSP  = (U32*)lay->dsp_top;  //DSP
     p->ER  = 0;             //exception register
-    p->DAT = (U32)var;      //
+    p->DAT = (U32)lay;      //
     p->lr  = (U32)&inner_interpreter; //defined in bindings
     
 //printf("inner interpreter is at %p\n",&inner_interpreter);
@@ -79,8 +79,7 @@ void interpret_init(){
 // U32 __attribute__((cdecl)) meow_invoke(U32);
 
 void call_meow(U8* addr){
- 
-//printf("call_meow will run: %08X\n",addr);
+ //printf("call_meow will run: %08X\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
   U32 ret=    meow_invoke(lay->data_base); //var is in data!

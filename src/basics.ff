@@ -75,6 +75,7 @@ PROC space { $20 emit ; }
 PROC spaces // (i--) Print i spaces
 {
     times ( space ) ;
+}
 |
 PROC cr { $D emit $A emit ; }
 |
