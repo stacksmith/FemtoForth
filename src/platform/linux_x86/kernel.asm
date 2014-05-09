@@ -281,10 +281,18 @@ CODE "system'core'4+ // (a -- a+4) increment by 4",incr4,T_PROC
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'4- // (a -- a-14) decrement by 4",decr4,T_PROC
+CODE "system'core'4- // (a -- a-4) decrement by 4",decr4,T_PROC
         sub     eax,4
 .done:  NEXT
 .x:
+
+;------------------------------------------------------------------------------
+;
+CODE "system'core'4* // (a -- a*4) mul by 4",mul4,T_PROC
+        shl     eax,2
+.done:  NEXT
+.x:
+
 
 ;------------------------------------------------------------------------------
 CODE "system'core'+ // (a,b--sum)",add,T_PROC
@@ -498,7 +506,7 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
 .x: 
 ;------------------------------------------------------------------------------
 CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_PROC
-    mov         al,[eax]
+    movzx       eax,byte[eax]
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
@@ -730,12 +738,21 @@ CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_PROC
     DPOP        eax
     NEXT
 .x:
+;==============================================================================
+; some useful things:
+;
+CODE "system'table'base // (addr--tbase) determine table base for this address",table_base,T_PROC
 ;------------------------------------------------------------------------------
+    add         eax,1          ;calculate table base ***
+    shr         eax,4
+    shl         eax,2
+    NEXT
+.x:    
+    
+    
 db 0    ;an empty record to terminate load process
 
-;==============================================================================
-; type dispatchables
-;
+
 
 
 

@@ -114,18 +114,35 @@ PROC splash
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
 |
+// ==============================================================
+// TABLE
+cd system'core
+mkdir table cd table
+$04000000 $8 + SYSVAR bottom
+|
+$04000000 $C + SYSVAR top
+|
+$04000080 $10 + SYSVAR runptr // used to preserve table for cleanup after running
+|
+PROC detokenize // (ptr--pointer corresponding to token at ptr)
+{
+   dup system'table'base // ptr,table
+   swap c@ 4* + @        // reference
+   ;
+}
+|
 
 cd system'core
 mkdir head cd head
-$04000018 SYSVAR ptr
+$04000080 $18 + SYSVAR ptr
 |
 cd system'core
 mkdir dic cd dic
-$04000008 SYSVAR ptr
+$04000080 $8 + SYSVAR ptr
 |
 cd system'core
 mkdir run cd run
-$0400000C SYSVAR ptr
+$04000080 $C + SYSVAR ptr
 |
 // ============================================ 
 // sys

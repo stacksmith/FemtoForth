@@ -110,6 +110,7 @@ struct sHeader;
 // system
 //=======================================================
 // DANGER: update bindings.asm and kernel.asm if offset change!!!
+// at DATA_BASE+HOST_RESERVED (currently 0x80
 typedef struct sVar {
 /* 00  0 */ 
             U8* sp_c;                   //c sp with context..

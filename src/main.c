@@ -48,20 +48,20 @@ HINDEX H_SYSVAR;
 HINDEX H_SYSTEM;
 
 void head_build(){
-//                         code,        type    PARM         DAD
-         H_ROOT = head_new(0,           0,      0,        0); //type is DIR
+//                         code,        type    DAD
+         H_ROOT = head_new(0,           0,      0); //type is DIR
   head_commit(H_ROOT);
-         H_SYSTEM = head_new(0,         0,      0,        H_ROOT);
+         H_SYSTEM = head_new(0,         0,      H_ROOT);
   head_commit(head_append_source(H_SYSTEM,"system // system internals",0));
-         H_TYPE = head_new(0,           0,      0,        H_SYSTEM);
+         H_TYPE = head_new(0,           0,      H_SYSTEM);
   head_commit(head_append_source(H_TYPE,"TYPE // contains types",0));
-         H_DIR =  head_new(0,           0,      0,        H_TYPE); //dad is TYPE 
+         H_DIR =  head_new(0,           0,      H_TYPE); //dad is TYPE 
   head_commit(head_append_source(H_DIR,"DIR ",0));       
-         H_PROC = head_new(0,           H_TYPE, 0,        H_TYPE);
+         H_PROC = head_new(0,           H_TYPE, H_TYPE);
   head_commit(head_append_source(H_PROC,"PROC // procedure directory",0));
-         H_U32 =  head_new(0,           H_TYPE, 0,        H_TYPE);
+         H_U32 =  head_new(0,           H_TYPE, H_TYPE);
   head_commit(head_append_source(H_U32,"U32 // procedure directory",0));
-      H_SYSVAR =  head_new(0,           H_TYPE, 0,        H_TYPE);
+      H_SYSVAR =  head_new(0,           H_TYPE, H_TYPE);
   head_commit(head_append_source(H_SYSVAR,"SYSVAR // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
   

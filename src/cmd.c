@@ -41,7 +41,8 @@ void cmd_init(){
     search_list[0] = H_TYPE;   //wd
     search_list[1] = head_find_abs_or_die("system'core");    //
     search_list[2] = head_find_abs_or_die("system'io");      //
-    search_list[3] = H_ROOT;    //
+    search_list[3] = head_find_abs_or_die("system");    //
+    search_list[4] = H_ROOT;    //
    //
     var->wd = head_find_abs_or_die("test"); 
 }
@@ -372,7 +373,7 @@ int cmd_load(){
 int cmd_mkdir(){
      U32 cnt; char* ptr = src_word(&cnt);
      //careful, no pathing
-    HINDEX h = head_new(0,H_DIR,0,var->wd);
+    HINDEX h = head_new(0,H_DIR,var->wd);
     head_append_source(h,ptr,cnt);
     head_commit(h);
 

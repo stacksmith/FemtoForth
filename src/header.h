@@ -30,14 +30,12 @@ char* head_get_comments(HINDEX h,U32* len);
 
 
 TOKEN*          head_get_code(HINDEX h);
-PARM            head_get_parm(HINDEX h);
 const char*     head_get_name(HINDEX h);
 
 void    head_set_type(HINDEX h,HINDEX type);
-void    head_set_parm(HINDEX h,PARM parm);
 void    head_set_code(HINDEX h,TOKEN* code);
 
-HINDEX  head_new(U8* pcode,HINDEX type,PARM parm, HINDEX dad);
+HINDEX  head_new(U8* pcode,HINDEX type, HINDEX dad);
 HINDEX head_append_source(HINDEX h,char* buf,U32 cnt);
 HINDEX head_commit(HINDEX h);
 

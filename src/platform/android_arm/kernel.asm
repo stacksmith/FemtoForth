@@ -300,6 +300,13 @@ CODE "system'core'4- // (a -- a-14) decrement by 4",decr4,T_PROC
 .done:  NEXT
 .x:
 ;------------------------------------------------------------------------------
+;
+CODE "system'core'4* // (a -- a*4) mul by 4",mul4,T_PROC
+        lsr     r0,4
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
 CODE "system'core'+ // (a,b--sum)",add,T_PROC
         DPOP    r1
         add     r0,r1
@@ -650,6 +657,16 @@ CODE "system'TYPE'U32'into // (val--)",var_storep,T_PROC
         DPOP      r0
         NEXT
 .x:
+;==============================================================================
+; some useful things:
+;
+CODE "system'table'base // (addr--tbase) determine table base for this address",table_base,T_PROC
+;------------------------------------------------------------------------------
+        add       r0,1                 ;calculate table base ***
+        lsl       r0,4
+        lsr       r0,2
+        NEXT
+.x:    
 
 
 ;------------------------------------------------------------------------------

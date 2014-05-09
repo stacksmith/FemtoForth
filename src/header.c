@@ -36,7 +36,6 @@ typedef struct sHeader {
         struct sHeader* type;               //points at type directory
         TOKEN* pcode;              //headers refer to actual code
         //
-        PARM  parm;                //decompilation data
         U8 namelen;                //actual name part of string
         U16 srclen;               //padding                   
         //
@@ -66,14 +65,13 @@ U32 head_size(HINDEX h){
     -head_append_source to add source
     -head_commit to finish
 */
-HINDEX head_new(U8*pcode,HINDEX type,PARM parm,HINDEX dad)
+HINDEX head_new(U8*pcode,HINDEX type,HINDEX dad)
 {
   HINDEX head = (HINDEX)var->head_ptr;
   head->dad = dad;
   head->child = 0;
   head->type = type;
   head->pcode = pcode;
-  head->parm = parm;
   head->srclen = 0;
   head->namelen = 0;
   //link in
@@ -134,7 +132,7 @@ if(h->next==h){
   
   return h;
 }
-extern HINDEX H_PROC;
+extern HINDEX H_PROC,H_DIR;
 HINDEX head_find_or_create(char* path){
 //printf("head_find_or_create [%s]\n",path);
   HINDEX dir = head_get_root();         //start at root
@@ -143,7 +141,7 @@ HINDEX head_find_or_create(char* path){
     HINDEX found = head_locate(dir,name,strlen(name));
     if(!found) {
 //printf("head_find_or_create  CREATING [%s] in dir %p\n",name,dir);
-      dir = head_new(0,H_PROC,0,dir);
+      dir = head_new(0,H_DIR,dir);
       head_append_source(dir,name,0);
       head_commit(dir);
 //head_dump_one(dir);
@@ -331,9 +329,6 @@ HINDEX head_get_dad(HINDEX h){
 TOKEN* head_get_code(HINDEX h){
     return h->pcode;
 }
-PARM head_get_parm(HINDEX h){
-    return h->parm;
-}
 HINDEX  head_get_type(HINDEX h){
     return h->type;
 }
@@ -359,9 +354,6 @@ char* head_get_comments(HINDEX h,U32* len){
 void    head_set_type(HINDEX h,HINDEX type){
     h->type = type;
 };
-void    head_set_parm(HINDEX h,PARM parm){
-    h->parm = parm;
-}
 void    head_set_code(HINDEX h,TOKEN* code){
     h->pcode = code;
 }
@@ -371,7 +363,7 @@ void head_dump_one(HINDEX h){
     sHeader*p = h;
 //printf("---%d [%s]\n",head_get_namelen(p),head_get_name(p));
   // next dad child type table
-  printf("\33[1;32m     PTR      NAME     NEXT      DAD    CHILD     TYPE      CODE    PARM     BASE  ENTRIES\33[0;32m\n");
+  printf("\33[1;32m     PTR      NAME     NEXT      DAD    CHILD     TYPE      CODE    BASE  ENTRIES\33[0;32m\n");
   printf("%X ",(U32)p);
   printf("%9.*s",head_get_namelen(p),head_get_name(p));
   //         p,p->next,p->dad,p->child, p->type,(U32)p->pcode,p->parm,p->name);

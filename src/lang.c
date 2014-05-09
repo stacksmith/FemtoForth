@@ -192,8 +192,18 @@ int lang_else(){
     dstack_push((U32)newfixup);
     
 }
-int lang_if_paren(){
-    int ret = interpret_compuntil(")",1);       //compile conditional
+int lang_begin(){
+    dstack_push((U32)var->data_ptr);    //just save the loop start location
+    if(!interpret_compuntil("again",5)) {       //compile until 'again'
+printf("lang_begin: err \n");
+        dstack_pop();  //on error, get rid of pfixup
+        return 0;
+    }
+    data_compile_token(H_BRANCH);
+    TOKEN* target = (TOKEN*)dstack_pop();       //recover loop start
+    U32 offset = target - var->data_ptr - 1;
+    data_compile_U8(offset);
+    return 1;
     
 }
 
@@ -276,7 +286,6 @@ int lang_p(char* ptr,U32 cnt){
            
             break;
         case 3:
-            if(0==strncmp(ptr,"if(",3)) { return lang_if_paren(); }
              if(0==strncmp(ptr,"ptr",3)) { return lang_ptr(); }
             break;
         case 4:
@@ -286,6 +295,7 @@ int lang_p(char* ptr,U32 cnt){
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }
+            if(0==strncmp(ptr,"begin",5)) { return lang_begin(); }
             break;
     }
     return 0;
