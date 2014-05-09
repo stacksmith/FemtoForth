@@ -263,6 +263,14 @@ CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",con
 .x:
 ;------------------------------------------------------------------------------
 ;
+CODE "system'core'dbl'drop // (a b --) Discards 2 items.",dbl_drop,T_PROC
+        mov     eax,[ebp+4]
+        add     ebp,8
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
+;
 CODE "system'core'1+ // (a -- a+1) increment",incr,T_PROC
         inc     eax
 .done:  NEXT

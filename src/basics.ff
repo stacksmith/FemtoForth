@@ -131,11 +131,21 @@ PROC detokenize // (ptr--pointer corresponding to token at ptr)
    ;
 }
 |
-
+// ==============================================================
+// HEAD
 cd system'core
 mkdir head cd head
+$04000000 $20 + SYSVAR bottom
+|
+$04000000 $24 + SYSVAR top
+|
 $04000080 $18 + SYSVAR ptr
 |
+
+
+
+
+
 cd system'core
 mkdir dic cd dic
 $04000080 $8 + SYSVAR ptr
@@ -153,6 +163,7 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
   dup . space over . space DSP 4+ . space RSP . space
   head'ptr . space
   run'ptr . space
+//  run'ptr system'table'base  spa
 
 cr ;
  }

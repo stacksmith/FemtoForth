@@ -30,14 +30,14 @@ extern sMemLayout*       lay;
 // sHeader structure is private.  Headers can be reworked
 // at a later time.
 typedef struct sHeader {
-        struct sHeader* next;               //header index
-        struct sHeader* dad;
-        struct sHeader* child;
-        struct sHeader* type;               //points at type directory
-        TOKEN* pcode;              //headers refer to actual code
+        struct sHeader* next;      // 0         //header index
+        struct sHeader* dad;       // 4
+        struct sHeader* child;     // 8
+        struct sHeader* type;      // 12         //points at type directory
+        TOKEN* pcode;              // 16  headers refer to actual code
         //
-        U8 namelen;                //actual name part of string
-        U16 srclen;               //padding                   
+        U8 namelen;                // 22 actual name part of string
+        U16 srclen;               //  20 padding          TODO 
         //
         // a name follows inline
         char src[];
@@ -79,6 +79,7 @@ HINDEX head_new(U8*pcode,HINDEX type,HINDEX dad)
   if(dad)
     dad->child=head;                //we are dad's first child
 //printf("head_new: dad is %p\n",dad);
+   // printf("offset of srccnt is %d\n",(U32)(&head->namelen)-(U32)head);
   return head;
 }
 /*
