@@ -163,7 +163,7 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
   dup . space over . space DSP 4+ . space RSP . space
   head'ptr . space
   run'ptr . space
-//  run'ptr system'table'base  spa
+  run'ptr system'table'base . space
 
 cr ;
  }

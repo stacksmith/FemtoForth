@@ -14,7 +14,7 @@ For Android (you may need a rooted device), using an adb shell, create a directo
 This is very much work in progress, and is barely implemented, so don't expect too much...
 
 ---TEMPORARY---
-Once up and running, type 'load test.ff'.  Things to try:
+Once up and running, type 'load basics.ff'.  Things to try:
 ```
 1 2 + .
 cd 'system'core
@@ -22,7 +22,7 @@ pwd
 ls
 sys
 list splash
-ptr splash see
+// ptr splash see // does not work
 PROC test { 1 2 + ; }
 |
 ****Note: the vertical bar as the only thing on a line terminates the definition
