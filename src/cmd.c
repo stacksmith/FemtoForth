@@ -378,7 +378,7 @@ int cmd_mkdir(){
     head_commit(h);
 
 }
-int cmd_anus(){
+/*int cmd_anus(){
     HINDEX h = head_get_root();
    while(h < (HINDEX)var->head_ptr){
 printf("anus: h is %p\n",h);
@@ -386,24 +386,10 @@ printf("anus: h is %p\n",h);
         h = (HINDEX)(head_size(h) + (U32)h);
     }
 }
-
+*/
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
     switch(cnt){
-        case 1:
-             if(0==strncmp(ptr,"{",1)) {
-                int ret = interpret_compuntil("}",1);
-                if(ret){
-                    //don't let interpreter erase us!
-                    var->run_ptr = var->data_ptr;
-//printf("update: run_table is at %08p\n",var->run_table);
-                    var->run_table = table_end(var->data_ptr);
-                    return 1;
-                } else
-                    return 0;
-            }
-            break;
-           
         case 2:
             if(0==strncmp(ptr,"ls",2)) { cmd_ls(var->wd);return 1; }
             if(0==strncmp(ptr,"cd",2)) { cmd_cd(); return 1;  };
@@ -419,7 +405,6 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
             if(0==strncmp(ptr,"list",4)) {return cmd_list();}
             if(0==strncmp(ptr,"load",4)) {return cmd_load();}
-            if(0==strncmp(ptr,"anus",4)) {return cmd_anus();}
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}

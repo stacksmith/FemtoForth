@@ -313,9 +313,10 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     return best_hindex;
 }
 
-const char* head_get_name(HINDEX h){
+char* head_get_name(HINDEX h){
     return h->src; 
 }
+
 U32 head_get_namelen(HINDEX h){
     return h->namelen;
 }
@@ -338,6 +339,13 @@ HINDEX  head_get_type(HINDEX h){
 char* head_get_source(HINDEX h){
     return h->src + h->namelen;
 }
+
+char* head_name(HINDEX h,U32*size){
+    char* ret = h->src;
+    if(size) *size = h->namelen;
+    return ret;
+}
+
 //by convention, first line contains comments...
 U32 head_linelen(char*p){
     char* pend = strpbrk(p,"\n\r\0");

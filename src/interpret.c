@@ -26,6 +26,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "table.h"
 #include "lang.h"
 #include "data.h"
+#include "color.h"
 
 // interpret.c
 
@@ -86,8 +87,9 @@ void call_meow(U8* addr){
 //printf("call_meow: %08X\n",ret);
 
 }
-
-
+void interpret_commit(){
+    var->run_ptr = var->data_ptr;
+}
 
 int interpret_literal_num(char* ptr,U32 cnt,U32 radix){
     char* endptr;
@@ -169,31 +171,52 @@ extern HINDEX H_SYSVAR;
   handle source attachment
 */
 //defining
-int interpret_def_source(HINDEX h){
+int interpret_copy_source(HINDEX h){
     src_ws(); //
     head_append_source(h,var->src_ptr,0); //append this first line
     //now read lines and append as source until a line containing only "end"
     while(1){
         char*psrc = src_line();         //a fresh line of source
-        U32 len = strlen(psrc);        
+        U32 len = strlen(psrc);       
 //printf("lang_colon [%s] %d\n",psrc,len);
         //terminate source with a line containing an |
-        if((2==len)&&('|'==*psrc)){
+        head_append_source(h,psrc,len);
+        if((4==len)&&(0==strncmp("end\n",psrc,4))){
             var->src_ptr += len;
             break;
         }
-        head_append_source(h,psrc,len);
     }
     head_commit(h);
 //printf("interpret_def_source done...[%s]\n",head_get_source(h));
 
 }
+void def_error(char*src, char*errptr){
+    //print the portion of the source that is good
+    color(COLOR_RESET); color(FORE_GREEN);
+    printf("%.*s",(errptr-src),src);
+    color(FORE_RED);
+    printf("%s",errptr);
+    color(COLOR_RESET);    
+}
+
+
+extern char* src_errbuf;
 int interpret_def_PROC(HINDEX h){
     src_set(head_get_source(h));
+    U32 ret = interpret_compuntil("end",3);
+    if(!ret) {
+        table_wipe(var->run_table);
+
+printf("interpret_def_type: ret [%d]\n",ret);
+printf("-----------\n");
+def_error(head_get_name(h),src_errbuf);//var->src_ptr);
+printf("-----------\n");
+    }
     return 1;
 }
 int interpret_def_U32(HINDEX h){
-    var->data_ptr +=4;
+    data_compile_U32(dstack_pop());
+    interpret_commit();
 //printf("interpret_def_U32 [%s]\n",var->src_ptr);
     return 1;
 }
@@ -208,31 +231,33 @@ int interpret_def_SYSVAR(HINDEX h){
     return 1;
 }
 
-
 int interpret_def_type(HINDEX htype){
-//printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
+printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
     HINDEX h = head_new(var->data_ptr,  htype,var->wd);
 
-    interpret_def_source(h); //in any event, append source and commit entry
+    interpret_copy_source(h); //in any event, append source and commit entry
 //printf("interpret_def: src [%s]\n",var->src_ptr);
 //printf("lang_colon: type %.*s %d \n",head_get_namelen(htype),head_get_name(htype));
     //dispatch on type! Note: tcnt and tname are not valid, as source has changed
     int ret=0;
-    if(htype == H_PROC)
+    if(htype == H_PROC) {
         ret = interpret_def_PROC(h);
+    }
     else if(htype == H_U32)
         ret = interpret_def_U32(h);
     else if(htype == H_SYSVAR)
         ret = interpret_def_SYSVAR(h);
-    
-    //if compile OK, commit the data
-    if(ret)
-        var->run_ptr = var->data_ptr;
+    else {
+        //-------------------------------------------
+        // unimplemented type
+        U32 n; const char*p = head_name(h,&n);
+        printf("def_type invalid type %.*s:\n",n,p);
+    }
+printf("interpret_def_type: done\n");
     return ret;
     
 }
-
 int interpret_compone(char* ptr,U32 cnt){
 //printf("interpret_compone[%s] %d\n",ptr,cnt);
     //--------------------------------------------------------------
@@ -279,7 +304,7 @@ int interpret_compuntil(char* delim, U32 delimcnt){
         if((delimcnt==cnt)&&(0==strncmp(delim,ptr,cnt)))
             return 1;
         if(!interpret_compone(ptr,cnt)) {
-            printf("ERROR [[%s]]\n",var->src_ptr);
+//            printf("compuntil...ERROR [[%s]]\n",var->src_ptr);
             return 0;
         }
          
@@ -297,6 +322,7 @@ int interpret_outer_p(char* ptr,U32 cnt){
             *var->src_ptr=0;                         //abandon line!
             return 0;
          }
+//printf("OUTER done\n");
     return 1;
 }
 int interpret_outer(){
@@ -315,7 +341,9 @@ int interpret_outer(){
         data_compile_token(hleave);                    //terminate with a return
 //printf("--%p\n",var->data_ptr);
 //lang_ql(var->run_ptr);//
+//table_dump( ((U32)(var->run_ptr)) >>4 << 2);
         call_meow(var->run_ptr);                    //run from run_ptr
+//printf("interpreter-outer done\n");
 //    }      
     //---------------------------------------
     // reset after run

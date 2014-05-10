@@ -1,18 +1,11 @@
 cd 'test
-// 
 
 PROC xxx // (refptr--head) find the head for this reference
 { 
-  table'runptr // refptr, tbl
-  begin
-    if( dup table'bottom = ) 
-      dbl'drop 0 ; 
-    thanx
-    if( dbl'dup @ = )
+    dup
+    ;
     
-    dup . cr
-    4-
-  again
-  
+
 }
-|
+end
+

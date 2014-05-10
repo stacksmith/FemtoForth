@@ -30,7 +30,8 @@ char* head_get_comments(HINDEX h,U32* len);
 
 
 TOKEN*          head_get_code(HINDEX h);
-const char*     head_get_name(HINDEX h);
+char*     head_get_name(HINDEX h);
+char* head_name(HINDEX h,U32*size);
 
 void    head_set_type(HINDEX h,HINDEX type);
 void    head_set_code(HINDEX h,TOKEN* code);

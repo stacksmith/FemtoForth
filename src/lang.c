@@ -30,7 +30,7 @@ extern sMemLayout* lay;
 #include "cmd.h"
 extern HINDEX search_list[];
 #include "data.h"
-
+#include "table.h"
 
 //TODO: check error conditions, return...
 extern HINDEX H_PROC;           //initilization code set this...
@@ -272,7 +272,18 @@ int lang_p(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"q",1)) { return lang_q(); }
             if(0==strncmp(ptr,"t",1)) { return lang_t(); }
             if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
-          
+            if(0==strncmp(ptr,"{",1)) {
+                int ret = interpret_compuntil("}",1);
+                if(ret){
+                    //don't let interpreter erase us!
+                    var->run_ptr = var->data_ptr;
+//printf("update: run_table is at %08p\n",var->run_table);
+                    var->run_table = table_end(var->data_ptr);
+                    return 1;
+                } else
+                    return 0;
+            }
+         
             break;
         case 2:
              if(0==strncmp(ptr,"if",2)) { return lang_if(); }

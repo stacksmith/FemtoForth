@@ -21,21 +21,19 @@
 // system'io stuff
 //
 cd system'io
-U32 HIN
-|
-0 into HIN
+0 U32 HIN
+end
 
-U32 HOUT
-|
-1 into HOUT
+1 U32 HOUT
+end
 // ---
 PROC emit // (c--)
 {  HOUT putc ; }
-|
+end
 
 PROC key // (--n)
 { HIN getc ; }
-|
+end
 PROC hexd // (hexd--ascii) convert a hex digit to ascii
 { 
   $F and '0' +
@@ -43,7 +41,7 @@ PROC hexd // (hexd--ascii) convert a hex digit to ascii
     7 + 
   thanx ; 
 }
-|
+end
 
 PROC hexp // (val,nybcnt--)
 {
@@ -53,13 +51,13 @@ PROC hexp // (val,nybcnt--)
   )
   drop ;
 }
-|
+end
 
 PROC . // (val--)
 {
   8 hexp ;
 }
-|
+end
 
 
 
@@ -69,18 +67,18 @@ PROC ctell // (ptr,cnt--)
   )
   drop ;
 }
-|
+end
 PROC space { $20 emit ; }
-|
+end 
 PROC spaces // (i--) Print i spaces
 {
     times ( space ) ;
 }
-|
+end
 PROC cr { $D emit $A emit ; }
-|
+end
 PROC tab { 9 emit ; }
-|
+end
 // ============================================ 
 PROC color // (col--)
 {  $1B emit
@@ -89,52 +87,52 @@ PROC color // (col--)
    'm' emit
    ;
 }
-|
+end
 
 cd color
 PROC red { 1 color ; }
-|
+end
 PROC green { 2 color ; }
-|
+end
 PROC yellow { 3 color ; }
-|
+end
 PROC blue { 4 color ; }
-|
+end
 PROC magenta { 4 color ; }
-|
+end
 PROC cyan { 6 color ; }
-|
+end
 PROC white { 7 color ; }
-|
+end
 
 cd system'io
 PROC splashp
 { color'blue 4 times (
-  "-+|+-- -- - - -- -" ctell
+  "-+end+-- -- - - -- -" ctell
   ) cr ;
 }
-|
+end
 PROC splash
 { splashp 
   tab tab color'yellow " FemtoForth" ctell 
   tab tab color'cyan "2012 Victor Yurkovsky" ctell cr 
   splashp color'white cr ; }
-|
+end
 // ==============================================================
 // TABLE
 cd system
 mkdir table cd table
 $04000000 $8 + SYSVAR bottom
-|
+end
 $04000000 $C + SYSVAR top
-|
+end
 $04000080 $10 + SYSVAR runptr // used to preserve table for cleanup after running
-|
+end
 PROC base // {ptr--base} get table base for pointer
 {
     1+ 4 >> 2 << ; // 16:1
 }
-|
+end
 
 PROC detokenize // (ptr--pointer corresponding to token at ptr)
 {
@@ -142,23 +140,23 @@ PROC detokenize // (ptr--pointer corresponding to token at ptr)
    swap c@ 4* + @        // reference
    ;
 }
-|
+end
 // ==============================================================
 // HEAD
 cd system'core
 mkdir head cd head
 $04000000 $20 + SYSVAR bottom
-|
+end
 $04000000 $24 + SYSVAR top
-|
+end
 $04000080 $18 + SYSVAR ptr
-|
+end
 
 PROC name // (e--name,cnt) //from entry pointer, get name/cnt
 {
     23 + c@++ ;
 }
-|
+end
 
 
 
@@ -167,11 +165,11 @@ PROC name // (e--name,cnt) //from entry pointer, get name/cnt
 cd system'core
 mkdir dic cd dic
 $04000080 $8 + SYSVAR ptr
-|
+end
 cd system'core
 mkdir run cd run
 $04000080 $C + SYSVAR ptr
-|
+end
 // ============================================ 
 // sys
 // ============================================ 
@@ -186,7 +184,7 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
 
 cr ;
  }
-|
+end
 
 
 

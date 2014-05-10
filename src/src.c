@@ -157,7 +157,7 @@ U32 src_one(){
 
 char* src_word(U32* pcnt){
     *pcnt = src_one();          //parse a word, count
-    char* ret = var->src_ptr;
+    char* ret = src_errbuf = var->src_ptr;
     var->src_ptr += *pcnt;
     return ret;
 }
