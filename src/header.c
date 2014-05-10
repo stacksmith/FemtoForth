@@ -68,6 +68,7 @@ U32 head_size(HINDEX h){
 */
 HINDEX head_new(U8*pcode,HINDEX type,HINDEX dad)
 {
+//printf("sizeof(sHeader) is %d\n",sizeof(sHeader));        
   HINDEX head = (HINDEX)var->head_ptr;
   head->dad = dad;
   head->child = 0;

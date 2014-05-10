@@ -215,7 +215,6 @@ color(COLOR_RESET);color(FORE_WHITE);
 // SRC 
         lay->src_base =  (char*)malloc(256);
         src_reset(); 
-        
       
         head_build();
      

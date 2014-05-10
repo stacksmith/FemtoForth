@@ -2,9 +2,9 @@ cd 'test
 
 PROC xxx // (refptr--head) find the head for this reference
 { 
-    dup
-    ;
-    
+    // walk the hierarchy
+    head'bottom
+   
 
 }
 end
