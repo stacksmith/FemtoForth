@@ -61,6 +61,7 @@ __#name:
     ;RPOP IP
 } 
 ; return to C
+;------------------------------------------------------------------------------
 CODE "system'core'leave // exit to outer host ",leave,T_PROC 
  ;and in reverse.. interpreter is already on the stack!
     
@@ -80,8 +81,23 @@ CODE "system'core'leave // exit to outer host ",leave,T_PROC
     pop         ebx
 
     ret
+.x:
+
+;------------------------------------------------------------------------------
+CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
+    push        esi                     ;save IP, so upon return we will continue
+    mov         esi,eax                 ;will execute at ptr
+    DPOP        eax                     ;clean up
+    NEXT
 
 .x:
+
+;------------------------------------------------------------------------------
+;CODE "system'core'; // (--) mostly for decompile (usually <0>) ",invoke,T_PROC 
+;    pop         esi
+;    NEXT;
+;.x:
+
 ;------------------------------------------------------------------------------
 ; 
 CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
@@ -417,6 +433,16 @@ CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_PROC
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
+CODE "system'core'nz // (n1 -- n1,flag) True if n1 is not 0",pres_cmp_nz,T_PROC
+    DPUSH       eax
+    xor         edx,edx
+    cmp         edx,eax
+    setne       dl
+    mov         eax,edx
+    NEXT
+.x: 
+
+;------------------------------------------------------------------------------
 CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_PROC
     xor         edx,edx
     test        eax,eax
@@ -534,6 +560,14 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
     DPOP        eax
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "system'core'@++ // (addr -- addr+4 val) fetch and increment pointer",finc,T_PROC
+        mov     edx,eax
+        mov     eax,[edx]
+        add     edx,4
+        DPUSH   edx
+        NEXT
+.x:
 
 
 
@@ -620,6 +654,15 @@ CODE "system'core'U16'! // (val addr --) store a 16-bit val at addr",wstore,T_PR
     DPOP        eax
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U16'@++ // (addr -- addr+1 val) fetch and increment pointer",wfinc1,T_PROC
+        mov     edx,eax
+        xor     eax,eax
+        mov     ax,[edx]
+        add     edx,2
+        DPUSH   edx
+        NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 ; U32 (--U32) load a 32 from codestream.
@@ -658,7 +701,7 @@ CODE "system'core'STR8 // (--str,cnt) fetch a string pointer.  String follows in
     add         esi,eax         ;skip string
     NEXT
  .x:   
-CODE "system'core'STR8'_= // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstrings",str_cmp,T_PROC
+CODE "system'core'STR8'eq // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstrings",str_cmp,T_PROC
     cmp         eax,[ebp+4]     ;compare counts
     jne         .no
    push        esi

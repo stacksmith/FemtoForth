@@ -198,7 +198,7 @@ PROC locatex // (ptr,cnt,hdir -- h/0)
       if( dup 0= ) drop dbl'drop 0 ; thanx
       dup push // preserve eptr
       if( head'namelen over = ) // ptr,cnt
-        if( RSP@ head'name STR8'_= ) // l-pres compare
+        if( RSP@ head'name STR8'eq ) // l-pres compare
           dbl'drop pop ; // return head
         thanx
       thanx

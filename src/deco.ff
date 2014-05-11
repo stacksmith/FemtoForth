@@ -16,11 +16,11 @@ end
 PROC deco1 // (ip--ip,e)
 {
     U8'@++ // ptr,tok
-    if( dup 0= )
+    if( zr )
       "CODE " ctell ;
     thanx
     4* over table'base + @ // ip,ref
-    if( deref dup 0<> )
+    if( deref nz )
         ;
     else
         drop 1 error'throw
@@ -63,6 +63,27 @@ PROC decompile // (ip--ip)
     +
     '"' emit
     ;
+}
+end
+
+cd 'system'TYPE'PU32
+PROC decompile // (ip--ip)
+{   
+    dup @++ . ;
+}
+end
+
+cd 'system'TYPE'PU16
+PROC decompile // (ip--ip)
+{   
+    dup U16'@++ . ;
+}
+end
+
+cd 'system'TYPE'PU8
+PROC decompile // (ip--ip)
+{   
+    dup U8'@++ . ;
 }
 end
 cd 'test
