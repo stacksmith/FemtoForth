@@ -91,10 +91,17 @@ CODE "system'core'leave exit to outer host ",leave,T_PROC
         pop     {r4-r11,lr}
         bx      lr
 .x:
-CODE "system'core'nop ",nop,T_PROC 
-mov r0,0xDEAD
-        bx      lr
+;------------------------------------------------------------------------------
+CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
+        RPUSH   IP
+        mov     IP,r0
+        DPOP    r0
+        NEXT
 .x:
+;CODE "system'core'nop ",nop,T_PROC 
+;mov r0,0xDEAD
+;        bx      lr
+;.x:
 
 CODE "test'a",testa,T_PROC 
 
@@ -247,6 +254,13 @@ CODE "system'core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_PROC
 .x:
 ;------------------------------------------------------------------------------
 ;
+CODE "system'core'RSP@ // (--val) value at RSP",ATRSP ,T_PROC
+        DPUSH   r0
+        ldr     r0,[RSP]
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+;
 CODE "system'core'dup // (n -- n n) Duplicates the top stack item.",dup,T_PROC
         DPUSH   r0
         NEXT
@@ -295,7 +309,21 @@ CODE "system'core'-rot // (a b c -- c a b) Rotates the first item to third.",min
 CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",conddup,T_PROC
         cmp     r0,0
         streq   r0,[DSP,-4]!
-.done:  NEXT
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
+CODE "system'core'dbl'drop // (a b --) Discard 2 items.",dbl_drop,T_PROC
+        add     DSP,4
+        DPOP    r0
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
+        ldr     r1,[DSP]        ;r1=a
+        DPUSH   r0              ;abb
+        DPUSH   r1              ;abab
+        NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;
@@ -324,7 +352,7 @@ CODE "system'core'4- // (a -- a-14) decrement by 4",decr4,T_PROC
 ;------------------------------------------------------------------------------
 ;
 CODE "system'core'4* // (a -- a*4) mul by 4",mul4,T_PROC
-        lsr     r0,4
+        lsl     r0,2
         NEXT
 .x:
 
@@ -408,12 +436,26 @@ CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_PROC
+CODE "system'core'zr // (n1 -- n1,flag) True if n1 is 0",pres_cmp_zr,T_PROC
+        DPUSH   r0
         cmp     r0,0
         moveq   r0,1
         movne   r0,0
         NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'0<> // (n1 -- flag) True if n1 is not 0",cmp_nz,T_PROC
+        cmp     r0,0
+        movne   r0,1
+        NEXT
 .x:
+;------------------------------------------------------------------------------
+CODE "system'core'nz // (n1 -- n1,flag) True if n1 is not 0",pres_cmp_nz,T_PROC
+        DPUSH   r0
+        cmp     r0,0
+        movne   r0,1
+        NEXT
+.x: 
 ;------------------------------------------------------------------------------
 CODE "system'core'0< // (n1 -- flag) True if n1 is less than 0",cmp_ltz,T_PROC
         cmp     r0,0
@@ -492,7 +534,13 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
         DPOP    r0
         NEXT
 .x: 
-
+;------------------------------------------------------------------------------
+CODE "system'core'@++ // (addr -- addr+4 val) fetch and increment pointer",finc,T_PROC
+        mov     r1,r0
+        ldr     r0,[r1],1
+        DPUSH   r1
+        NEXT
+.x:
 ;------------------------------------------------------------------------------
 CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
         ldr     r1,[DSP]        ;r1=bh
@@ -583,7 +631,15 @@ CODE "system'core'U16'! // (val addr --) store val at addr",wstore,T_PROC
         strh    r1,[r0]
         DPOP    r0
         NEXT
-.x: ;------------------------------------------------------------------------------
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'U16'@++ // (addr -- addr+1 val) fetch and increment pointer",wfinc1,T_PROC
+        mov     r1,r0                   ;addr
+        ldrh    r0,[r1],1               ;val
+        DPUSH   r1
+        NEXT
+.x:
+;------------------------------------------------------------------------------
 ; U32 // (--U32)   load a 32 from codestream.
 ;
 CODE "system'core'U32 // (--n) fetch a U32 that follows in the codestream",U32,T_U32
@@ -612,6 +668,29 @@ CODE "system'core'STR8 // (--str,cnt) fetch a string pointer.  String follows in
     DPUSH       IP              ;STR
     add         IP,r0
     NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'STR8'eq // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstrings",str_cmp,T_PROC
+    DPOP        r1              ;r0=cnt2 r1=str2
+    ldr         r2,[DSP]        ;r2 is cnt1
+    cmp         r1,r0           ;counts equal?
+    moveq       r0,0            ;no, clear flag
+    bxeq        lr              ;and return...
+    ; otherwise compare strings using r2...
+    ldr         r3,[DSP,4]      ;r3 is str1
+.loop:
+    ldrb        r0,[r1],1       ;load str2 character into r0
+    ldrb        r8,[r3],1       ;load str1 character into r1
+    cmp         r0,r8
+    bne         .no
+    subs        r2,1
+    bne         .loop
+.yes:
+    mov         r0,1
+    NEXT
+.no:
+    mov         r0,0
+    NEXT    
 .x:
 ;------------------------------------------------------------------------------
 ; branch

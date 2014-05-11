@@ -285,11 +285,12 @@ CODE "system'core'?dup // (a -- a a | 0) duplicate top of stack if non-zero",con
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'dbl'drop // (a b --) Discards 2 items.",dbl_drop,T_PROC
+CODE "system'core'dbl'drop // (a b --) Discard 2 items.",dbl_drop,T_PROC
         mov     eax,[ebp+4]
         add     ebp,8
         NEXT
 .x:
+;------------------------------------------------------------------------------
 CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
         mov     ecx,[ebp]       ;ecx=a  eax=b
         sub     ebp,8           ;room for 2 more

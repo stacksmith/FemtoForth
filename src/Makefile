@@ -18,8 +18,8 @@
 #
 #*****************************************************************************
 # uncomment one of the supported platforms
-#PLATFORM := android_arm
-PLATFORM := linux_x86
+PLATFORM := android_arm
+#PLATFORM := linux_x86
 #===============================================
 ifeq ($(PLATFORM),android_arm)
 BIN := /home/miner/android-ndk-r9d/toolchains/arm-linux-androideabi-4.6/prebuilt/linux-x86_64/bin
