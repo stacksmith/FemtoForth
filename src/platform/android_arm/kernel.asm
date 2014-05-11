@@ -492,25 +492,6 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
         DPOP    r0
         NEXT
 .x: 
-;------------------------------------------------------------------------------
-CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_PROC
-        ldrb    r0,[r0]
-        NEXT
-.x: 
-;------------------------------------------------------------------------------
-CODE "system'core'c! // (val addr --) store val at addr",cstore,T_PROC
-        DPOP    r1              ;val
-        strb    r1,[r0]
-        DPOP    r0
-        NEXT
-.x: 
-;------------------------------------------------------------------------------
-CODE "system'core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_PROC
-        mov     r1,r0                   ;addr
-        ldrb    r0,[r1],1               ;val
-        DPUSH   r1
-        NEXT
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
@@ -564,6 +545,26 @@ CODE "system'core'U8 // (--n) fetch a U8 that follows in the codestream",U8,T_U8
         NEXT
 .x:
 ;------------------------------------------------------------------------------
+CODE "system'core'U8'@ // (addr -- val) fetch val from addr",cfetch,T_PROC
+        ldrb    r0,[r0]
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U8'! // (val addr --) store val at addr",cstore,T_PROC
+        DPOP    r1              ;val
+        strb    r1,[r0]
+        DPOP    r0
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U8'@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_PROC
+        mov     r1,r0                   ;addr
+        ldrb    r0,[r1],1               ;val
+        DPUSH   r1
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
 ; U16 // (--U16)  load a U16 from codestream.
 ;
 CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T_U16
@@ -572,6 +573,17 @@ CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T
         NEXT
 .x:
 ;------------------------------------------------------------------------------
+CODE "system'core'U16'@ // (addr -- val) fetch val from addr",wfetch,T_PROC
+        ldrh    r0,[r0]
+        NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U16'! // (val addr --) store val at addr",wstore,T_PROC
+        DPOP    r1              ;val
+        strh    r1,[r0]
+        DPOP    r0
+        NEXT
+.x: ;------------------------------------------------------------------------------
 ; U32 // (--U32)   load a 32 from codestream.
 ;
 CODE "system'core'U32 // (--n) fetch a U32 that follows in the codestream",U32,T_U32

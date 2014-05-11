@@ -36,7 +36,7 @@ typedef struct sHeader {
         struct sHeader* type;      // 12         //points at type directory
         TOKEN* pcode;              // 16  headers refer to actual code
         //
-        U16 srclen;               //  20 padding          TODO 
+        U16 srclen;               //  20  
         U8 pad;
         U8 namelen;                // 23 actual name part of string
         //

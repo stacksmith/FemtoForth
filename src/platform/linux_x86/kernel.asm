@@ -206,6 +206,12 @@ CODE "system'core'RSP // (--RSP) get Return Stack Pointer",RSP ,T_PROC
         mov     eax,esp
         NEXT
 .x:
+;------------------------------------------------------------------------------
+CODE "system'core'RSP@ // (--val) value at RSP",ATRSP ,T_PROC
+        DPUSH   eax
+        mov     eax,[esp]
+        NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 ;
@@ -269,9 +275,9 @@ CODE "system'core'dbl'drop // (a b --) Discards 2 items.",dbl_drop,T_PROC
         NEXT
 .x:
 CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
-        mov     ecx,[ebx]       ;ecx=a
+        mov     ecx,[ebp]       ;ecx=a  eax=b
         sub     ebp,8           ;room for 2 more
-        mov     [ebp+4],eax     ;ab?b
+        mov     DWORD[ebp+4],eax     ;ab?b
         mov     [ebp],ecx
         NEXT
 .x:
@@ -389,6 +395,15 @@ CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_PROC
 CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
     xor         edx,edx
     cmp         edx,eax
+    sete        dl
+    mov         eax,edx
+    NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'_0= // (n1 -- n1,flag) True if n1 is 0",pres_cmp_zr,T_PROC
+    DPUSH       eax
+    xor         edx,edx
+    cmp         eax,edx
     sete        dl
     mov         eax,edx
     NEXT
@@ -519,29 +534,10 @@ CODE "system'core'! // (val addr --) store val at addr",store,T_PROC
     DPOP        eax
     NEXT
 .x: 
-;------------------------------------------------------------------------------
-CODE "system'core'c@ // (addr -- val) fetch val from addr",cfetch,T_PROC
-    movzx       eax,byte[eax]
-    NEXT
-.x: 
-;------------------------------------------------------------------------------
-CODE "system'core'c! // (val addr --) store val at addr",cstore,T_PROC
-    mov         edx,[ebp]
-    add         ebp,4
-    mov         [eax],dl
-    DPOP        eax
-    NEXT
-.x: 
 
-;------------------------------------------------------------------------------
-CODE "system'core'c@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_PROC
-        mov     edx,eax
-        xor     eax,eax
-        mov     al,[edx]
-        add     edx,1
-        DPUSH   edx
-        NEXT
-.x:
+
+
+
         
 ;------------------------------------------------------------------------------
 ;
@@ -579,6 +575,29 @@ CODE "system'core'U8 // (--n) fetch a U8 that follows in the codestream",U8,T_U8
     NEXT
 .x:
 ;------------------------------------------------------------------------------
+CODE "system'core'U8'@ // (addr -- val) fetch a char from addr",cfetch,T_PROC
+    movzx       eax,byte[eax]
+    NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U8'! // (val addr --) store char at addr",cstore,T_PROC
+    mov         edx,[ebp]
+    add         ebp,4
+    mov         [eax],dl
+    DPOP        eax
+    NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U8'@++ // (addr -- addr+1 val) fetch and increment pointer",finc1,T_PROC
+        mov     edx,eax
+        xor     eax,eax
+        mov     al,[edx]
+        add     edx,1
+        DPUSH   edx
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
 ; U16 (--U16) load a U16 from codestream.
 ;
 CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T_U16
@@ -588,6 +607,20 @@ CODE "system'core'U16 // (--n) fetch a U16 that follows in the codestream",U16,T
     add         esi,2
     NEXT
 .x:
+;------------------------------------------------------------------------------
+CODE "system'core'U16'@ // (addr -- val) fetch a 16-bit val from addr",wfetch,T_PROC
+    movzx       eax,word[eax]
+    NEXT
+.x: 
+;------------------------------------------------------------------------------
+CODE "system'core'U16'! // (val addr --) store a 16-bit val at addr",wstore,T_PROC
+    mov         edx,[ebp]       ;edx =addr
+    add         ebp,4
+    mov         [eax],dx
+    DPOP        eax
+    NEXT
+.x: 
+
 ;------------------------------------------------------------------------------
 ; U32 (--U32) load a 32 from codestream.
 ;
@@ -625,8 +658,28 @@ CODE "system'core'STR8 // (--str,cnt) fetch a string pointer.  String follows in
     add         esi,eax         ;skip string
     NEXT
  .x:   
-
-
+CODE "system'core'STR8'_= // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstrings",str_cmp,T_PROC
+    cmp         eax,[ebp+4]     ;compare counts
+    jne         .no
+   push        esi
+   mov         esi,[ebp+8]      ;esi=str1;
+   push        edi
+   mov         edi,[ebp]        ;edi=str2;
+    mov         ecx,eax         ;count
+    xor         eax,eax
+    repe cmpsb
+    sete       al
+   add         ebp,4
+   pop         edi
+   pop         esi
+   NEXT
+.no:
+   xor         eax,eax
+   add         ebp,4
+   pop         edi
+   pop         esi
+   NEXT
+.x:
 ;------------------------------------------------------------------------------
 ; branch
 ;

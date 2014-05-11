@@ -232,7 +232,7 @@ int interpret_def_SYSVAR(HINDEX h){
 }
 
 int interpret_def_type(HINDEX htype){
-printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
+//printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
     HINDEX h = head_new(var->data_ptr,  htype,var->wd);
 
@@ -254,7 +254,7 @@ printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name
         U32 n; const char*p = head_name(h,&n);
         printf("def_type invalid type %.*s:\n",n,p);
     }
-printf("interpret_def_type: done\n");
+//printf("interpret_def_type: done\n");
     return ret;
     
 }

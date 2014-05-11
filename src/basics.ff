@@ -62,8 +62,9 @@ end
 
 
 PROC ctell // (ptr,cnt--)
-{ times (
-    c@++ emit
+{ if( dup 0 = ) dbl'drop ; thanx
+  times (
+    U8'@++ emit
   )
   drop ;
 }
@@ -137,7 +138,7 @@ end
 PROC detokenize // (ptr--pointer corresponding to token at ptr)
 {
    dup table'base // ptr,table
-   swap c@ 4* + @        // reference
+   swap U8'@ 4* + @        // reference
    ;
 }
 end
@@ -151,16 +152,48 @@ $04000000 $24 + SYSVAR top
 end
 $04000080 $18 + SYSVAR ptr
 end
-
 PROC name // (e--name,cnt) //from entry pointer, get name/cnt
-{
-    23 + c@++ ;
+{   23 + U8'@++ ;
 }
 end
-
-
-
-
+PROC size // (e--size) return size of the entry (head+src)
+{   20 + U16'@ 24 + ;
+}
+end
+PROC next // (e-echild) return first child
+{   @ ;
+}
+end
+PROC dad // (e-echild) return first child
+{   4 + @ ;
+}
+end
+PROC child // (e-echild) return first child
+{   8 + @ ;
+}
+end
+PROC code // (e--code) return code pointer
+{   16 + @ ;
+}
+end
+PROC namelen // (e--n) get the name length
+{   23 + U8'@ ; }
+end
+// TODO: why can't I eliminate the = test?
+PROC locatex // (ptr,cnt,hdir -- h/0)
+{
+    head'child begin
+      if( dup 0= ) drop dbl'drop 0 ; thanx
+      dup push // preserve eptr
+      if( head'namelen over = ) // ptr,cnt
+        if( RSP@ head'name STR8'_= ) // l-pres compare
+          dbl'drop pop ; // return head
+        thanx
+      thanx
+      pop head'next
+    again
+}
+end
 
 cd system'core
 mkdir dic cd dic
