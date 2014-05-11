@@ -83,7 +83,7 @@ end
 // ============================================ 
 PROC color // (col--)
 {  $1B emit
-   "[0;3" ctell
+   "[3" ctell
    '0' + emit // output as ascii digit
    'm' emit
    ;
@@ -105,6 +105,14 @@ PROC cyan { 6 color ; }
 end
 PROC white { 7 color ; }
 end
+
+PROC reset { $1B emit "[0m" ctell ; }
+end
+PROC bright { $1B emit "[1m" ctell ; }
+end
+PROC dim { $1B emit "[2m" ctell ; }
+end
+    
 
 cd system'io
 PROC splashp
@@ -170,6 +178,10 @@ PROC dad // (e-echild) return first child
 end
 PROC child // (e-echild) return first child
 {   8 + @ ;
+}
+end
+PROC type // (e-echild) return e's type
+{   12 + @ ;
 }
 end
 PROC code // (e--code) return code pointer

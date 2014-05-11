@@ -211,6 +211,7 @@ printf("interpret_def_type: ret [%d]\n",ret);
 printf("-----------\n");
 def_error(head_get_name(h),src_errbuf);//var->src_ptr);
 printf("-----------\n");
+        return 0;
     }
     return 1;
 }

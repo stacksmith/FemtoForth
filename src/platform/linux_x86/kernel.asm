@@ -400,7 +400,7 @@ CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'_0= // (n1 -- n1,flag) True if n1 is 0",pres_cmp_zr,T_PROC
+CODE "system'core'zr // (n1 -- n1,flag) True if n1 is 0",pres_cmp_zr,T_PROC
     DPUSH       eax
     xor         edx,edx
     cmp         eax,edx

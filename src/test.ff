@@ -1,6 +1,6 @@
 cd 'test
 
-PROC deref // (refptr--head) find the head for this reference
+PROC deref // (refptr--head/0) find the head for this reference
 { 
     // walk the entire header list.  TOS=header; NOS=addr
     head'bottom begin
@@ -13,21 +13,48 @@ PROC deref // (refptr--head) find the head for this reference
 }
 end
 
-PROC deco1 // (ip--ip)
+PROC deco1 // (ip--ip,e)
 {
-    dup U8'@++ // ptr,tok
+    U8'@++ // ptr,tok
     if( dup 0= )
       "CODE " ctell ;
     thanx
     4* over table'base + @ // ip,ref
     if( deref dup 0<> )
-        head'name ctell space
+        ;
     else
-        drop "UNKNOWN " ctell
+        drop 1 error'throw
     thanx
     ;
 }
 end
 
 
+
+PROC deco2 // (ip--ip)
+{
+
+    color'dim color'white '<' emit color'reset color'green
+    if( error'catch 0= )
+        deco1 dup head'name ctell
+        head'type push "decompile" pop 
+        head'locatex // ip,deco
+     dup head'name ctell
+        error'clear
+    else 
+        "ERROR" ctell 
+    thanx
+    color'dim color'white '>' emit color'reset color'white
+    ;
+}
+end
+
+cd 'system'TYPE'PROC
+PROC decompile // (ip--ip)
+{
+    "PROCTYPE " ctell
+}
+end
+
+cd 'test
 

@@ -274,14 +274,16 @@ int lang_p(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"(",1)) { return interpret_compuntil(")",1);}
             if(0==strncmp(ptr,"{",1)) {
                 int ret = interpret_compuntil("}",1);
+//printf("{...} %d\n",ret);
                 if(ret){
                     //don't let interpreter erase us!
                     var->run_ptr = var->data_ptr;
 //printf("update: run_table is at %08p\n",var->run_table);
                     var->run_table = table_end(var->data_ptr);
                     return 1;
-                } else
+                } else {
                     return 0;
+                }
             }
          
             break;
