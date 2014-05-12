@@ -127,13 +127,16 @@ U32 dstack_read(){
  * pop count off the return stack.
  * ==========================================================================*/
 int lang_times(){
-   HINDEX hpush = head_find_abs_or_die("system'core'push");
-   data_compile_token(hpush);
-   dstack_push((U32)var->data_ptr);       //save loop target on stack
-   interpret_one();                     //compile expression
-   HINDEX htimes = head_find_abs_or_die("system'core'times");
-   data_compile_token(htimes);
-   data_compile_off_S8(dstack_pop());
+    HINDEX hpush = head_find_abs_or_die("system'core'push");
+    data_compile_token(hpush);
+    dstack_push((U32)var->data_ptr);       //save loop target on stack
+    if(interpret_one()) {                     //compile expression
+        HINDEX htimes = head_find_abs_or_die("system'core'times");
+        data_compile_token(htimes);
+        data_compile_off_S8(dstack_pop());
+        return 1;
+    }
+    return 0;
    
 
 }

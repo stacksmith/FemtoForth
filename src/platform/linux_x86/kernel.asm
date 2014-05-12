@@ -400,6 +400,14 @@ CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_PROC
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
+CODE "system'core'gt // (n1 n2 --n1, flag) True if n1 > n2",pres_cmp_gt,T_PROC
+    xor         edx,edx
+    cmp         [ebp],eax
+    setg        dl
+    mov         eax,edx
+    NEXT  
+.x:
+;------------------------------------------------------------------------------
 CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_PROC
     xor         edx,edx
     cmp         [ebp],eax

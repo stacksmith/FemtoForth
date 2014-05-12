@@ -407,7 +407,7 @@ CODE "system'core'< // (n1 n2 -- flag) True if n1 < n2",cmp_lt,T_PROC
 ;------------------------------------------------------------------------------
 CODE "system'core'lt // (n1 n2 --n1, flag) True if n1 < n2",pres_cmp_lt,T_PROC
         ldr     r1,[DSP]                      ;r1=n1
-        cmp     r1,r0fs
+        cmp     r1,r0
         movge   r0,0                    ;<              
         movlt   r0,1
         NEXT
@@ -415,8 +415,16 @@ CODE "system'core'lt // (n1 n2 --n1, flag) True if n1 < n2",pres_cmp_lt,T_PROC
 ;------------------------------------------------------------------------------
 CODE "system'core'> // (n1 n2 -- flag) True if n1 > n2",cmp_gt,T_PROC
         DPOP    r1                      ;r1=n1
-        cmp     r0,r1
-        movge   r0,0                    ;> // (r0 and r1 reversed)            
+        cmp     r1,r0
+        movle   r0,0
+        movgt   r0,1                    ;> // (r0 and r1 reversed)            
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'gt // (n1 n2 --n1, flag) True if n1 > n2",pres_cmp_gt,T_PROC
+        ldr     r1,[DSP]                      ;r1=n1
+        cmp     r1,r0
+        movge   r0,0                    ;<              
         movlt   r0,1
         NEXT
 .x:

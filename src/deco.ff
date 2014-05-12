@@ -53,6 +53,7 @@ PROC deco_n // (ip,cnt--ip)
 { times (
   color'green dup . space
   color'cyan dup U8'@ hex2 space
+  dd
   deco_tok 
   cr
   ) color'reset ;

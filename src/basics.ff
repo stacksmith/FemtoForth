@@ -122,12 +122,15 @@ end
 PROC dim { $1B emit "[2m" ctell ; }
 end
 // ============================================ 
-// cd core'U8
-// PROC printable // (c--c,flag) 1 if the character is printable
-// { dup
-//    U8'@ // c
-// }
-
+cd core'U8
+PROC is_print // (c--c,flag) 1 if the character is printable
+{ dup
+  U8'@ // c
+  if( 127 gt ) drop 0 ; thanx
+  if( 32 lt ) drop 0 ; thanx
+  drop 1 ;
+}
+end
 // ============================================ 
 
 cd system'io
