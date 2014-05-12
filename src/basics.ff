@@ -260,6 +260,7 @@ PROC owner // (ptr--head/0) find the head referring to this ptr
 }
 end
 
+
 // ============================================ 
 // DATA
 cd system'core
@@ -298,6 +299,20 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
   table'runptr -( run'ptr table'base ) 2 shr .
 cr ;
  }
+end
+
+cd test
+PROC dump // (pt--)
+{ 
+  table'base
+  16 times (
+      dup . space
+      dup @ head'owner head'name ctell
+      4+
+      cr
+  ) 
+  ;
+}
 end
 
 
