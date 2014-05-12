@@ -121,7 +121,14 @@ PROC bright { $1B emit "[1m" ctell ; }
 end
 PROC dim { $1B emit "[2m" ctell ; }
 end
-    
+// ============================================ 
+// cd core'U8
+// PROC printable // (c--c,flag) 1 if the character is printable
+// { dup
+//    U8'@ // c
+// }
+
+// ============================================ 
 
 cd system'io
 PROC splashp
