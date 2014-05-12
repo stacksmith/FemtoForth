@@ -92,6 +92,12 @@ CODE "system'core'leave exit to outer host ",leave,T_PROC
         bx      lr
 .x:
 ;------------------------------------------------------------------------------
+CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
+        DPUSH   r0
+        mov     r0,RDAT
+        NEXT
+.x:
+;------------------------------------------------------------------------------
 CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
         RPUSH   IP
         mov     IP,r0

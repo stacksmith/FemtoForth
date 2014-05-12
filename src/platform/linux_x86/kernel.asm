@@ -82,7 +82,12 @@ CODE "system'core'leave // exit to outer host ",leave,T_PROC
 
     ret
 .x:
-
+;------------------------------------------------------------------------------
+CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
+    DPUSH       eax
+    mov         eax,ebx
+    NEXT
+.x:
 ;------------------------------------------------------------------------------
 CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
     push        esi                     ;save IP, so upon return we will continue
@@ -433,6 +438,14 @@ CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_PROC
     mov         eax,edx
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "system'core'ge // (n1 n2 --n1, flag) True if n1 <= n2",pres_cmp_ge,T_PROC
+    xor         edx,edx
+    cmp         [ebp],eax
+    setge       dl
+    mov         eax,edx
+    NEXT
+.x:
 ;------------------------------------------------------------------------------
 CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
     xor         edx,edx

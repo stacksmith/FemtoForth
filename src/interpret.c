@@ -177,11 +177,11 @@ int interpret_copy_source(HINDEX h){
     //now read lines and append as source until a line containing only "end"
     while(1){
         char*psrc = src_line();         //a fresh line of source
-        U32 len = strlen(psrc);       
-//printf("lang_colon [%s] %d\n",psrc,len);
+        U32 len = strlen(psrc);      
+//printf("interpret_copy_source [%.*s] %d\n",len,psrc,len);
         //terminate source with a line containing an |
         head_append_source(h,psrc,len);
-        if((4==len)&&(0==strncmp("end\n",psrc,4))){
+        if( (0==strncmp("end",psrc,3)) && (src_is_ws(psrc[3])) ){
             var->src_ptr += len;
             break;
         }
@@ -225,6 +225,7 @@ int interpret_def_U32(HINDEX h){
   Sysvar has no data allocated - it points to some other data...
 */
 int interpret_def_SYSVAR(HINDEX h){
+//printf("SYSVAR [%s]\n",var->src_ptr);
     //the pointer is on the datastack!
     TOKEN* ptr = (TOKEN*)dstack_pop();
     head_set_code(h,ptr);         
@@ -237,7 +238,9 @@ int interpret_def_type(HINDEX htype){
     //TODO: check for duplication...of string and of datatptr...
     HINDEX h = head_new(var->data_ptr,  htype,var->wd);
 
+//printf("interpret_def_type1 [%s]\n",var->src_ptr);
     interpret_copy_source(h); //in any event, append source and commit entry
+//printf("interpret_def_type2 [%s]\n",var->src_ptr);
 //printf("interpret_def: src [%s]\n",var->src_ptr);
 //printf("lang_colon: type %.*s %d \n",head_get_namelen(htype),head_get_name(htype));
     //dispatch on type! Note: tcnt and tname are not valid, as source has changed
@@ -255,7 +258,8 @@ int interpret_def_type(HINDEX htype){
         U32 n; const char*p = head_name(h,&n);
         printf("def_type invalid type %.*s:\n",n,p);
     }
-//printf("interpret_def_type: done\n");
+//U32 n; const char*p = head_name(h,&n);
+//printf("interpret_def_type: done %.*s:\n",n,p);
     return ret;
     
 }
@@ -317,6 +321,7 @@ int command(char* ptr,U32 cnt);
 
 
 int interpret_outer_p(char* ptr,U32 cnt){
+//printf("OUTER [%.*s]\n",cnt,ptr);
     if(!command(ptr,cnt)) 
         if(!interpret_compone(ptr,cnt)) {        //otherwise, do the magic
             src_error("not found:");

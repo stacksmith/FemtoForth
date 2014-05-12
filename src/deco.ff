@@ -1,27 +1,15 @@
 cd 'test
 
-PROC deref // (refptr--head/0) find the head for this reference
-{ 
-    // walk the entire header list.  TOS=header; NOS=addr
-    head'bottom begin
-      if( dup head'ptr = ) dbl'drop 0 ; thanx  // exit on head'ptr
-      if( dbl'dup head'code = ) 
-        swap drop ;
-      thanx 
-      dup head'size +
-    again
-}
-end
 
 // Decompiling a 0 token is tricky...
 PROC deco1 // (ip--ip,e)
 {
     U8'@++ // ptr,tok
     if( zr )
-      drop ref ; deref ; // a search for "'system'core';" may be better?
+      drop ref ; head'owner ; // a search for "'system'core';" may be better?
     thanx
     4* over table'base + @ // ip,ref
-    if( deref nz )
+    if( head'owner nz )
         ;
     else
         drop 1 error'throw
