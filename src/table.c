@@ -103,7 +103,7 @@ int table_ptr_verify(PTOKEN*p){
     return 1;
 }
 
-void table_dump(PTOKEN* p){
+PTOKEN* table_dump(PTOKEN* p){
     int i; for(i=0;i<16;i++){
         printf("\33[0;32m");
         printf("%2d %p: ",i,p);
@@ -121,6 +121,7 @@ void table_dump(PTOKEN* p){
         printf("\33[0;37m");
         p++;
     }
+    return p;
 }
 
 

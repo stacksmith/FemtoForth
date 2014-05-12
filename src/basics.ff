@@ -34,6 +34,9 @@ end
 PROC key // (--n)
 { HIN getc ; }
 end
+
+
+
 PROC hexd // (hexd--ascii) convert a hex digit to ascii
 { 
   $F and '0' +
@@ -59,7 +62,13 @@ PROC . // (val--)
 }
 end
 
+PROC hex2 // (val--) output 2 hex digits
+{ 24 shl 2 hexp ; }
+end
 
+PROC hex4 // (val--) output 4 hex digits
+{ 16 shl 4 hexp ; }
+end
 
 PROC ctell // (ptr,cnt--)
 { if( dup 0 = ) dbl'drop ; thanx
@@ -139,7 +148,7 @@ $04000080 $10 + SYSVAR runptr // used to preserve table for cleanup after runnin
 end
 PROC base // {ptr--base} get table base for pointer
 {
-    1+ 4 >> 2 << ; // 16:1
+    1+ 4 shr 2 shl ; // 16:1
 }
 end
 
@@ -225,7 +234,7 @@ color'green "     TOS      NOS      DSP      RSP     HEAD      CPL     BASE  ENT
   head'ptr . space
   run'ptr . space
   run'ptr table'base . space
-  table'runptr -( run'ptr table'base ) 2 >> .
+  table'runptr -( run'ptr table'base ) 2 shr .
 
 cr ;
  }

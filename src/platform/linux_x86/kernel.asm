@@ -525,14 +525,14 @@ CODE "system'core'negate // (n1 -- 0-n1) arithmetic negation",negate,T_PROC
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_PROC
+CODE "system'core'shl // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_PROC
     mov         ecx,eax
     DPOP        eax
     shl         eax,cl
     NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_PROC
+CODE "system'core'shr // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_PROC
     mov         ecx,eax
     DPOP        eax
     shr         eax,cl

@@ -139,7 +139,7 @@ int lang_times(){
 }
 int lang_t(){
     PTOKEN* p = (PTOKEN*) dstack_pop();
-    table_dump(p);
+    dstack_push( table_dump(p) );
 }
 
 

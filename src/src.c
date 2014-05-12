@@ -196,7 +196,7 @@ int src_file(char* fname,U32 cnt){
     hfile = fopen(p,"r");
     free(p);
     if(!hfile) {
-        printf("File error trying to open [%s]\n",p);
+        printf("File error trying to open [%*.s]\n",cnt,fname);
         src_error(" ");
         return 0;
     }
