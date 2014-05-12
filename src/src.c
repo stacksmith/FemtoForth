@@ -194,11 +194,10 @@ void src_error(char* msg){
 int src_file(char* fname,U32 cnt){
     char*p = strndup(fname,cnt);
     hfile = fopen(p,"r");
-    free(p);
     if(!hfile) {
-        printf("File error trying to open [%*.s]\n",cnt,fname);
+        printf("File error trying to open [%s]\n",p);
         src_error(" ");
-        return 0;
     }
-    return 1;
+    free(p);
+    return hfile?1:0;
 }
