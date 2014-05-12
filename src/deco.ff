@@ -13,6 +13,7 @@ PROC deref // (refptr--head/0) find the head for this reference
 }
 end
 
+// Decompiling a 0 token is tricky...
 PROC deco1 // (ip--ip,e)
 {
     U8'@++ // ptr,tok
@@ -29,9 +30,8 @@ PROC deco1 // (ip--ip,e)
 }
 end
 
-// Decompiling a 0 token is tricky...
-
-PROC deco2 // (ip--ip)
+// decompile a token and associated data in the codestream
+PROC deco_tok // (ip--ip)
 {
     if( error'catch 0= )
         color'dim color'white '<' emit color'reset color'green
@@ -47,6 +47,12 @@ PROC deco2 // (ip--ip)
         "ERROR" ctell 
     thanx
     ;
+}
+end
+PROC deco_n // (ip,cnt--ip)
+{ times (
+  color'green dup . space deco_tok cr
+  ) color'reset ;
 }
 end
 
