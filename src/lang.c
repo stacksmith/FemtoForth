@@ -142,24 +142,7 @@ int lang_t(){
     table_dump(p);
 }
 
-/*=============================================================================
-* ref   - compile a reference to an addres.
-* 
-* - code: <ref> <tok>   at runtime leave address (onding to tok) on dstack
-*/
-int lang_ref_p(HINDEX htarget){
-    if(!htarget) return 0; //TODO: error
-    HINDEX href = head_find_absolute("system'core'REF",8); //TODO:pre-find
-    if(!href) return 0;
-    data_compile_token(href);
-    data_compile_token(htarget);
-    return 1;
-}
-int lang_ref(char* ptr,U32 cnt){
-    //find the identifier following the &
-    HINDEX htarget = head_find(ptr,cnt,search_list);
-    return lang_ref_p(htarget);
-}
+
 int lang_return(void){
     data_compile_U8(0);
     return 1;
@@ -241,8 +224,13 @@ int lang_oper(char* opname,U32 oplen){
     //compile a reference-style sequence
     return data_ref_style_p(h,operation);
 }
+/*=============================================================================
+* ref   - compile a reference to an address, using the table (via a token)
+* 
+* - code: <ref> <tok>   at runtime leave address (onding to tok) on dstack
+*/
 
-int lang_ptr(){
+int lang_ref(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     //now compile as a tabled variable, to allow for relocation   
@@ -261,9 +249,9 @@ int lang_p(char* ptr,U32 cnt){
    
     //--------------------------------------------------
     // address of operator
-    if((cnt>1)&&('&'==*ptr)){
-        return lang_ref(ptr+1,cnt-1);
-    }
+//    if((cnt>1)&&('&'==*ptr)){
+//        return lang_ref(ptr+1,cnt-1);
+//    }
     switch(cnt){
         case 1:
 //            if(0==strncmp(ptr,"+",1)) { return lang_operator(ptr,cnt); }
@@ -294,7 +282,7 @@ int lang_p(char* ptr,U32 cnt){
            
             break;
         case 3:
-             if(0==strncmp(ptr,"ptr",3)) { return lang_ptr(); }
+             if(0==strncmp(ptr,"ref",3)) { return lang_ref(); }
             break;
         case 4:
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }

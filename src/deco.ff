@@ -29,7 +29,7 @@ PROC deco1 // (ip--ip,e)
 }
 end
 
-
+// Decompiling a 0 token is tricky...
 
 PROC deco2 // (ip--ip)
 {
