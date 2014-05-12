@@ -17,7 +17,7 @@ PROC deco1 // (ip--ip,e)
 {
     U8'@++ // ptr,tok
     if( zr )
-      "CODE " ctell ;
+      drop ref ; deref ; // a search for "'system'core';" may be better?
     thanx
     4* over table'base + @ // ip,ref
     if( deref nz )

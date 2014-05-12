@@ -93,10 +93,10 @@ CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC
 .x:
 
 ;------------------------------------------------------------------------------
-;CODE "system'core'; // (--) mostly for decompile (usually <0>) ",invoke,T_PROC 
-;    pop         esi
-;    NEXT;
-;.x:
+CODE "system'core'; // (--) mostly for decompile (usually <0>) ",returno,T_PROC 
+    pop         esi
+    NEXT;
+.x:
 
 ;------------------------------------------------------------------------------
 ; 
