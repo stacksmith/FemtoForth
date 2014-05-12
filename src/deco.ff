@@ -35,7 +35,7 @@ PROC deco_tok // (ip--ip)
 {
     if( error'catch 0= )
         color'dim color'white '<' emit color'reset color'green
-        deco1 dup head'name ctell
+        deco1 dup head'name ctell space
         head'type 
         if( push "decompile" pop  head'locatex zr )
             dbl'drop 1 error'throw
@@ -92,7 +92,12 @@ end
 cd 'system'TYPE'PU8
 PROC decompile // (ip--ip)
 {   
-    dup U8'@++ . ;
+    dup U8'@++ 
+    dup hex2 space
+    ''' emit
+    dup emit 
+    ''' emit
+    ;
 }
 end
 cd 'test
