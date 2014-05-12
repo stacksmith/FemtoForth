@@ -429,13 +429,13 @@ CODE "system'core'<= // (n1 n2 -- flag) True if n1 <= n2",cmp_le,T_PROC
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'le // (n1 n2 -- flag) True if n1 <= n2",pres_cmp_le,T_PROC
+CODE "system'core'le // (n1 n2 -- n1,flag) True if n1 <= n2",pres_cmp_le,T_PROC
         ldr     r1,[DSP]                      ;r1=n1
         cmp     r0,r1
         movge   r0,1                    ;<              
         movlt   r0,0
         NEXT
-.x: 
+.x:
 ;------------------------------------------------------------------------------
 CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_PROC
         DPOP    r1                      ;r1=n1
