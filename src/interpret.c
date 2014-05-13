@@ -232,10 +232,15 @@ int interpret_def_SYSVAR(HINDEX h){
    
     return 1;
 }
-
+/* ==========================================================
+    define !
+*/
 int interpret_def_type(HINDEX htype){
 //printf("interpret_def_type: type [%.*s]\n",head_get_namelen(htype),head_get_name(htype));
     //TODO: check for duplication...of string and of datatptr...
+    
+    var->define_stackdepth = 0;         //return uses this to clean up rstack.
+    
     HINDEX h = head_new(var->data_ptr,  htype,var->wd);
 
 //printf("interpret_def_type1 [%s]\n",var->src_ptr);
@@ -260,6 +265,8 @@ int interpret_def_type(HINDEX htype){
     }
 //U32 n; const char*p = head_name(h,&n);
 //printf("interpret_def_type: done %.*s:\n",n,p);
+    var->define_stackdepth = 0;         //return uses this to clean up rstack.
+
     return ret;
     
 }

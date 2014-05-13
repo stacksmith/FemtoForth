@@ -125,8 +125,9 @@ typedef struct sVar {
 /* 14 20 */ 
             char*  src_ptr;
 /* 18 24 */ 
-            U8* head_ptr; 
+            U8* head_ptr;               //should really scan table...
 /* 1C 28 */ 
+            U32 define_stackdepth;      //tracks rstack usage during define
 /* 4C 76 */
             struct sHeader* wd;
 

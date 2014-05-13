@@ -83,27 +83,6 @@ CODE "system'core'leave // exit to outer host ",leave,T_PROC
     ret
 .x:
 ;------------------------------------------------------------------------------
-CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
-    DPUSH       eax
-    mov         eax,ebx
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
-    push        esi                     ;save IP, so upon return we will continue
-    mov         esi,eax                 ;will execute at ptr
-    DPOP        eax                     ;clean up
-    NEXT
-
-.x:
-
-;------------------------------------------------------------------------------
-CODE "system'core'; // (--) mostly for decompile (usually <0>) ",returno,T_PROC 
-    pop         esi
-    NEXT;
-.x:
-
-;------------------------------------------------------------------------------
 ; 
 CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
     db 0;
@@ -129,6 +108,35 @@ CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
 ;------------------------------------------------------------------------------
 CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
     db 0;
+.x:
+
+;------------------------------------------------------------------------------
+CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
+    DPUSH       eax
+    mov         eax,ebx
+    NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC 
+    push        esi                     ;save IP, so upon return we will continue
+    mov         esi,eax                 ;will execute at ptr
+    DPOP        eax                     ;clean up
+    NEXT
+
+.x:
+
+;------------------------------------------------------------------------------
+CODE "system'core'; // (--) mostly for decompile (usually <0>) ",returno,T_PROC 
+    pop         esi
+    NEXT;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'rdrop# // (--) clean up <n> rstack items ",rclean,T_U8 
+    xor         ecx,ecx
+    mov         cl,[esi]
+    inc         esi
+    add         esp,[ecx*4]
+    NEXT
 .x:
 
 
@@ -960,6 +968,9 @@ CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_PROC
     DPOP        eax
     NEXT
 .x:
+;==============================================================================
+; 
+;------------------------------------------------------------------------------
 
 
 db 0    ;an empty record to terminate load process

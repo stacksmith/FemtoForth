@@ -147,7 +147,15 @@ int lang_t(){
 
 
 int lang_return(void){
-    data_compile_U8(0);
+    // Clean up the return stack if necessary
+    if(var->define_stackdepth){
+printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
+        HINDEX tok = head_find_abs_or_die("system'core'rdrop#");
+        data_compile_token(tok);
+        data_compile_U8(var->define_stackdepth);
+    } else {
+        data_compile_U8(0);
+    }
     return 1;
 }
 void lang_fixup(){
