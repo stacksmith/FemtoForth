@@ -55,8 +55,8 @@ end
 PROC deco_n // (ip,cnt--ip)
 { times (
 // see if ip is a named target
-  if( dup head'owner dup ) 
-    color'cyan head'name ctell ':' emit cr
+  if( dup head'owner nz ) 
+    color'cyan head_name_display ':' emit cr
   else drop thanx
   
   color'green space dup . space // address
@@ -100,14 +100,14 @@ end
 cd 'system'TYPE'PU32
 PROC decompile // (ip--ip)
 {   
-    dup @++ . ;
+    '$' emit dup @++ . ;
 }
 end
 
 cd 'system'TYPE'PU16
 PROC decompile // (ip--ip)
 {   
-    dup U16'@++ . ;
+    '$' emit dup U16'@++ . ;
 }
 end
 
@@ -115,10 +115,12 @@ cd 'system'TYPE'PU8
 PROC decompile // (ip--ip)
 {   
     U8'@++ 
-    dup hex2 space
-    ''' emit
-    emit 
-    ''' emit
+    '$' emit dup hex2 space
+    if( U8'is_print )
+      ''' emit  emit ''' emit
+    else
+      drop
+    thanx 
     ;
 }
 end
