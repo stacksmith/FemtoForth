@@ -144,7 +144,7 @@ PTOKEN* table_dump(PTOKEN* p){
 int table_clean(PTOKEN*p ){
     //p can be accessed as 255th item from code way back...
     p = p-255;
-    if(p < lay->table_bottom) ;
+    if(p < lay->table_bottom) p = lay->table_bottom;
     //find corresponding code pointer
     TOKEN* pt = table_base_inverted(p);
    
