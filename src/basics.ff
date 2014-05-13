@@ -315,6 +315,28 @@ PROC dump // (pt--)
 }
 end
 
+PROC timit1
+{
+  sys'gettimeofday
+  1000000000 times ( )
+  sys'gettimeofday
+  swap2
+  D-
+  swap . . cr
+  ;
+}
+end
 
+PROC timit2
+{
+  sys'gettimeofday
+  1000000000 0 do loop
+  sys'gettimeofday
+  swap2
+  D-
+  swap . . cr
+  ;
+}
+end
 
 

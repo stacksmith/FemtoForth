@@ -5,7 +5,7 @@ Register usage:
 REG             VM              KERNEL          PRESERVE?
 =========================================================
 R0              -               TOS
-R1              -               DATA 
+R1              -                
 R2              -               
 R3             tok              scratch
 R5              -               ERR
@@ -13,7 +13,7 @@ R6             IP
 R7              -               DSP
 lr             vmptr
 sp             SP               SP
-
+R11             -               DATA
 
 
 

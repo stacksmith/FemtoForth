@@ -459,6 +459,14 @@ CODE "system'core'>= // (n1 n2 -- flag) True if n1 > n2",cmp_ge,T_PROC
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
+CODE "system'core'ge // (n1 n2 -- n1,flag) True if n1 >= n2",pres_cmp_ge,T_PROC
+        ldr     r1,[DSP]                      ;r1=n1
+        cmp     r1,r0
+        movge   r0,1                    ;<              
+        movlt   r0,0
+        NEXT
+.x:
+;------------------------------------------------------------------------------
 CODE "system'core'0= // (n1 -- flag) True if n1 is 0",cmp_zr,T_PROC
         cmp     r0,0
         moveq   r0,1
@@ -531,13 +539,13 @@ CODE "system'core'invert // (n1 -- ~n2) bitwise not",bit_not,T_PROC
 ; FORTH shifts 
 ;------------------------------------------------------------------------------
 ;------------------------------------------------------------------------------
-CODE "system'core'<< // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_PROC
+CODE "system'core'shl // (n1 n2 -- n1<<n2) shift n1 left by n2 bits",lshift,T_PROC
         DPOP    r1              ;r1=n1
         lsl     r0,r1,r0
         NEXT
 .x: 
 ;------------------------------------------------------------------------------
-CODE "system'core'>> // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_PROC
+CODE "system'core'shr // (n1 n2 -- n1>>n2) shift n1 right by n2 bits",rshift,T_PROC
         DPOP    r1              ;r1=n1
         lsr     r0,r1,r0
         NEXT
@@ -760,6 +768,35 @@ CODE "system'core'else",else,T_OFF
         ldrsb   r1,[IP],1       ;load offset, increment IP
         add     IP,r1
         NEXT
+.x:
+
+
+;------------------------------------------------------------------------------
+; limit start do ... loop
+;
+; return stack will contain: (--addr,limit,counter)
+CODE "system'core'do // (limit,start--) set up a counted loop",_do,T_PROC
+    RPUSH       IP              ;rstack the loop address
+    DPOP        r1              ;rstack the limit
+    RPUSH       r1
+    RPUSH       r0             ;stack counter...
+    DPOP        r0
+    NEXT
+.x:
+CODE "system'core'loop // (--) count and proceed to do site",_loop,T_PROC
+    ldmia       sp,{r1,r2,r3}   ;r1=count r2=limit r3=target
+    add         r1,1 
+    cmp         r1,r2           ;compare count to limit
+    movlt       IP,r3           ;loop again..
+    strlt       r1,[sp]
+    addge       sp,12           ;otherwise, clean up rstack
+    NEXT
+.x:
+
+CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
+    DPUSH       r0
+    ldr         r0,[RSP]
+    NEXT
 .x:
 
 ;------------------------------------------------------------------------------

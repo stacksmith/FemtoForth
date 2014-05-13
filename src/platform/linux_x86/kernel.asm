@@ -783,6 +783,35 @@ CODE "system'core'0branch // (cond--) if 0, branch by signed U8 offset",zbranchU
     NEXT
 .x:
 ;------------------------------------------------------------------------------
+; limit start do ... loop
+;
+; return stack will contain: (--addr,limit,counter)
+CODE "system'core'do // (limit,start--) set up a counted loop",_do,T_PROC
+    push        esi             ;rstack the loop address
+    push        dword [ebp]     ;rstack the limit
+    push        eax             ;stack counter...
+    add         ebp,4           ;clean up
+    DPOP        eax
+    NEXT
+.x:
+CODE "system'core'loop // (--) count and proceed to do site",_loop,T_PROC
+    mov         ecx,[esp]       ;counter
+    inc         ecx
+    cmp         [esp+4],ecx     ;compare with limit
+    jle         .over
+    mov         [esp],ecx       ;update count
+    mov         esi,[esp+8]     ;and loop again.
+    NEXT
+.over:
+    add         sp,12          ;get rid of rstack data
+    NEXT
+.x:
+CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
+    DPUSH       eax
+    mov         eax,[esp]
+    NEXT
+.x:
+;------------------------------------------------------------------------------
 ; times
 ;
 ; count on return stack.  Loop to offset. Clean up RSP at the end...
