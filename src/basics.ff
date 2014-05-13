@@ -201,11 +201,11 @@ PROC ptr_check // {ptr -- ptr,flg} Check that the pointer is valid
 }
 end
 PROC name // (e--name,cnt) //from entry pointer, get name/cnt
-{   23 + U8'@++ ;
+{   31 + U8'@++ ;
 }
 end
 PROC size // (e--size) return size of the entry (head+src)
-{   20 + U16'@ 24 + ;
+{   26 + U16'@ 32 + ;
 }
 end
 PROC next // (e-echild) return first child
@@ -229,7 +229,7 @@ PROC code // (e--code) return code pointer
 }
 end
 PROC namelen // (e--n) get the name length
-{   23 + U8'@ ; }
+{   31 + U8'@ ; }
 end
 // TODO: why can't I eliminate the = test?
 PROC locatex // (ptr,cnt,hdir -- h/0)

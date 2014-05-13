@@ -35,11 +35,14 @@ typedef struct sHeader {
         struct sHeader* child;     // 8
         struct sHeader* type;      // 12         //points at type directory
         TOKEN* pcode;              // 16  headers refer to actual code
-        //
-        U16 srclen;               //  20  
-        U8 pad;
-        U8 namelen;                // 23 actual name part of string
-        //
+        U32    timestamp;          // 20
+        U16    datasize;           // 24
+        U16 srclen;                // 26  
+        
+        U16 pad1;                  // 28
+        U8 pad;                    // 30
+        U8 namelen;                // 31 actual name part of string
+        //                         // 
         // a name follows inline
         char src[];
         
