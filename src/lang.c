@@ -39,8 +39,8 @@ extern HINDEX H_PROC;           //initilization code set this...
 HINDEX H_0BRANCH;
 HINDEX H_BRANCH;
 void lang_init(){
-    H_BRANCH = head_find_abs_or_die("system'core'branch");
-    H_0BRANCH = head_find_abs_or_die("system'core'0branch");
+    H_BRANCH = head_find_abs_or_die("system'core'else#");
+    H_0BRANCH = head_find_abs_or_die("system'core'if#");
 }
 
 int verify_ptr(U8* ptr){
@@ -149,7 +149,7 @@ int lang_t(){
 int lang_return(void){
     // Clean up the return stack if necessary
     if(var->define_stackdepth){
-printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
+//printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
         HINDEX tok = head_find_abs_or_die("system'core'rdrop#");
         data_compile_token(tok);
         data_compile_U8(var->define_stackdepth);

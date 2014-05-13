@@ -1,20 +1,5 @@
 cd 'test
 
-PROC head_name_display // (h--) print the qualified name
-{ 0 swap // (0,h--) will be stacking recursively
-  begin
-    dup head'dad
-    if( zr ) 
-      drop begin
-        head'name ctell
-        if( zr ) drop ; thanx
-        ''' emit
-      repeat
-    thanx
-  repeat
-  "NOT POSSIBLE" ctell
-}
-end
 
 // Decompiling a 0 token is tricky...
 PROC deco1 // (ip--ip,e)
@@ -38,7 +23,7 @@ PROC deco_tok // (ip--ip)
 {
     if( error'catch 0= )
         color'dim color'white '<' emit color'reset color'green
-        deco1 dup head_name_display
+        deco1 dup head'name.
         head'type 
         if( push "decompile" pop  head'locatex zr )
             dbl'drop 1 error'throw
@@ -57,7 +42,7 @@ PROC deco_n // (ip,cnt--ip)
 { times (
 // see if ip is a named target
   if( dup head'owner nz ) 
-    color'cyan head_name_display ':' emit cr
+    color'cyan head'name. ':' emit cr
   else drop thanx
   
   color'green space dup . space // address
@@ -124,6 +109,17 @@ PROC decompile // (ip--ip)
     thanx 
     ;
 }
+end
+cd 'system'TYPE'PREF
+PROC decompile // (ip--ip)
+{   
+    U8'@++      // ip+1,ref
+    4* over 1- table'base + @ // ip,ref
+    head'owner head'name.
+    ;
+}
+
+
 end
 cd 'test
 

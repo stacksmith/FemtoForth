@@ -784,14 +784,14 @@ CODE "system'core'STR8'eq // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstr
 ;------------------------------------------------------------------------------
 ; branch
 ;
-CODE "system'core'branch // (--) branch by signed U8 offset",branchU8,T_OFF
+CODE "system'core'else# // (--) branch by signed U8 offset",branchU8,T_OFF
     movsx       edx,byte[esi]
     add         esi,1
     add         esi,edx
     NEXT
 .x:    
 ;condition-code 0BRANCH OFFSET true-part rest-code
-CODE "system'core'0branch // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
+CODE "system'core'if# // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
     movsx       edx,byte[esi]           ;edx is offset
     add         esi,1
     and         eax,1

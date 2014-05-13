@@ -259,6 +259,21 @@ PROC owner // (ptr--head/0) find the head referring to this ptr
 }
 end
 
+PROC name. // (h--) print the qualified name
+{ 0 swap // (0,h--) will be stacking recursively
+  begin
+    dup head'dad
+    if( zr ) 
+      drop begin
+        head'name ctell
+        if( zr ) drop ; thanx
+        ''' emit
+      repeat
+    thanx
+  repeat
+}
+end
+
 
 // ============================================ 
 // DATA
