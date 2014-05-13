@@ -104,6 +104,12 @@ CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC
         DPOP    r0
         NEXT
 .x:
+;------------------------------------------------------------------------------
+CODE "system'core'rdrop# // (--) clean up <n> rstack items ",rclean,T_U8 
+        ldrb    r1,[IP],1
+        add     sp,r1,lsl 2
+        NEXT
+
 CODE "system'core'nop ",nop,T_PROC 
         DPUSH   r0
         mov     r0,lr
@@ -395,6 +401,14 @@ CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_PROC
         movne   r0,0
         NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "system'core'eq // (n1 n2 -- n1,flag) True if n1 = n2",pres_cmp_eq,T_PROC
+        ldr     r1,[DSP]                      ;r1=n1
+        cmp     r1,r0
+        moveq   r0,1                    ;<              
+        movne   r0,0
+        NEXT
+.x:
 ;------------------------------------------------------------------------------
 CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_PROC
         DPOP    r1                      ;r1=n1

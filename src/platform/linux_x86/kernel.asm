@@ -135,7 +135,7 @@ CODE "system'core'rdrop# // (--) clean up <n> rstack items ",rclean,T_U8
     xor         ecx,ecx
     mov         cl,[esi]
     inc         esi
-    add         esp,[ecx*4]
+    lea         esp,[esp+ecx*4]
     NEXT
 .x:
 
@@ -376,6 +376,15 @@ CODE "system'core'= // (n1 n2 -- flag) True if n1 = n2",cmp_eq,T_PROC
     mov         eax,edx
     NEXT
 .x: 
+;------------------------------------------------------------------------------
+CODE "system'core'eq // (n1 n2 -- n1,flag) True if n1 = n2",pres_cmp_eq,T_PROC
+    xor         edx,edx
+    cmp         eax,[ebp]
+    setz        dl
+    mov         eax,edx
+    NEXT
+.x: 
+
 ;------------------------------------------------------------------------------
 CODE "system'core'<> // (n1 n2 -- flag) True if n1 <> n2",cmp_ne,T_PROC
     xor         edx,edx
@@ -848,14 +857,14 @@ CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
 ; begin ... repeat
 ;
 ; leave loop address on RSP!
-;CODE "system'core'begin // (--) start a loop.",_begin,T_PROC
-;    push       esi             ;save loop target
-;    NEXT
-;.x:
-;CODE "system'core'repeat // (--) end a loop.",_repeat,T_PROC
-;    mov        esi,[esp]
-;    NEXT
-;.x:
+CODE "system'core'begin // (--) start a loop.",_begin,T_PROC
+    push       esi             ;save loop target
+    NEXT
+.x:
+CODE "system'core'repeat // (--) end a loop.",_repeat,T_PROC
+    mov        esi,[esp]
+    NEXT
+.x:
 ;
 ;------------------------------------------------------------------------------
 ; times

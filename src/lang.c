@@ -153,9 +153,8 @@ printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
         HINDEX tok = head_find_abs_or_die("system'core'rdrop#");
         data_compile_token(tok);
         data_compile_U8(var->define_stackdepth);
-    } else {
-        data_compile_U8(0);
     }
+    data_compile_U8(0);
     return 1;
 }
 void lang_fixup(){
@@ -200,7 +199,13 @@ printf("lang_begin: err \n");
     return 1;
     
 }
-
+    
+int lang_compile_with_rstack(char* name,int stackdepth){
+    HINDEX tok = head_find_abs_or_die(name);
+    data_compile_token(tok);
+    var->define_stackdepth+=stackdepth;
+    return 1;
+}
 /*int lang_operator(char* ptr,U32 cnt){
     HINDEX hop = head_locate(H_OPDIR,ptr,cnt);
     if(!hop){
@@ -289,6 +294,8 @@ int lang_p(char* ptr,U32 cnt){
         case 2:
              if(0==strncmp(ptr,"if",2)) { return lang_if(); }
              if(0==strncmp(ptr,"//",2)) { src_skip_line(); return 1;}
+             if(0==strncmp(ptr,"do",2))
+                 return lang_compile_with_rstack("system'core'do",3);
              
            
             break;
@@ -299,10 +306,17 @@ int lang_p(char* ptr,U32 cnt){
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }
              if(0==strncmp(ptr,"into",4)) { return lang_oper("into",4); }
              if(0==strncmp(ptr,"head",4)) { return lang_head(); }
+             if(0==strncmp(ptr,"loop",4))
+                 return lang_compile_with_rstack("system'core'loop",-3);
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }
-            if(0==strncmp(ptr,"begin",5)) { return lang_begin(); }
+            
+            if(0==strncmp(ptr,"begin",5)) 
+                 return lang_compile_with_rstack("system'core'begin",1);
+                //return lang_begin();
+          //  if(0==strncmp(ptr,"begxx",5)) 
+          //       return lang_compile_with_rstack("system'core'begin",1);
             break;
     }
     return 0;

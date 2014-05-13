@@ -12,6 +12,7 @@ PROC head_name_display // (h--) print the qualified name
       repeat
     thanx
   repeat
+  "NOT POSSIBLE" ctell
 }
 end
 
