@@ -27,6 +27,7 @@ void    table_wipe(PTOKEN* address);
 TOKEN** table_base(TOKEN* p);
 
 int table_clean(PTOKEN* ptable);
+U32 table_count_used(PTOKEN*ptab);
 
 
 

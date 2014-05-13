@@ -130,6 +130,16 @@ PTOKEN* table_dump(PTOKEN* p){
     }
     return p;
 }
+U32 table_count_used(PTOKEN*ptab){
+    //0 is not used, so start at 1...
+    int i;
+    U32 count = 0;
+    for(i=1;i<256;i++){
+        if(ptab[i]) count++;
+    }
+    return count;
+}
+
 /* ============================================================================
  * table_cleanse
  * 
@@ -140,15 +150,11 @@ PTOKEN* table_dump(PTOKEN* p){
  * and clear up from it after a run.  This works for a narrow range of situations
  * and requires no holes in table, bottom-up filling etc.
  * 
- * We shall cleanse an entry for now.
  */
 int table_clean(PTOKEN*p ){
-    //p can be accessed as 255th item from code way back...
-    p = p-255;
-    if(p < (PTOKEN*)lay->table_bottom) p = (PTOKEN*)lay->table_bottom;
-    //find corresponding code pointer
-    TOKEN* pt = table_base_inverted(p);
-    if(pt < (TOKEN*)lay->data_bottom) pt = (TOKEN*)lay->data_bottom; //avoid -1 corner case
-printf("table_clean: start scanning at %p\n",pt);
+    //figure out the top of the usable table...
+    U32 mapsize = lay->table_top - lay->table_bottom;
+printf("table_clean: table %p\n",mapsize);
+ 
     return 1;
 }

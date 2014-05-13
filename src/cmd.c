@@ -122,7 +122,7 @@ int cmd_sys(){
     printf("%08X ",(U32)(var->head_ptr));
     printf("%08X ",(U32)(var->data_ptr));       //compiling here
     printf("%08X ",(U32)(table_base(var->data_ptr)));  //table base
-    printf("%8d ",(table_end(var->data_ptr) - (1+table_base(var->data_ptr))));  //table base
+    printf("%8d ",table_count_used(table_base(var->data_ptr)));
     
     printf("\33[0;37m\n");
 

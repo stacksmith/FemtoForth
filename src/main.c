@@ -34,6 +34,7 @@ sMemLayout* lay;                //memory layout for THIS system
 
 #define        DSP_SIZE 1024
 #define        RSP_SIZE 1024
+//entry count in table
 #define TABLE_SIZE (CODE_SIZE/16)
 
 /*
