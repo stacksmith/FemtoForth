@@ -36,6 +36,7 @@ TOKEN** table_base(TOKEN* p){
 
 TOKEN* table_base_inverted(TOKEN** ptable){
     TOKEN* ret = (TOKEN*)((((U32)ptable)<<2)-1);
+    //note: may be 1 less then bottom!
     return ret;
 }
 
@@ -144,10 +145,10 @@ PTOKEN* table_dump(PTOKEN* p){
 int table_clean(PTOKEN*p ){
     //p can be accessed as 255th item from code way back...
     p = p-255;
-    if(p < lay->table_bottom) p = lay->table_bottom;
+    if(p < (PTOKEN*)lay->table_bottom) p = (PTOKEN*)lay->table_bottom;
     //find corresponding code pointer
     TOKEN* pt = table_base_inverted(p);
-   
+    if(pt < (TOKEN*)lay->data_bottom) pt = (TOKEN*)lay->data_bottom; //avoid -1 corner case
 printf("table_clean: start scanning at %p\n",pt);
     return 1;
 }
