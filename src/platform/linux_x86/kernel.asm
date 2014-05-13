@@ -837,6 +837,19 @@ CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
     NEXT
 .x:
 ;------------------------------------------------------------------------------
+; begin ... repeat
+;
+; leave loop address on RSP!
+;CODE "system'core'begin // (--) start a loop.",_begin,T_PROC
+;    push       esi             ;save loop target
+;    NEXT
+;.x:
+;CODE "system'core'repeat // (--) end a loop.",_repeat,T_PROC
+;    mov        esi,[esp]
+;    NEXT
+;.x:
+;
+;------------------------------------------------------------------------------
 ; times
 ;
 ; count on return stack.  Loop to offset. Clean up RSP at the end...

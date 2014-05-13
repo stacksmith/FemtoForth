@@ -180,7 +180,7 @@ int lang_else(){
 }
 int lang_begin(){
     dstack_push((U32)var->data_ptr);    //just save the loop start location
-    if(!interpret_compuntil("again",5)) {       //compile until 'again'
+    if(!interpret_compuntil("repeat",6)) {       //compile until 'again'
 printf("lang_begin: err \n");
         dstack_pop();  //on error, get rid of pfixup
         return 0;
