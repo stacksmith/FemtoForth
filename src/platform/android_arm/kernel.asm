@@ -92,6 +92,34 @@ CODE "system'core'leave exit to outer host ",leave,T_PROC
         bx      lr
 .x:
 ;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU16 // procedure that parses a U16",type_PU16,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+; 
+CODE "system'TYPE'PU32 // procedure that parses a U32",type_PU32,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'POFF // procedure that parses an 8-bit offset",type_POFF,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
+    db 0;
+.x:
+;------------------------------------------------------------------------------
+CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
+    db 0;
+.x:
+
+;------------------------------------------------------------------------------
 CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
         DPUSH   r0
         mov     r0,RDAT
@@ -105,11 +133,16 @@ CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC
         NEXT
 .x:
 ;------------------------------------------------------------------------------
+CODE "system'core'; // (--) mostly for decompile (usually <0>) ",returno,T_PROC 
+        RPOP    IP
+        NEXT;
+.x:
+;------------------------------------------------------------------------------
 CODE "system'core'rdrop# // (--) clean up <n> rstack items ",rclean,T_U8 
         ldrb    r1,[IP],1
         add     sp,r1,lsl 2
         NEXT
-
+.x:
 CODE "system'core'nop ",nop,T_PROC 
         DPUSH   r0
         mov     r0,lr
@@ -154,33 +187,6 @@ CODE "test'b",testb,T_PROC
 ; lr must be set to innerl.  Subroutines must preserve AND RESTORE lr!
 ;.x:
 
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU16 // procedure that parses a U16",type_PU16,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU32 // procedure that parses a U32",type_PU32,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'POFF // procedure that parses an 8-bit offset",type_POFF,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
-    db 0;
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'io'putc // (c,handle--)",putc1,T_PROC                      ;(c --)
@@ -292,7 +298,7 @@ CODE "system'core'swap // (n1 n2 -- n2 n1) Reverses the top two stack items.",sw
 .x:
 ;------------------------------------------------------------------------------
 ;
-CODE "system'core'over // (n1 n2 -- n1 n2 n1) Makes a copy of the second item and pushes it on top.",over,T_PROC
+CODE "system'core'over // (n1 n2 -- n1 n2 n1) Makes a copy of the second item.",over,T_PROC
         DPUSH   r0
         ldr     r0,[DSP,4]
         NEXT
@@ -748,14 +754,14 @@ CODE "system'core'STR8'eq // (str1,cnt1,str2,cnt2--str1,cnt1,flg) compare 2 cstr
 ;------------------------------------------------------------------------------
 ; branch
 ;
-CODE "system'core'branch // (--) branch by signed U8 offset",branchU8,T_OFF
+CODE "system'core'else# // (--) branch by signed U8 offset",branchU8,T_OFF
         ldrsb   r1,[IP],1               ;get offset
         add     IP,r1
         NEXT
 .x:
 ;------------------------------------------------------------------------------
 ;condition-code 0BRANCH OFFSET true-part rest-code
-CODE "system'core'0branch // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
+CODE "system'core'if# // (cond--) if 0, branch by signed U8 offset",zbranchU8,T_OFF
         ldrsb   r1,[IP],1               ;get offset
         cmp     r0,0                    ;is TOS 0?
         addeq   IP,r1                   ;if not, add the offset...
@@ -821,6 +827,18 @@ CODE "system'core'+loop // (inc--) increment counter by inc and loop",_plusloop,
 CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
     DPUSH       r0
     ldr         r0,[RSP]
+    NEXT
+.x:
+;------------------------------------------------------------------------------
+; begin ... repeat
+;
+; leave loop address on RSP!
+CODE "system'core'begin // (--) start a loop.",_begin,T_PROC
+    RPUSH       IP             ;save loop target
+    NEXT
+.x:
+CODE "system'core'repeat // (--) end a loop.",_repeat,T_PROC
+    ldr         IP,[RSP]
     NEXT
 .x:
 
