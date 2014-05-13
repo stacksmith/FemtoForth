@@ -157,22 +157,22 @@ U32 cmd_img_save_p(FILE* f){
     //TODO: write an ID header...
     //---------------------------------------------
     //first write the data, so that vars are first
-    required = var->data_ptr - lay->data_base;
-    total += ret = fwrite(lay->data_base,1,required,f);
+    required = var->data_ptr - lay->data_bottom;
+    total += ret = fwrite(lay->data_bottom,1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     //---------------------------------------------
     //now write the table 
     //for stability, write the entire reachable portion
     U8* table_end = ((U8*)table_base(var->data_ptr)) + 255;
-    required = table_end - lay->table_base;
-    total += ret = fwrite(lay->table_base, 1,required,f);
+    required = table_end - lay->table_bottom;
+    total += ret = fwrite(lay->table_bottom, 1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     
     //now write the headers
-    required = var->head_ptr - lay->head_base;
-    total += ret = fwrite(lay->head_base,1,required,f);
+    required = var->head_ptr - lay->head_bottom;
+    total += ret = fwrite(lay->head_bottom,1,required,f);
     if(required != ret) return 0;
 printf("cmd_img_save_p wrote %d, total %d\n",ret,total);
     
@@ -212,31 +212,31 @@ printf("cmd_img_load_p read %d, total %d\n",ret,total);
 printf("cmd_img_load_p read %d, total %d\n",ret,total);
     //---------------------------------------------
     // check that the positions are adequate
-    if( (lay->data_base != newlay->data_base) ||
-        (lay->table_base != newlay->table_base) ||
-        (lay->head_base != newlay->head_base) ) {
+    if( (lay->data_bottom != newlay->data_bottom) ||
+        (lay->table_bottom != newlay->table_bottom) ||
+        (lay->head_bottom != newlay->head_bottom) ) {
         printf("cmd_img_load_p: cannot load to a different address yet\n");
     }
     //for now, just load segments.
     //---------------------------------------------
     // rest of data
-    required = newvar->data_ptr - newlay->data_base - (HOST_RESERVED + SYS_RESERVED);
-    U8* dest = lay->data_base + HOST_RESERVED + SYS_RESERVED;
+    required = newvar->data_ptr - newlay->data_bottom - (HOST_RESERVED + SYS_RESERVED);
+    U8* dest = lay->data_bottom + HOST_RESERVED + SYS_RESERVED;
     total += ret = fread(dest,1,required,f);
 printf("cmd_img_load_p DATA: read %d, required %d, total %d\n",ret,required,total);
     if(required != ret) return 0;
     //---------------------------------------------
     // tabe
     U8* table_end = ((U8*)table_base(newvar->data_ptr)) + 255;
-    required = table_end - newlay->table_base;
-    dest = lay->table_base;
+    required = table_end - newlay->table_bottom;
+    dest = lay->table_bottom;
     total += ret = fread(dest,1,required,f);
 printf("cmd_img_load_p TABE: read %d, required %d, total %d\n",ret,required,total);
     if(required != ret) return 0;
     //---------------------------------------------
     // head
-    required = newvar->head_ptr - newlay->head_base;
-    dest = lay->head_base;
+    required = newvar->head_ptr - newlay->head_bottom;
+    dest = lay->head_bottom;
     total += ret = fread(dest,1,required,f);
 printf("cmd_img_load_p HEAD: read %d, required %d, total %d\n",ret,required,total);
     if(required != ret) return 0;
@@ -266,7 +266,7 @@ int cmd_img_load(){
 
 /*
 TOKEN* see_one(TOKEN*p){
-    PTOKEN* base = table_base(p);
+    PTOKEN* base = table_bottom(p);
     U8 token = *p;
     //return?
     if(!token){
@@ -350,7 +350,7 @@ int cmd_see(){
     
     TOKEN* ptr = (TOKEN*)dstack_pop();
     //validate token
-    if ((ptr < lay->data_base) || (ptr > lay->data_top)){
+    if ((ptr < lay->data_bottom) || (ptr > lay->data_top)){
         src_error("see: illegal address\n");
         return 0;
     }
@@ -408,6 +408,9 @@ int command(char* ptr,U32 cnt){
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
+            if(0==strncmp(ptr,"clean",5)) {
+                return table_clean((PTOKEN*) dstack_pop());
+            }
             break;
         case 8:
             if(0==strncmp(ptr,"img_save",8)) {return cmd_img_save();}

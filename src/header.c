@@ -55,7 +55,7 @@ typedef sHeader* HINDEX;
 
 
 HINDEX head_get_root(){
-    return (HINDEX)lay->head_base;
+    return (HINDEX)lay->head_bottom;
 }
 U32 head_size(HINDEX h){
     return sizeof(sHeader) + h->srclen;
@@ -290,7 +290,7 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
         if(poffset) *poffset=0;
         return 0;
     }
-    HINDEX h=(HINDEX)lay->head_base;
+    HINDEX h=(HINDEX)lay->head_bottom;
     HINDEX best_hindex=h;
     U32    best_offset = 0xFFFFFFFF;
     //traverse the dictionary brute force style, disregarding hierarchy.
@@ -299,7 +299,7 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
         TOKEN* target = h->pcode;       //header points here.
 //printf("head_resolve2 %p \n",target);
         //if target is below the pointer, track offset (if it's better)
-        if((target > lay->data_base) && (target <= ptr)) {
+        if((target > lay->data_bottom) && (target <= ptr)) {
             if((ptr-target)<best_offset){
                 best_offset = (ptr-target);
                 best_hindex=h;

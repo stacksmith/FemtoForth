@@ -42,7 +42,7 @@ void src_reset(){
         fclose(hfile);
  
     hfile = stdin;                   //initial
-     var->src_ptr = lay->src_base;
+     var->src_ptr = lay->src_bottom;
     *var->src_ptr=0;                         //will trigger initial src_line!
     src_errbuf = var->src_ptr;
     lineno = 0;
@@ -74,14 +74,14 @@ void src_skip_line(){
 
 //TODO: add file support
 char* src_line(){
-    if(NULL == fgets(lay->src_base,SRC_BUF_SIZE,hfile)){
+    if(NULL == fgets(lay->src_bottom,SRC_BUF_SIZE,hfile)){
         src_reset();
         //printf("src_line: EOF\n");
     }
-    var->src_ptr = lay->src_base;
+    var->src_ptr = lay->src_bottom;
     lineno++;
     src_errbuf = var->src_ptr; //for error reporting
-    return lay->src_base;
+    return lay->src_bottom;
     
 }
 /*=============================================================================

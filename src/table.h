@@ -26,6 +26,8 @@ PTOKEN* table_end(PTOKEN address);
 void    table_wipe(PTOKEN* address);
 TOKEN** table_base(TOKEN* p);
 
+int table_clean(PTOKEN* ptable);
+
 
 
 

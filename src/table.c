@@ -31,6 +31,12 @@ extern sMemLayout* lay;
 
 TOKEN** table_base(TOKEN* p){
     TOKEN**tbase = (TOKEN**)(((U32)(p+1) >>2) & 0xFFFFFFFC);
+    return tbase;
+}
+
+TOKEN* table_base_inverted(TOKEN** ptable){
+    TOKEN* ret = (TOKEN*)((((U32)ptable)<<2)-1);
+    return ret;
 }
 
 extern HINDEX H_PROC;           //in interpreter
@@ -98,7 +104,7 @@ void table_wipe(TOKEN* address){
 }
 
 int table_ptr_verify(PTOKEN*p){
-    if(p < (PTOKEN*)lay->table_base) return 0;
+    if(p < (PTOKEN*)lay->table_bottom) return 0;
     if(p >= (PTOKEN*)lay->table_top) return 0;
     return 1;
 }
@@ -123,5 +129,25 @@ PTOKEN* table_dump(PTOKEN* p){
     }
     return p;
 }
-
-
+/* ============================================================================
+ * table_cleanse
+ * 
+ * When a block of code is deleted, we can't just wipe the table (for a number
+ * of reasons - entries may be used by previous code, etc). 
+ * 
+ * A crude but workable solution is to preserve the top of the working table
+ * and clear up from it after a run.  This works for a narrow range of situations
+ * and requires no holes in table, bottom-up filling etc.
+ * 
+ * We shall cleanse an entry for now.
+ */
+int table_clean(PTOKEN*p ){
+    //p can be accessed as 255th item from code way back...
+    p = p-255;
+    if(p < lay->table_bottom) ;
+    //find corresponding code pointer
+    TOKEN* pt = table_base_inverted(p);
+   
+printf("table_clean: start scanning at %p\n",pt);
+    return 1;
+}

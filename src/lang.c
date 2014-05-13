@@ -44,11 +44,11 @@ void lang_init(){
 }
 
 int verify_ptr(U8* ptr){
-    if ((ptr >= lay->data_base) && (ptr < lay->data_top))     return 1;
-    if ((ptr >= lay->table_base) && (ptr < lay->table_top))   return 1;
-    if ((ptr >= lay->dsp_base) && (ptr < lay->dsp_top))       return 1;
-    if ((ptr >= lay->rsp_base) && (ptr < lay->rsp_top))     return 1;
-    if ((ptr >= lay->head_base) && (ptr < lay->head_top))     return 1;
+    if ((ptr >= lay->data_bottom) && (ptr < lay->data_top))     return 1;
+    if ((ptr >= lay->table_bottom) && (ptr < lay->table_top))   return 1;
+    if ((ptr >= lay->dsp_bottom) && (ptr < lay->dsp_top))       return 1;
+    if ((ptr >= lay->rsp_bottom) && (ptr < lay->rsp_top))     return 1;
+    if ((ptr >= lay->head_bottom) && (ptr < lay->head_top))     return 1;
     return 0;
 }
 /*=============================================================================

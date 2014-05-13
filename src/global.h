@@ -77,27 +77,27 @@ typedef struct sRegsMM {
 
 typedef struct sMemLayout {
 /* 00  0 */ 
-            U8* data_base;                
+            U8* data_bottom;                
 /* 04  4 */ 
             U8* data_top;
 /* 08  8 */ 
-            U8* table_base;
+            U8* table_bottom;
 /* 0C 12 */ 
             U8* table_top;
 /* 10 16 */ 
-            U8* dsp_base;
+            U8* dsp_bottom;
 /* 14 20 */ 
             U8* dsp_top;
 /* 18 24 */  
-            U8* rsp_base;
+            U8* rsp_bottom;
 /* 1C 28 */ 
             U8* rsp_top; 
 /* 20 32 */ 
-            U8* head_base; 
+            U8* head_bottom; 
 /* 24 36 */           
             U8* head_top; 
 /* 28 40 */           
-            char* src_base; 
+            char* src_bottom; 
 /* 2C 44 */           
             char* src_top;             
 } sMemLayout;

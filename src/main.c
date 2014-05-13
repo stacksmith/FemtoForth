@@ -172,48 +172,48 @@ color(COLOR_RESET);color(FORE_WHITE);
         var = (sVar*)(data_base+HOST_RESERVED); // SYS_RESERVED bytes 
         
         // install system var structure at bottom
-        lay->data_base = data_base;
+        lay->data_bottom = data_base;
         lay->data_top = data_base + CODE_SIZE;
         //
-        var->data_ptr = lay->data_base + HOST_RESERVED + SYS_RESERVED;
+        var->data_ptr = lay->data_bottom + HOST_RESERVED + SYS_RESERVED;
 
-        printf("data at %p->%p ",lay->data_base,lay->data_top);
+        printf("data at %p->%p ",lay->data_bottom,lay->data_top);
 
 //---------------------------------------------------------------------
 // Table - runtime 
 //
-        lay->table_base = mmap((U8**)(CODE_ADDRESS/4),
+        lay->table_bottom = mmap((U8**)(CODE_ADDRESS/4),
                  sizeof(TINDEX)*TABLE_SIZE,
                  PROT_READ+PROT_WRITE+PROT_EXEC,
                  MAP_ANONYMOUS|MAP_SHARED|MAP_FIXED,
                  0,0);
-        printf("TABLE at %p ",lay->table_base);
-        lay->table_top = (U8*)lay->table_base + sizeof(TINDEX)*TABLE_SIZE;
-       // var->table_ptr = (U8**)var->table_base;
+        printf("TABLE at %p ",lay->table_bottom);
+        lay->table_top = (U8*)lay->table_bottom + sizeof(TINDEX)*TABLE_SIZE;
+       // var->table_ptr = (U8**)var->table_bottom;
        // *var->table_ptr++ = 0 ; //first table entry is always 0 !
       
 //---------------------------------------------------------------------
 // DSP
 //
 // 
-        lay->dsp_base = (U8*)malloc(DSP_SIZE);
-        lay->dsp_top = lay->dsp_base + DSP_SIZE;
+        lay->dsp_bottom = (U8*)malloc(DSP_SIZE);
+        lay->dsp_top = lay->dsp_bottom + DSP_SIZE;
  printf("DSP at %p ",lay->dsp_top);
 //---------------------------------------------------------------------
 // RSP
-        lay->rsp_base = (U8*)malloc(RSP_SIZE);
-        lay->rsp_top = lay->rsp_base + RSP_SIZE;
+        lay->rsp_bottom = (U8*)malloc(RSP_SIZE);
+        lay->rsp_top = lay->rsp_bottom + RSP_SIZE;
         var->sp_meow = (sRegsMM*)lay->rsp_top;
  printf("RSP at %p ",lay->rsp_top);
 //---------------------------------------------------------------------
 // HEAD
-        lay->head_base = (U8*)malloc(HEAD_SIZE);
-        lay->head_top = lay->head_base + HEAD_SIZE;
-        var->head_ptr = lay->head_base;
- printf("HEAD at %p \n",lay->head_base);
+        lay->head_bottom = (U8*)malloc(HEAD_SIZE);
+        lay->head_top = lay->head_bottom + HEAD_SIZE;
+        var->head_ptr = lay->head_bottom;
+ printf("HEAD at %p \n",lay->head_bottom);
 //---------------------------------------------------------------------
 // SRC 
-        lay->src_base =  (char*)malloc(256);
+        lay->src_bottom =  (char*)malloc(256);
         src_reset(); 
       
         head_build();
