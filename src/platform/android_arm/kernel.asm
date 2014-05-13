@@ -104,10 +104,11 @@ CODE "system'core'invoke // (ptr--) execute ptr via interpreter ",invoke,T_PROC
         DPOP    r0
         NEXT
 .x:
-;CODE "system'core'nop ",nop,T_PROC 
-;mov r0,0xDEAD
-;        bx      lr
-;.x:
+CODE "system'core'nop ",nop,T_PROC 
+        DPUSH   r0
+        mov     r0,lr
+        NEXT
+.x:
 
 CODE "test'a",testa,T_PROC 
 
@@ -792,6 +793,16 @@ CODE "system'core'loop // (--) count and proceed to do site",_loop,T_PROC
     addge       sp,12           ;otherwise, clean up rstack
     NEXT
 .x:
+CODE "system'core'+loop // (inc--) increment counter by inc and loop",_plusloop,T_PROC
+    ldmia       sp,{r1,r2,r3}   ;r1=count r2=limit r3=target
+    add         r1,r0 
+    cmp         r1,r2           ;compare count to limit
+    movlt       IP,r3           ;loop again..
+    strlt       r1,[sp]
+    addge       sp,12           ;otherwise, clean up rstack
+    DPOP        r0
+    NEXT
+.x:
 
 CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
     DPUSH       r0
@@ -813,6 +824,12 @@ CODE "system'core'times // (cnt--) execute expression that follows cnt times",ti
         add       RSP,4                 ;if
         NEXT
 .x:   
+;------------------------------------------------------------------------------
+CODE "system'core'one // (--1)",one,T_PROC
+        DPUSH     r0
+        mov       r0,1
+        NEXT
+.x:
     
 ;==============================================================================
 ; variable

@@ -77,6 +77,15 @@ meow_invoke:
 ;
 public inner_interpreter
 ;
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+; 
 return:
         RPOP     IP                         ;restore IP from stack, returning
 inner_interpreter:

@@ -35,6 +35,13 @@ void data_align4_minus_1(void){
     while(3 != (0x3 & (U32)var->data_ptr))
         *var->data_ptr++ = 0xEE;
 }
+/*=============================================================================
+  align at 16-bound -1, to insert a token before aligned code, for instance...
+*/
+void data_align16_minus_1(void){
+    while(0xF != (0xF & (U32)var->data_ptr))
+        *var->data_ptr++ = 0xEE;
+}
 
 
 U8* data_compile_U8(U8 val){

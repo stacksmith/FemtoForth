@@ -86,6 +86,16 @@ meow_invoke:
 ; Upon entry to code subroutines, IP points above, at the next token (not at
 ; code).
 ;
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
 public inner_interpreter
 return:
     pop       esi

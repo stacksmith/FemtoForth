@@ -642,9 +642,11 @@ CODE "system'core'pop // (--n) pop from return stack",pop,T_PROC
 ;
 CODE "system'core'U8 // (--n) fetch a U8 that follows in the codestream",U8,T_U8
     DPUSH       eax
+
     xor         eax,eax
     mov         al,[esi]
     add         esi,1
+
     NEXT
 .x:
 ;------------------------------------------------------------------------------
@@ -794,6 +796,7 @@ CODE "system'core'do // (limit,start--) set up a counted loop",_do,T_PROC
     DPOP        eax
     NEXT
 .x:
+
 CODE "system'core'loop // (--) count and proceed to do site",_loop,T_PROC
     mov         ecx,[esp]       ;counter
     inc         ecx
@@ -805,7 +808,29 @@ CODE "system'core'loop // (--) count and proceed to do site",_loop,T_PROC
 .over:
     add         sp,12          ;get rid of rstack data
     NEXT
+    
+; // TODO: bogus - alignment! 
+    nop 
+    nop
+    nop
+    nop
 .x:
+CODE "system'core'+loop // (inc--) increment counter by inc and loop",_plusloop,T_PROC
+    mov         ecx,[esp]       ;counter
+   add         DSP,4            ;attempt an interlead DPOP
+    add         ecx,eax
+   mov         eax,[DSP-4]
+    cmp         [esp+4],ecx     ;compare with limit
+    jle         .over
+    mov         [esp],ecx       ;update count
+    mov         esi,[esp+8]     ;and loop again.
+    NEXT
+.over:
+    add         sp,12          ;get rid of rstack data
+    NEXT
+.x:
+
+
 CODE "system'core'i // (--i) inside a do..loop, return index",_i,T_PROC
     DPUSH       eax
     mov         eax,[esp]
@@ -827,7 +852,12 @@ CODE "system'core'times // (--) execute expression that follows cnt times",times
         NEXT
 .x:
 
-
+;------------------------------------------------------------------------------
+CODE "system'core'one // (--1)",one,T_PROC
+        DPUSH           eax
+        mov             eax,1
+        NEXT
+.x:
 ;==============================================================================
 
 ;------------------------------------------------------------------------------
@@ -917,6 +947,7 @@ CODE "system'TYPE'SYSVAR'prim'into // (val--)",sysvar_storep,T_PROC
     DPOP        eax
     NEXT
 .x:
+
 
 db 0    ;an empty record to terminate load process
 

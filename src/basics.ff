@@ -339,4 +339,26 @@ PROC timit2
 }
 end
 
+PROC timit3
+{
+  sys'gettimeofday
+  1000000000 0 do 1 +loop
+  sys'gettimeofday
+  swap2
+  D-
+  swap . . cr
+  ;
+}
+end
 
+PROC timit4
+{
+  sys'gettimeofday
+  1000000000 0 do one +loop
+  sys'gettimeofday
+  swap2
+  D-
+  swap . . cr
+  ;
+}
+end

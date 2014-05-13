@@ -18,6 +18,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 
 *****************************************************************************/
 void data_align4(void);
+void data_align16_minus_1(void);
 U8* data_compile_U8(U8 val);
 U8* data_compile_U16(U16 val);
 U8* data_compile_U32(U32 val);
