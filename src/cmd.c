@@ -67,6 +67,9 @@ cmd_ls(HINDEX dir){
         color(COLOR_BRIGHT); color(FORE_GREEN);
     }
     printf("%-10.*s ",head_get_namelen(h),head_get_name(h));
+    // data size
+    color(COLOR_RESET);color(FORE_CYAN);
+    printf("%5.d ",head_get_datasize(h));
     // type
     HINDEX type = head_get_type(h);
     color(COLOR_RESET); color(FORE_WHITE);

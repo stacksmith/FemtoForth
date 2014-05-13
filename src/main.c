@@ -107,8 +107,12 @@ int kernel_load_record(FILE* f){
   U32 datalen;
   fread(&datalen,4,1,f);                        //read data length
   data_align4_minus_1();
+  //keep track of datasize...
+  U8* datastart = var->data_ptr;
+  
   data_compile_U8(0);                           //code token
   U8* data = data_compile_from_file(f,datalen);
+  head_set_datasize(h,var->data_ptr - datastart);
   // And update the head
   // set type based on param...
   HINDEX mytype;
@@ -127,6 +131,7 @@ int kernel_load_record(FILE* f){
   head_set_type(h,mytype);        //it was created as DIR originally...
 
   head_set_code(h,data-1);       //point at 0 (code) token
+  
 //interpret_ql(data);
     return 1;
 }

@@ -241,8 +241,8 @@ int interpret_def_type(HINDEX htype){
     
     var->define_stackdepth = 0;         //return uses this to clean up rstack.
     
-    HINDEX h = head_new(var->data_ptr,  htype,var->wd);
-
+    U8* datastart = var->data_ptr;
+    HINDEX h = head_new(datastart,  htype,var->wd);
 //printf("interpret_def_type1 [%s]\n",var->src_ptr);
     interpret_copy_source(h); //in any event, append source and commit entry
 //printf("interpret_def_type2 [%s]\n",var->src_ptr);
@@ -266,7 +266,7 @@ int interpret_def_type(HINDEX htype){
 //U32 n; const char*p = head_name(h,&n);
 //printf("interpret_def_type: done %.*s:\n",n,p);
     var->define_stackdepth = 0;         //return uses this to clean up rstack.
-
+    head_set_datasize(h,var->data_ptr-datastart);
     return ret;
     
 }

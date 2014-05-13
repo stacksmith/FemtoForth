@@ -339,7 +339,9 @@ TOKEN* head_get_code(HINDEX h){
 HINDEX  head_get_type(HINDEX h){
     return h->type;
 }
-
+U32 head_get_datasize(HINDEX h){
+    return h->datasize;
+}
 char* head_get_source(HINDEX h){
     return h->src + h->namelen;
 }
@@ -373,6 +375,9 @@ void    head_set_code(HINDEX h,TOKEN* code){
     h->pcode = code;
 }
 
+void    head_set_datasize(HINDEX h,U32 datasize){
+    h->datasize = datasize;
+}
 
 void head_dump_one(HINDEX h){
     sHeader*p = h;

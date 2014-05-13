@@ -25,6 +25,9 @@ HINDEX  head_get_child(HINDEX h);
 HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
 HINDEX  head_get_type(HINDEX h);
+U32     head_get_datasize(HINDEX h);
+
+
 char* head_get_source(HINDEX h);
 char* head_get_comments(HINDEX h,U32* len);
 
@@ -35,6 +38,7 @@ char* head_name(HINDEX h,U32*size);
 
 void    head_set_type(HINDEX h,HINDEX type);
 void    head_set_code(HINDEX h,TOKEN* code);
+void    head_set_datasize(HINDEX h,U32 datasize);
 
 HINDEX  head_new(U8* pcode,HINDEX type, HINDEX dad);
 HINDEX head_append_source(HINDEX h,char* buf,U32 cnt);
