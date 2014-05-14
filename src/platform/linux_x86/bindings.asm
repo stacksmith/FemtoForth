@@ -86,16 +86,6 @@ meow_invoke:
 ; Upon entry to code subroutines, IP points above, at the next token (not at
 ; code).
 ;
-nop
-nop
-nop
-nop
-nop
-nop
-nop
-nop
-nop
-nop
 public inner_interpreter
 return:
     pop       esi
@@ -117,4 +107,6 @@ inner_interpreter:
     mov       ecx,esi               ;routine address
     pop       esi                   ;no stacking of IP...
     jmp       ecx                   ;call assembly subroutine that follows
+
+    
 

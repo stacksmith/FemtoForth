@@ -346,6 +346,30 @@ CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
 .x:
 ;------------------------------------------------------------------------------
 ;
+CODE "system'core'dbl'swap // (a,b,c,d--c,d,a,b)",swap2,T_PROC
+        ldr     r1,[DSP]        ;r1=c
+        ldr     r2,[DSP,4]      ;r2=b
+        ldr     r3,[DSP,8];     ;r3=a
+        str     r1,[DSP,8]
+        str     r0,[DSP,4]
+        str     r3,[DSP]
+        mov     r0,r2
+        NEXT
+.x:
+;------------------------------------------------------------------------------
+CODE "system'core'dbl'- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
+        ldr     r1,[DSP]        ;r1=bh
+        ldr     r2,[DSP,4]      ;r2=al
+        ldr     r3,[DSP,8]      ;r3=ah
+        subs    r0,r2,r0        ;low
+        sbc     r3,r3,r1
+        str     r3,[DSP,8]
+        add     DSP,8
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
+;
 CODE "system'core'1+ // (a -- a+1) increment",incr,T_PROC
         add     r0,1
 .done:  NEXT
@@ -600,33 +624,10 @@ CODE "system'core'@++ // (addr -- addr+4 val) fetch and increment pointer",finc,
         DPUSH   r1
         NEXT
 .x:
-;------------------------------------------------------------------------------
-CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
-        ldr     r1,[DSP]        ;r1=bh
-        ldr     r2,[DSP,4]      ;r2=al
-        ldr     r3,[DSP,8]      ;r3=ah
-        subs    r0,r2,r0        ;low
-        sbc     r3,r3,r1
-        str     r3,[DSP,8]
-        add     DSP,8
-        NEXT
-.x:
 
 
 
 
-;------------------------------------------------------------------------------
-;
-CODE "system'core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_PROC
-        ldr     r1,[DSP]        ;r1=c
-        ldr     r2,[DSP,4]      ;r2=b
-        ldr     r3,[DSP,8];     ;r3=a
-        str     r1,[DSP,8]
-        str     r0,[DSP,4]
-        str     r3,[DSP]
-        mov     r0,r2
-        NEXT
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'core'push // (n--) push n onto ReturnStack",push,T_PROC

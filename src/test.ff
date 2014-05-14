@@ -1,12 +1,8 @@
-cd 'test
-PROC shit {
-  times ( 
-  19
-  29 ( (
-  dd
-  123
-  9 ) )
-  )
-
+PROC timit
+{
+  'sys'gettimeofday
+ // 1000000000 0 begin repeat
+  'sys'gettimeofday
+  swap2 D- ;
 }
 end

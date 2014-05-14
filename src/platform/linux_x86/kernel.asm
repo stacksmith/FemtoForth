@@ -311,6 +311,27 @@ CODE "system'core'dbl'dup // (ab--abab) like OVER OVER.",dbl_dup,T_PROC
         mov     [ebp],ecx
         NEXT
 .x:
+;------------------------------------------------------------------------------
+;
+CODE "system'core'dbl'swap // (a,b,c,d--c,d,a,b)",swap2,T_PROC
+        xchg    eax,[ebp+4]     ;a,d,c,b
+        mov     edx,[ebp]
+        xchg    edx,[ebp+8]     ;c,d,a,b
+        mov     [ebp],edx
+        NEXT
+.x:
+
+;------------------------------------------------------------------------------
+CODE "system'core'dbl'- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
+    mov         edx,[ebp+4]       ;edx = al, low word
+    sub         edx,eax
+    mov         eax,edx           ;low done
+    mov         edx,[ebp+8]       ;edx = ah, high word
+    sbb         edx,[ebp]
+    add         ebp,8
+    mov         [ebp],edx
+    NEXT
+.x:
 
 ;------------------------------------------------------------------------------
 ;
@@ -629,15 +650,6 @@ CODE "system'core'@++ // (addr -- addr+4 val) fetch and increment pointer",finc,
 
 
         
-;------------------------------------------------------------------------------
-;
-CODE "system'core'swap2 // (a,b,c,d--c,d,a,b)",swap2,T_PROC
-        xchg    eax,[ebp+4]     ;a,d,c,b
-        mov     edx,[ebp]
-        xchg    edx,[ebp+8]     ;c,d,a,b
-        mov     [ebp],edx
-        NEXT
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'core'push // (n--) push n onto ReturnStack",push,T_PROC
@@ -890,17 +902,6 @@ CODE "system'core'one // (--1)",one,T_PROC
 .x:
 ;==============================================================================
 
-;------------------------------------------------------------------------------
-CODE "system'core'D- // (ah,al,bh,bl--ch,cl)",2sub,T_PROC
-    mov         edx,[ebp+4]       ;edx = al
-    sub         edx,eax
-    mov         eax,edx           ;low done
-    mov         edx,[ebp+8]       ;edx = ah
-    sbb         edx,[ebp]
-    add         ebp,12    
-    mov         [ebp],edx
-    NEXT
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "test'dbase ",dbase,T_PROC
