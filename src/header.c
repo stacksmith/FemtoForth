@@ -281,7 +281,7 @@ HINDEX head_find(char* ptr,U32 len,HINDEX* searchlist){
   return 0;
 }
 /* ============================================================================
-*  Resolve   given a pointer, find header
+*  Resolve   given a pointer, find header.  Pointer may point inside data.
 * 
 *  We will find the header pointing at the pointer, or the nearest one below,
 *  in case we are pointing inside a routine.  'The Price Is Right' rules apply.
@@ -309,13 +309,16 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
             }
         }
         //step to next head
-
         h = (HINDEX)(head_size(h) + (U32)h);
     }
     //finally, return the best match
     if(poffset) *poffset = best_offset;
     return best_hindex;
 }
+/* ============================================================================
+*  Owner   given a pointer, find header
+* 
+*/
 
 char* head_get_name(HINDEX h){
     return h->src; 
@@ -408,3 +411,6 @@ void head_dump_one(HINDEX h){
   printf("\33[0m\n");
 }
 
+HINDEX head_nextup(HINDEX h){
+    return (HINDEX)( ((U32)h) + head_size(h) );
+}

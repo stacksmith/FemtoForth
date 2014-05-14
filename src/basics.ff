@@ -247,7 +247,7 @@ PROC locatex // (ptr,cnt,hdir -- h/0)
 }
 end
 PROC owner // (ptr--head/0) find the head referring to this ptr
-{ 
+{
     // walk the entire header list.  TOS=header; NOS=addr
     head'bottom begin
       if( dup head'ptr = ) dbl'drop 0 ; thanx  // exit on head'ptr

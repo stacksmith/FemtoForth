@@ -56,3 +56,4 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset);
 void head_dump_one(HINDEX h);
 
 int head_save(FILE* f);
+HINDEX head_nextup(HINDEX h);

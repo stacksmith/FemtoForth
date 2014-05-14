@@ -83,6 +83,8 @@ printf("table_end ERROR: no room intable!\n");
     }
     return ptr+1;
 }
+
+
 /* ============================================================================
  * table_cleanse
  * 
@@ -153,8 +155,24 @@ U32 table_count_used(PTOKEN*ptab){
  */
 int table_clean(PTOKEN*p ){
     //figure out the top of the usable table...
-    U32 mapsize = lay->table_top - lay->table_bottom;
-printf("table_clean: table %p\n",mapsize);
- 
+    U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
+    U8* map = (U8*)malloc(mapsize);
+    // walk the heads sequentially
+    HINDEX h = (HINDEX)lay->head_bottom;
+    while(h < (HINDEX)var->head_ptr){
+        //head_dump_one(h);
+        TOKEN* ptok = head_get_code(h);
+        TOKEN* end = ptok + head_get_datasize(h);
+printf("table_clean: %p %p\n",ptok,end);
+        //Now, walk the bytecodes...
+        TOKEN** base = table_base(ptok);
+        TOKEN tok = *ptok++;
+    
+        
+        h = head_nextup(h);
+
+    }
+//printf("table_clean: table %x\n",mapsize);
+    free(map);
     return 1;
 }
