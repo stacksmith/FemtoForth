@@ -423,3 +423,16 @@ void head_dump_one(HINDEX h){
 HINDEX head_nextup(HINDEX h){
     return (HINDEX)( ((U32)h) + head_size(h) );
 }
+
+typedef int (*head_proc)(HINDEX h, void* params);
+// a process function receives header pointers and returns a bool.
+
+HINDEX head_seq(head_proc func,void* params){
+    HINDEX h=(HINDEX)lay->head_bottom;
+    while(h < (HINDEX)var->head_ptr){
+        int ret = func(h,params);
+        if(ret) return h;
+        h = (HINDEX)(head_size(h) + (U32)h);
+    }
+    return 0;
+}

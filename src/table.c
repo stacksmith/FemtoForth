@@ -153,7 +153,17 @@ U32 table_count_used(PTOKEN*ptab){
  * and requires no holes in table, bottom-up filling etc.
  * 
  */
+int mytest(HINDEX h,void*p){
+    U32 l=head_get_namelen(h);
+    char*pn = head_get_name(h);
+    printf("SEQ: processing %.*s\n",l,pn);
+    return 0;
+}
 int table_clean(PTOKEN*p ){
+    head_seq(&mytest,0);
+    return 1;
+    
+    
     //figure out the top of the usable table...
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);

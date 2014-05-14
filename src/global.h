@@ -133,3 +133,4 @@ typedef struct sVar {
 
 } sVar;
 
+typedef int (*head_proc)(HINDEX h, void* params);

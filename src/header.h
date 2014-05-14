@@ -59,3 +59,5 @@ void head_dump_one(HINDEX h);
 
 int head_save(FILE* f);
 HINDEX head_nextup(HINDEX h);
+
+HINDEX head_seq(head_proc func,void* params);
