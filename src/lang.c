@@ -149,7 +149,7 @@ int lang_t(){
 int lang_return(void){
     // Clean up the return stack if necessary
     if(var->define_stackdepth){
-//printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
+printf("lang_return: cleaning up %d rstack items\n",var->define_stackdepth);
         HINDEX tok = head_find_abs_or_die("system'core'rdrop#");
         data_compile_token(tok);
         data_compile_U8(var->define_stackdepth);
@@ -311,9 +311,10 @@ int lang_p(char* ptr,U32 cnt){
             break;
         case 5:
             if(0==strncmp(ptr,"times",5)) { return lang_times(); }
-            
             if(0==strncmp(ptr,"begin",5)) 
                  return lang_compile_with_rstack("system'core'begin",1);
+             if(0==strncmp(ptr,"+loop",5))
+                 return lang_compile_with_rstack("system'core'+loop",-3);
                 //return lang_begin();
           //  if(0==strncmp(ptr,"begxx",5)) 
           //       return lang_compile_with_rstack("system'core'begin",1);

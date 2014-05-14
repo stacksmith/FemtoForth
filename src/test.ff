@@ -1,8 +1,10 @@
-PROC timit
+PROC aaa
 {
-  'sys'gettimeofday
- // 1000000000 0 begin repeat
-  'sys'gettimeofday
-  swap2 D- ;
+  sys'gettimeofday
+  1000000000 0 do loop
+  sys'gettimeofday
+  dbl'swap  dbl'-
+  swap . . cr
+  ;
 }
 end

@@ -144,8 +144,6 @@ CODE "system'core'rdrop# // (--) clean up <n> rstack items ",rclean,T_U8
         NEXT
 .x:
 CODE "system'core'nop ",nop,T_PROC 
-        DPUSH   r0
-        mov     r0,lr
         NEXT
 .x:
 
