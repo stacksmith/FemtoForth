@@ -373,3 +373,21 @@ PROC timit4
   ;
 }
 end
+
+PROC timitB
+{ 1 2 3 drop drop drop  ; }
+end
+
+PROC timitA
+{ 1 2 3 drop drop drop timitB ; }
+end
+PROC timit5
+{
+  sys'gettimeofday
+  100000000 0 do timitA loop
+  sys'gettimeofday
+  dbl'swap  dbl'-
+  swap . . cr
+  ;
+}
+end

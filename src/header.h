@@ -51,7 +51,9 @@ HINDEX head_locate(HINDEX dir,char* name,U32 len);
 HINDEX head_find_or_create(char* path);
 HINDEX head_find_absolute( char* path,U32 len);
 HINDEX head_find_abs_or_die( char* path);
+
 HINDEX head_resolve(TOKEN* ptr,U32* poffset);
+HINDEX head_owner(TOKEN* ptr);
 
 void head_dump_one(HINDEX h);
 

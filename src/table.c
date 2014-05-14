@@ -160,17 +160,40 @@ int table_clean(PTOKEN*p ){
     // walk the heads sequentially
     HINDEX h = (HINDEX)lay->head_bottom;
     while(h < (HINDEX)var->head_ptr){
+U32 l=head_get_namelen(h);
+char*pn = head_get_name(h);
+printf("table_clean: processing %.*s\n",l,pn);
+
         //head_dump_one(h);
         TOKEN* ptok = head_get_code(h);
         TOKEN* end = ptok + head_get_datasize(h);
-printf("table_clean: %p %p\n",ptok,end);
-        //Now, walk the bytecodes...
-        TOKEN** base = table_base(ptok);
-        TOKEN tok = *ptok++;
-    
-        
-        h = head_nextup(h);
+        //first token is special: 0 means code may indicate code!
+        if(ptok) { //dirs and such have 0 code pointers...
+            if(*ptok){ //first token may be 0 for code
+    printf(" RANGE: %p %p\n",ptok,end);
+                while(ptok < end){
+                    //Now, walk the bytecodes...
+                    TOKEN** base = table_base(ptok);
+                    TOKEN tok = *ptok++;
+                    if(tok){
+    printf(".");
+                        TOKEN* target = base[tok];
+                        //based on type, process...
+                    } else {
+                        //0 token means return
+                    }
+                    
+                }
+    printf("\n");
 
+            
+            }else {
+printf(" CODE...\n"); 
+    
+            }  
+        }
+        h = head_nextup(h);
+      
     }
 //printf("table_clean: table %x\n",mapsize);
     free(map);

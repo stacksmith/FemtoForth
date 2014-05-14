@@ -316,10 +316,19 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
     return best_hindex;
 }
 /* ============================================================================
-*  Owner   given a pointer, find header
+*  Owner   given a pointer, find header that points directly at it...
 * 
 */
-
+HINDEX head_owner(TOKEN* ptr){
+    if(!ptr) return 0;
+    HINDEX h=(HINDEX)lay->head_bottom;
+    while((U8*)h < var->head_ptr){
+        if(ptr == head_get_code(h))
+            return h;
+        h = (HINDEX)(head_size(h) + (U32)h);
+    }
+    return 0;
+}
 char* head_get_name(HINDEX h){
     return h->src; 
 }
