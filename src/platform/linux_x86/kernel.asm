@@ -82,48 +82,6 @@ CODE "system'core'leave // exit to outer host ",leave,T_PROC
 
     ret
 .x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PROC'pcnt // (ip--#cnt)",type_PROC_cnt,T_PROC
-    mov         eax,0
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'U32'pcnt // (ip--#cnt)",type_U32_cnt,T_PROC
-    mov         eax,0
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU8'pcnt // (ip--#cnt)",type_PU8_cnt,T_PROC
-    mov         eax,1
-    NEXT
-.x:
-;------------------------------------------------------------------------------ 
-CODE "system'TYPE'PU16'pcnt // (ip--#cnt) ",type_PU16_cnt,T_PROC
-    mov         eax,2
-    NEXT
-.x:
-;------------------------------------------------------------------------------ 
-CODE "system'TYPE'PU32'pcnt // (ip--#cnt) ",type_PU32_cnt,T_PROC
-    mov         eax,4
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'POFF'pcnt // (ip--#cnt) ",type_POFF_cnt,T_PROC
-    mov         eax,1
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PSTR8'pcnt // (ip--#cnt) ",type_PSTR8_cnt,T_PROC
-    mov         al,[eax]
-    and         eax,0xFF
-    NEXT
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PREF'pcnt // (ip--#cnt) ",type_PREF_cnt,T_PROC
-    mov         eax,1
-    NEXT
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 

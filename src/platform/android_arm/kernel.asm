@@ -91,33 +91,6 @@ CODE "system'core'leave exit to outer host ",leave,T_PROC
         pop     {r4-r11,lr}
         bx      lr
 .x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU8 // procedure that parses a U8",type_PU8,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU16 // procedure that parses a U16",type_PU16,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-; 
-CODE "system'TYPE'PU32 // procedure that parses a U32",type_PU32,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'POFF // procedure that parses an 8-bit offset",type_POFF,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PSTR8 // procedure that parses a string",type_PSTR8,T_DIR
-    db 0;
-.x:
-;------------------------------------------------------------------------------
-CODE "system'TYPE'PREF // procedure that parses a reference",type_PREF,T_DIR
-    db 0;
-.x:
 
 ;------------------------------------------------------------------------------
 CODE "system'core'SYSBASE // (--sysbase) get the bottom of system ",sysbase,T_PROC 
