@@ -24,3 +24,8 @@ void interpret_init();
 int interpret_compone(char* ptr,U32 cnt);
 int interpret_outer();
 int interpret_one();
+
+void dstack_push(U32 val);
+U32  dstack_pop();
+void dstack_write(U32 val);
+U32  dstack_read();

@@ -58,11 +58,16 @@ cd 'system'TYPE'PROC
 PROC decompile // (ip--ip)
 { ; }
 end
+PROC skip // (ip--ip)
+{ ; }
 
 cd 'system'TYPE'SYSVAR
 PROC decompile // (ip--ip)
 { ; }
 end
+PROC skip // (ip--ip)
+{ ; }
+
 
 cd 'system'TYPE'POFF
 PROC decompile // (ip--ip)
@@ -71,6 +76,8 @@ PROC decompile // (ip--ip)
 ; 
 }
 end
+PROC skip // (ip--ip)
+{ 1+ ; }
 
 cd 'system'TYPE'PSTR8
 PROC decompile // (ip--ip)
@@ -82,6 +89,8 @@ PROC decompile // (ip--ip)
     ;
 }
 end
+PROC skip // (ip--ip)
+{ U8'@++ + ; }
 
 cd 'system'TYPE'PU32
 PROC decompile // (ip--ip)
@@ -89,6 +98,8 @@ PROC decompile // (ip--ip)
     '$' emit dup @++ . ;
 }
 end
+PROC skip // (ip--ip)
+{ 4+ ; }
 
 cd 'system'TYPE'PU16
 PROC decompile // (ip--ip)
@@ -96,6 +107,8 @@ PROC decompile // (ip--ip)
     '$' emit dup U16'@++ . ;
 }
 end
+PROC skip // (ip--ip)
+{ 2+ ; }
 
 cd 'system'TYPE'PU8
 PROC decompile // (ip--ip)
@@ -118,6 +131,8 @@ PROC decompile // (ip--ip)
     head'owner head'name.
     ;
 }
+PROC skip // (ip--ip)
+{ 1+ ; }
 
 
 end

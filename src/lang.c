@@ -75,6 +75,7 @@ U8* lang_ql(U8*p){
   return p+16;
 }
 int lang_q(){
+
   printf("\33[0;32m");
 
 /*  U32 cnt = src_one();
@@ -97,24 +98,6 @@ int lang_q(){
   return 1;
 }
 
-
-void dstack_push(U32 val){
-    *(--var->sp_meow->DSP)=var->sp_meow->TOS;
-    var->sp_meow->TOS = val;
-}
-U32 dstack_pop(){
-    U32 ret = var->sp_meow->TOS;
-    var->sp_meow->TOS = *(var->sp_meow->DSP++);
-    return ret;
-}
-
-void dstack_write(U32 val){
-    var->sp_meow->TOS=val;
-}
-
-U32 dstack_read(){
-    return (var->sp_meow->TOS);
-}
 
 /*=============================================================================
  * times

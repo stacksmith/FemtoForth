@@ -80,11 +80,11 @@ void interpret_init(){
 // U32 __attribute__((cdecl)) meow_invoke(U32);
 
 void call_meow(U8* addr){
- //printf("call_meow will run: %08X\n",addr);
+// printf("call_meow will run: %p\n",addr);
     sRegsMM* pregs = (sRegsMM*)var->sp_meow;
    pregs->IP = (U32)addr;
   U32 ret=    meow_invoke(lay->data_bottom); //var is in data!
-//printf("call_meow: %08X\n",ret);
+//printf("call_meow: %p\n",ret);
 
 }
 void interpret_commit(){
@@ -350,7 +350,8 @@ int interpret_outer(){
 //printf("in: run_table is at %08p\n",var->run_table);
     interpret_outer_p(ptr,cnt);
     //execute
-//    if(var->run_ptr != var->data_ptr) {
+    if(var->run_ptr != var->data_ptr) {
+//printf("--%p--%p %s\n",var->data_ptr,var->run_ptr,ptr);
 //        data_compile_U8(0);
         data_compile_token(hleave);                    //terminate with a return
 //printf("--%p\n",var->data_ptr);
@@ -358,7 +359,7 @@ int interpret_outer(){
 //table_dump( ((U32)(var->run_ptr)) >>4 << 2);
         call_meow(var->run_ptr);                    //run from run_ptr
 //printf("interpreter-outer done\n");
-//    }      
+    }      
     //---------------------------------------
     // reset after run
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
@@ -369,3 +370,21 @@ int interpret_outer(){
    
 }
 
+
+void dstack_push(U32 val){
+    *(--var->sp_meow->DSP)=var->sp_meow->TOS;
+    var->sp_meow->TOS = val;
+}
+U32 dstack_pop(){
+    U32 ret = var->sp_meow->TOS;
+    var->sp_meow->TOS = *(var->sp_meow->DSP++);
+    return ret;
+}
+
+void dstack_write(U32 val){
+    var->sp_meow->TOS=val;
+}
+
+U32 dstack_read(){
+    return (var->sp_meow->TOS);
+}

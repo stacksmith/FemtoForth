@@ -165,8 +165,35 @@ int tbl_cln_proc(HINDEX h,void*p){
         U8* map = (U8*)p;
 printf("SEQ: processing %.*s %p %p \n",l,pn,ptok,end);
         while(ptok < end){
-            TOKEN tok = *ptok++; 
-printf(" %02X",tok);
+            TOKEN** base = table_base(ptok);
+            TOKEN tok = *ptok++;
+            if(tok) { 
+printf(" %02X  ",tok);
+                U8* target =base[tok];
+                HINDEX owner = head_owner(target);
+                if(!owner){
+                    printf("CANNOT FIND owner for token %d at %p\n",
+                        tok,ptok-1);
+                    return 1;
+                }
+printf("OWNER: %.*s ",head_get_namelen(owner),head_get_name(owner));
+             
+                HINDEX type = head_get_type(owner);
+                HINDEX pcnt = head_locate(type,"pcnt",4);
+printf("TYPE: %.*s ",head_get_namelen(type),head_get_name(type));
+                if(!pcnt) {
+                    printf("CANNOT FIND TYPE'%.*s'pcnt\n",
+                        head_get_namelen(type),head_get_name(type));
+                    return 1;
+                }
+                //Now execute pcnt to find out the data length
+                dstack_push(ptok);
+                U8* code = head_get_code(pcnt);
+printf("CODE %p\n",code);
+                call_meow(code);
+                U32 params = dstack_pop();
+printf("--%d\n",params);
+            }
         }
 printf("\n");
     }
