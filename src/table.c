@@ -153,21 +153,35 @@ U32 table_count_used(PTOKEN*ptab){
  * and requires no holes in table, bottom-up filling etc.
  * 
  */
-int mytest(HINDEX h,void*p){
-    U32 l=head_get_namelen(h);
-    char*pn = head_get_name(h);
-    printf("SEQ: processing %.*s\n",l,pn);
+int tbl_cln_proc(HINDEX h,void*p){
+    U32 l       = head_get_namelen(h);
+    char*pn     = head_get_name(h);
+    TOKEN* ptok = head_get_code(h);
+    TOKEN* end  = ptok + head_get_datasize(h);
+    if(!ptok) return 0;   //dirs have 0 code pointers
+    if(!*ptok) return 0;  //code is not interesting
+    // Process each token against the map
+    {
+        U8* map = (U8*)p;
+printf("SEQ: processing %.*s %p %p  BLOB:%d\n",l,pn,ptok,end,head_get_flag_blob(h));
+        while(ptok < end){
+            TOKEN tok = *ptok++; 
+printf(" %02X",tok);
+        }
+printf("\n");
+    }
     return 0;
 }
 int table_clean(PTOKEN*p ){
-    head_seq(&mytest,0);
-    return 1;
-    
-    
-    //figure out the top of the usable table...
+    // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);
-    // walk the heads sequentially
+    memset(map,0,mapsize);
+    // and process each header...
+    head_seq(tbl_cln_proc,map);
+    return 1;
+     
+    
     HINDEX h = (HINDEX)lay->head_bottom;
     while(h < (HINDEX)var->head_ptr){
 U32 l=head_get_namelen(h);

@@ -25,7 +25,6 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 
 extern sVar*            var;
 extern sMemLayout*       lay;
-
 //=======================================================
 // sHeader structure is private.  Headers can be reworked
 // at a later time.
@@ -40,7 +39,7 @@ typedef struct sHeader {
         U16 srclen;                // 26  
         
         U16 pad1;                  // 28
-        U8 pad;                    // 30
+        U8 flag;                  // 30
         U8 namelen;                // 31 actual name part of string
         //                         // 
         // a name follows inline
@@ -49,6 +48,7 @@ typedef struct sHeader {
 } sHeader;
 typedef sHeader* HINDEX;
 
+#define FLAG_BLOB_MASK  1
 /*
  * Head dictionary is a linear structure containing sHeaders...
 
@@ -319,8 +319,14 @@ HINDEX head_resolve(TOKEN* ptr,U32* poffset){
 *  Owner   given a pointer, find header that points directly at it...
 * 
 */
+int head_owner_proc(HINDEX h,void*p){
+    if(p == head_get_code(h))
+        return 1;
+    return 0;
+}
 HINDEX head_owner(TOKEN* ptr){
-    if(!ptr) return 0;
+    return head_seq(head_owner_proc,ptr);
+/*    if(!ptr) return 0;
     HINDEX h=(HINDEX)lay->head_bottom;
     while((U8*)h < var->head_ptr){
         if(ptr == head_get_code(h))
@@ -328,7 +334,38 @@ HINDEX head_owner(TOKEN* ptr){
         h = (HINDEX)(head_size(h) + (U32)h);
     }
     return 0;
+*/
 }
+/* ============================================================================
+*  is_in
+* 
+*/
+typedef struct sHeadIsIn{
+    HINDEX best_h;
+    TOKEN* ref;
+    U32 best_dif;
+} sHeadIsIn;
+
+//----------------------------------------------------------
+int head_is_in_proc(HINDEX h,void* _parm){
+    sHeadIsIn* parm = (sHeadIsIn*)_parm;
+   TOKEN* p = head_get_code(h);         
+   if(p < parm->ref){                   //is head's pointer below reference?
+       U32 dif = parm->ref - p;         //yup, here is the difference
+       if(dif<= (parm->best_dif)) {     //is it better then our best difference?
+           parm->best_dif = dif;        //yup, this is the one for now.
+           parm->best_h = h;
+       }
+   }
+   return 0;    //continue processing
+}
+
+HINDEX head_is_in(TOKEN* ref){
+    sHeadIsIn data = {0,ref,0xFFFFFFFF};
+    HINDEX ret = head_seq(&head_is_in_proc,&data);
+    return data.best_h;
+}
+
 char* head_get_name(HINDEX h){
     return h->src; 
 }
@@ -356,6 +393,16 @@ U32 head_get_datasize(HINDEX h){
 }
 char* head_get_source(HINDEX h){
     return h->src + h->namelen;
+}
+
+int head_get_flag_blob(HINDEX h){
+    return h->flag & FLAG_BLOB_MASK;
+}
+void head_set_flag_blob(HINDEX h){
+    h->flag |= FLAG_BLOB_MASK;
+}
+void head_clear_flag_blob(HINDEX h){
+    h->flag &= ~FLAG_BLOB_MASK;
 }
 
 char* head_name(HINDEX h,U32*size){
@@ -424,7 +471,7 @@ HINDEX head_nextup(HINDEX h){
     return (HINDEX)( ((U32)h) + head_size(h) );
 }
 
-typedef int (*head_proc)(HINDEX h, void* params);
+//typedef int (*head_proc)(HINDEX h, void* params);
 // a process function receives header pointers and returns a bool.
 
 HINDEX head_seq(head_proc func,void* params){

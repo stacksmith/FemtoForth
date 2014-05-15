@@ -149,6 +149,8 @@ Error message and password prompt
 
 <li>$:/temp/NewTagName</li>
 
+<li>$:/temp/search</li>
+
 <li>$:/theme</li>
 
 <li>$:/themes/tiddlywiki/snowwhite</li>
@@ -161,7 +163,11 @@ Error message and password prompt
 
 <li>do ... loop</li>
 
+<li>Draft of 'do ... loop'</li>
+
 <li>FemtoForth</li>
+
+<li>HeaderFlags</li>
 
 <li>Installation</li>
 
@@ -3487,7 +3493,7 @@ Error message and password prompt
 <pre>[[Introduction]]
 </pre>
 </div>
-<div current-tiddler="FemtoForth" modified="20140513152539584" modifier="stacksmith" title="$:/HistoryList" type="application/json">
+<div current-tiddler="HeaderFlags" modified="20140515152340298" modifier="stacksmith" title="$:/HistoryList" type="application/json">
 <pre>[
     {
         &quot;title&quot;: &quot;$:/ControlPanel&quot;,
@@ -3913,6 +3919,71 @@ Error message and password prompt
     },
     {
         &quot;title&quot;: &quot;FemtoForth&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Introduction&quot;,
+        &quot;fromPageRect&quot;: {
+            &quot;top&quot;: 308.26666259765625,
+            &quot;left&quot;: 777,
+            &quot;width&quot;: 75,
+            &quot;right&quot;: 852,
+            &quot;bottom&quot;: 326.26666259765625,
+            &quot;height&quot;: 18
+        }
+    },
+    {
+        &quot;title&quot;: &quot;do ... loop&quot;,
+        &quot;fromPageRect&quot;: {
+            &quot;top&quot;: 328.26666259765625,
+            &quot;left&quot;: 777,
+            &quot;width&quot;: 63,
+            &quot;right&quot;: 840,
+            &quot;bottom&quot;: 346.26666259765625,
+            &quot;height&quot;: 18
+        }
+    },
+    {
+        &quot;title&quot;: &quot;Meow-Meow&quot;,
+        &quot;fromPageRect&quot;: {
+            &quot;top&quot;: 348.26666259765625,
+            &quot;left&quot;: 777,
+            &quot;width&quot;: 81,
+            &quot;right&quot;: 858,
+            &quot;bottom&quot;: 366.26666259765625,
+            &quot;height&quot;: 18
+        }
+    },
+    {
+        &quot;title&quot;: &quot;Installation&quot;,
+        &quot;fromPageRect&quot;: {
+            &quot;top&quot;: 368.26666259765625,
+            &quot;left&quot;: 777,
+            &quot;width&quot;: 68,
+            &quot;right&quot;: 845,
+            &quot;bottom&quot;: 386.26666259765625,
+            &quot;height&quot;: 18
+        }
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'do ... loop'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'Installation'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Installation&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'New Tiddler'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;HeaderFlags&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'HeaderFlags'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;HeaderFlags&quot;
     }
 ]</pre>
 </div>
@@ -3955,14 +4026,17 @@ Error message and password prompt
 <div created="20140512215222795" creator="s" modified="20140512215225635" modifier="stacksmit" title="$:/status/UserName">
 <pre>stacksmith</pre>
 </div>
-<div list="Introduction FemtoForth" title="$:/StoryList">
+<div list="HeaderFlags Installation Meow-Meow [[Draft of 'do ... loop']] Introduction" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20140513145832702" creator="stacksmith" modified="20140513145833491" modifier="stacksmith" title="$:/temp/NewFieldName">
 <pre></pre>
 </div>
-<div modified="20140513145753889" modifier="stacksmith" title="$:/temp/NewTagName">
+<div modified="20140515151042646" modifier="stacksmith" title="$:/temp/NewTagName">
 <pre></pre>
+</div>
+<div created="20140515150629929" creator="stacksmith" modified="20140515150633041" modifier="stacksmith" title="$:/temp/search">
+<pre>HeaderFlags</pre>
 </div>
 <div modified="20140512215258156" modifier="stacksmith" title="$:/theme">
 <pre>$:/themes/tiddlywiki/snowwhite</pre>
@@ -4065,6 +4139,24 @@ Internally, the &lt;do&gt; token stacks the following:
 Since the entire loop address is rstacked there is no restriction on the branch reach of the ''loop''.
 </pre>
 </div>
+<div created="20140512235506239" creator="stacksmith" draft.of="do ... loop" draft.title="do ... loop" modified="20140515141525007" modifier="stacksmith" title="Draft of 'do ... loop'" type="text/vnd.tiddlywiki">
+<pre>Like forth, the looping construct is
+
+```
+limit start do ... loop
+```
+There is no limit on the span of this loop.
+
+!!DETAILS
+Internally, the do token stacks the following:
+
+#Loop entry address
+#Limit
+#Counter 
+
+Since the entire loop address is rstacked there is no restriction on the branch reach of the ''loop''.
+</pre>
+</div>
 <div created="20140513150952570" creator="stacksmith" modified="20140513152539583" modifier="stacksmith" title="FemtoForth">
 <pre>FemtoForth is an environment for developing code on multiple platforms.  Based on a unique infinite bytecode machine called Meow-Meow, FemtoForth is a proof-of-concept system, as well as a basis for further hardware development.
 
@@ -4083,7 +4175,16 @@ Words are referred to either as a fully qualified path such as '''system'core'du
 The system boots as a C application which allocates memory and provides basic language services (which are ideally replaced by native services after boot). The rest of the system consists a binary image, and headers containing name 
 </pre>
 </div>
-<div created="20140513150128286" creator="stacksmith" modified="20140513150320333" modifier="stacksmith" title="Installation">
+<div created="20140515150645454" creator="stacksmith" modified="20140515152340296" modifier="stacksmith" title="HeaderFlags">
+<pre>It is important to be able to perform external operations on the image -- operations such as reordering the dictionary or cleaning the tabe.  To do so, we should not rely on search dispatch as the headers may be moving around with improper pointers.  The header data should provide us with enough information.
+
+
+|FLAG_BLOB|This entry is not built of tokens - it has binary data|
+
+
+</pre>
+</div>
+<div created="20140513150128286" creator="stacksmith" modified="20140515150642206" modifier="stacksmith" title="Installation">
 <pre>!!Pre-requisites
 You should be able to compile 32-bit c code.  64-bit systems require some extra libraries and tools to accomplish this.
 

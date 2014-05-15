@@ -66,6 +66,7 @@ void head_build(){
   head_commit(head_append_source(H_SYSVAR,"SYSVAR // procedure directory",0));
          //H_U32 = head_new("U32",3,      0,H_TYPE, T_NA,      H_TYPE);
   
+  
   head_set_type(H_ROOT,H_DIR);  
   head_set_type(H_SYSTEM,H_DIR);
   head_set_type(H_TYPE,H_DIR);      
@@ -130,8 +131,8 @@ int kernel_load_record(FILE* f){
         return 0;
   }   
   head_set_type(h,mytype);        //it was created as DIR originally...
-
   head_set_code(h,data-1);       //point at 0 (code) token
+  head_set_flag_blob(h);        //since these are code...
   
 //interpret_ql(data);
     return 1;
