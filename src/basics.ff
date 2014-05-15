@@ -228,6 +228,9 @@ PROC code // (e--code) return code pointer
 {   16 + @ ;
 }
 end
+PROC ptype // (e--ptype) payload type
+{   30 + U8'@ ; }
+end
 PROC namelen // (e--n) get the name length
 {   31 + U8'@ ; }
 end

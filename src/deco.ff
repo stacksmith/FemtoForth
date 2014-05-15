@@ -17,20 +17,80 @@ PROC deco1 // (ip--ip,e)
     ;
 }
 end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_ONE // (ip--ip) 
+{
+    U8'@++ 
+    '$' emit dup hex2 space
+    if( U8'is_print )
+      ''' emit  emit ''' emit
+    else
+      drop
+    thanx 
+    ;
+}
+end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_TWO // (ip--ip) 
+{   '$' emit dup U16'@++ . ; }
+end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_FOUR // (ip--ip) 
+{    '$' emit dup @++ . ;
+}
+end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_OFF8 // (ip--ip) 
+{  U8'@++ over + . ;
+}
+end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_REF // (ip--ip) 
+{   
+    U8'@++      // ip+1,ref
+    4* over 1- table'base + @ // ip,ref
+    head'owner head'name.
+    ;
+}
+end
+// ----------------------------------------------------------------------
+PROC deco_PAYLOAD_STR8 // (ip--ip) 
+{   '"' emit
+    U8'@++      // ptr,cnt
+    dbl'dup ctell
+    +
+    '"' emit
+    ;
+}
+end
+// ----------------------------------------------------------------------
 
+PROC deco_payload // (ip,h--)
+{
+    head'ptype
+    if( zr ) drop ; thanx      // No payload
+    if( 1 eq ) drop deco_PAYLOAD_ONE ; thanx
+    if( 2 eq ) drop deco_PAYLOAD_TWO ; thanx
+    if( 3 eq ) drop deco_PAYLOAD_FOUR ; thanx
+    if( 4 eq ) drop deco_PAYLOAD_OFF8 ; thanx
+    if( 5 eq ) drop deco_PAYLOAD_REF ; thanx
+    if( 6 eq ) drop deco_PAYLOAD_STR8 ; thanx
+    "deco_payload error" ctell 1 error'throw
+}
+end
 // decompile a token and associated data in the codestream
 PROC deco_tok // (ip--ip)
 {
     if( error'catch 0= )
         color'dim color'white '<' emit color'reset color'green
-        deco1 dup head'name.
-        head'type 
-        if( push "decompile" pop  head'locatex zr )
-            dbl'drop 1 error'throw
-        thanx
+        deco1 dup head'name. // (ip,h)
         color'dim color'white '>' emit color'reset color'white
         space
-        head'code invoke // find and run decompile
+        deco_payload
+//        if( push "decompile" pop  head'locatex zr )
+//            dbl'drop 1 error'throw
+//        thanx
+//        head'code invoke // find and run decompile
         error'clear
     else 
         "ERROR" ctell 
@@ -54,87 +114,6 @@ PROC deco_n // (ip,cnt--ip)
 }
 end
 
-cd 'system'TYPE'PROC
-PROC decompile // (ip--ip)
-{ ; }
-end
-PROC skip // (ip--ip)
-{ ; }
 
-cd 'system'TYPE'SYSVAR
-PROC decompile // (ip--ip)
-{ ; }
-end
-PROC skip // (ip--ip)
-{ ; }
-
-
-cd 'system'TYPE'POFF
-PROC decompile // (ip--ip)
-{ 
-  U8'@++ over + .
-; 
-}
-end
-PROC skip // (ip--ip)
-{ 1+ ; }
-
-cd 'system'TYPE'PSTR8
-PROC decompile // (ip--ip)
-{   '"' emit
-    U8'@++      // ptr,cnt
-    dbl'dup ctell
-    +
-    '"' emit
-    ;
-}
-end
-PROC skip // (ip--ip)
-{ U8'@++ + ; }
-
-cd 'system'TYPE'PU32
-PROC decompile // (ip--ip)
-{   
-    '$' emit dup @++ . ;
-}
-end
-PROC skip // (ip--ip)
-{ 4+ ; }
-
-cd 'system'TYPE'PU16
-PROC decompile // (ip--ip)
-{   
-    '$' emit dup U16'@++ . ;
-}
-end
-PROC skip // (ip--ip)
-{ 2+ ; }
-
-cd 'system'TYPE'PU8
-PROC decompile // (ip--ip)
-{   
-    U8'@++ 
-    '$' emit dup hex2 space
-    if( U8'is_print )
-      ''' emit  emit ''' emit
-    else
-      drop
-    thanx 
-    ;
-}
-end
-cd 'system'TYPE'PREF
-PROC decompile // (ip--ip)
-{   
-    U8'@++      // ip+1,ref
-    4* over 1- table'base + @ // ip,ref
-    head'owner head'name.
-    ;
-}
-PROC skip // (ip--ip)
-{ 1+ ; }
-
-
-end
 cd 'test
 
