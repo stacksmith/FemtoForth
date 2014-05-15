@@ -159,11 +159,11 @@ int tbl_cln_proc(HINDEX h,void*p){
     TOKEN* ptok = head_get_code(h);
     TOKEN* end  = ptok + head_get_datasize(h);
     if(!ptok) return 0;   //dirs have 0 code pointers
-    if(!*ptok) return 0;  //code is not interesting
+    if(head_get_flag_blob(h)) return 0; //blobs not interesting
     // Process each token against the map
     {
         U8* map = (U8*)p;
-printf("SEQ: processing %.*s %p %p  BLOB:%d\n",l,pn,ptok,end,head_get_flag_blob(h));
+printf("SEQ: processing %.*s %p %p \n",l,pn,ptok,end);
         while(ptok < end){
             TOKEN tok = *ptok++; 
 printf(" %02X",tok);
