@@ -202,7 +202,7 @@ printf("(%.*s) %d",head_get_namelen(type),head_get_name(type),
                     case PAYLOAD_ONE: ptok++; break;
                     case PAYLOAD_TWO: ptok+=2; break;
                     case PAYLOAD_FOUR: ptok+=4; break;
-                    case PAYLOAD_OFF8: ptok++; ptok+=1; break;
+                    case PAYLOAD_OFF8: ptok+=1; break;
                     case PAYLOAD_REF: 
                         ptok++;  //TODO: do table magic...
                         break;
