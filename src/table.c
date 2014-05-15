@@ -159,7 +159,7 @@ int tbl_cln_proc(HINDEX h,void*p){
     TOKEN* ptok = head_get_code(h);
     TOKEN* end  = ptok + head_get_datasize(h);
     if(!ptok) return 0;   //dirs have 0 code pointers
-    if(head_get_flag_blob(h)) return 0; //blobs not interesting
+//    if(head_get_flag_blob(h)) return 0; //blobs not interesting
     // Process each token against the map
     {
         U8* map = (U8*)p;

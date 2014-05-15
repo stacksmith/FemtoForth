@@ -26,8 +26,8 @@ HINDEX  head_get_next(HINDEX h);
 HINDEX  head_get_dad(HINDEX h);
 HINDEX  head_get_type(HINDEX h);
 U32     head_get_datasize(HINDEX h);
-int head_get_flag_blob(HINDEX h);
-void head_set_flag_blob(HINDEX h);
+int  head_get_ptype(HINDEX h);
+void head_set_ptype(HINDEX h,U32 ptype);
 void head_clear_flag_blob(HINDEX h);
 
 

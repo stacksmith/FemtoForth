@@ -201,6 +201,9 @@ void def_error(char*src, char*errptr){
 
 
 extern char* src_errbuf;
+/* ==========================================================
+  def PROC
+*/
 int interpret_def_PROC(HINDEX h){
     src_set(head_get_source(h));
     U32 ret = interpret_compuntil("end",3);
@@ -215,8 +218,12 @@ printf("-----------\n");
     }
     return 1;
 }
+/* ==========================================================
+  def U32
+*/
+
 int interpret_def_U32(HINDEX h){
-    head_set_flag_blob(h);              //U32 has a 4-byte blob
+    head_set_ptype(h,PAYLOAD_FOUR); //U32 has a 4-byte payload
     data_compile_U32(dstack_pop());
     interpret_commit();
 //printf("interpret_def_U32 [%s]\n",var->src_ptr);

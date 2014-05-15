@@ -47,8 +47,8 @@ typedef struct sHeader {
         
 } sHeader;
 typedef sHeader* HINDEX;
-
-#define FLAG_BLOB_MASK  1
+//
+// Flag contains payload type:
 /*
  * Head dictionary is a linear structure containing sHeaders...
 
@@ -79,6 +79,7 @@ HINDEX head_new(U8*pcode,HINDEX type,HINDEX dad)
   head->pcode = pcode;
   head->srclen = 0;
   head->namelen = 0;
+  head->flag = 0;
   //link in
   head->next = dad?dad->child:0;      //dad's first child is our sib
   if(dad)
@@ -395,14 +396,11 @@ char* head_get_source(HINDEX h){
     return h->src + h->namelen;
 }
 
-int head_get_flag_blob(HINDEX h){
-    return h->flag & FLAG_BLOB_MASK;
+int head_get_ptype(HINDEX h){
+    return h->flag & 0xF;
 }
-void head_set_flag_blob(HINDEX h){
-    h->flag |= FLAG_BLOB_MASK;
-}
-void head_clear_flag_blob(HINDEX h){
-    h->flag &= ~FLAG_BLOB_MASK;
+void head_set_ptype(HINDEX h,U32 ptype){
+    h->flag = (h->flag & 0xF0) | ptype;
 }
 
 char* head_name(HINDEX h,U32*size){

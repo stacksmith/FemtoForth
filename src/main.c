@@ -117,22 +117,23 @@ int kernel_load_record(FILE* f){
   head_set_datasize(h,var->data_ptr - datastart);
   // And update the head
   // set type based on param...
-  HINDEX mytype;
+  HINDEX mytype= head_find_abs_or_die("system'TYPE'PROC");
+  U32 paytype = 0;
   switch(parm){
-      case T_PROC: mytype = head_find_abs_or_die("system'TYPE'PROC"); break;
-      case T_U8:   mytype = head_find_abs_or_die("system'TYPE'PU8");break;
-      case T_U16:  mytype = head_find_abs_or_die("system'TYPE'PU16");break;
-      case T_U32:  mytype = head_find_abs_or_die("system'TYPE'PU32");break;
-      case T_OFF:  mytype = head_find_abs_or_die("system'TYPE'POFF");break;
-      case T_STR8: mytype = head_find_abs_or_die("system'TYPE'PSTR8");break;
-      case T_REF:  mytype = head_find_abs_or_die("system'TYPE'PREF");break;
+      case T_PROC: break;
+      case T_U8:   paytype = PAYLOAD_ONE; break;
+      case T_U16:  paytype = PAYLOAD_TWO; break;
+      case T_U32:  paytype = PAYLOAD_FOUR; break;
+      case T_OFF:  paytype = PAYLOAD_OFF8; break;
+      case T_STR8: paytype = PAYLOAD_STR8; break;
+      case T_REF:  paytype = PAYLOAD_REF; break;
       case T_DIR:  mytype = head_find_abs_or_die("system'TYPE'DIR");break;
       default: printf("kernel_load_record: invalid type %d\n",parm);
         return 0;
   }   
   head_set_type(h,mytype);        //it was created as DIR originally...
+  head_set_ptype(h,paytype);
   head_set_code(h,data-1);       //point at 0 (code) token
-  head_set_flag_blob(h);        //since these are code...
   
 //interpret_ql(data);
     return 1;

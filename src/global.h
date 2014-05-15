@@ -35,13 +35,23 @@ typedef U8  PARM ;         //token stream parameter
 typedef unsigned char TOKEN;
 typedef TOKEN* PTOKEN;
 
+#define PAYLOAD_NONE   0
+#define PAYLOAD_ONE    1
+#define PAYLOAD_TWO    2
+#define PAYLOAD_FOUR   3
+#define PAYLOAD_OFF8   4
+#define PAYLOAD_REF    5
+#define PAYLOAD_STR8   6
+#define PAYLOAD_OTHER 15
+
+//these are from kernel code...
 #define T_PROC  0     
 #define T_U8    1
 #define T_U16   2
 #define T_U32   3
 #define T_OFF   4
-#define T_STR8  5
-#define T_REF   6
+#define T_REF   5
+#define T_STR8  6
 #define T_DIR   255
 // must match kernel definitions
 
