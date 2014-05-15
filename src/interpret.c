@@ -223,7 +223,8 @@ printf("-----------\n");
 */
 
 int interpret_def_U32(HINDEX h){
-    head_set_ptype(h,PAYLOAD_FOUR); //U32 has a 4-byte payload
+//    head_set_ptype(h,PAYLOAD_FOUR); //U32 has a 4-byte payload
+    head_set_blob(h,1); //an instance of data, not codestream.
     data_compile_U32(dstack_pop());
     interpret_commit();
 //printf("interpret_def_U32 [%s]\n",var->src_ptr);

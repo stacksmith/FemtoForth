@@ -142,6 +142,8 @@ U32 table_count_used(PTOKEN*ptab){
     return count;
 }
 
+
+
 /* ============================================================================
  * table_cleanse
  * 
@@ -153,13 +155,24 @@ U32 table_count_used(PTOKEN*ptab){
  * and requires no holes in table, bottom-up filling etc.
  * 
  */
+
+void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
+    U32 index = ((U32)base - (U32)(lay->table_bottom)) /4 + tok;
+printf("adding index %d\n",index);
+    if(map[index] <255)
+        map[index]++;
+}
+
+
+
 int tbl_cln_proc(HINDEX h,void*p){
+    U8* table = (U8*)p;
     U32 l       = head_get_namelen(h);
     char*pn     = head_get_name(h);
     TOKEN* ptok = head_get_code(h);
     TOKEN* end  = ptok + head_get_datasize(h);
     if(!ptok) return 0;   //dirs have 0 code pointers
-//    if(head_get_flag_blob(h)) return 0; //blobs not interesting
+    if(head_get_blob(h)) return 0; //blobs not interesting
     // Process each token against the map
     {
         U8* map = (U8*)p;
@@ -167,8 +180,11 @@ printf("SEQ: processing %.*s %p %p \n",l,pn,ptok,end);
         while(ptok < end){
             TOKEN** base = table_base(ptok);
             TOKEN tok = *ptok++;
-            if(tok) { 
-printf(" %02X  ",tok);
+printf("%p %02X  ",ptok,tok);
+            if(tok) { //don't count implicit returns
+                // count it!
+                tbl_cln_add(table,base,tok);
+                // now figure out how to skip...
                 U8* target =base[tok];
                 HINDEX owner = head_owner(target);
                 if(!owner){
@@ -176,29 +192,51 @@ printf(" %02X  ",tok);
                         tok,ptok-1);
                     return 1;
                 }
-printf("OWNER: %.*s ",head_get_namelen(owner),head_get_name(owner));
+printf(" %.*s ",head_get_namelen(owner),head_get_name(owner));
              
                 HINDEX type = head_get_type(owner);
-                HINDEX pcnt = head_locate(type,"pcnt",4);
-printf("TYPE: %.*s ",head_get_namelen(type),head_get_name(type));
-                if(!pcnt) {
-                    printf("CANNOT FIND TYPE'%.*s'pcnt\n",
-                        head_get_namelen(type),head_get_name(type));
-                    return 1;
+printf("(%.*s) %d",head_get_namelen(type),head_get_name(type),
+    head_get_ptype(owner));
+                switch(head_get_ptype(owner)){
+                    case PAYLOAD_NONE: break;
+                    case PAYLOAD_ONE: ptok++; break;
+                    case PAYLOAD_TWO: ptok+=2; break;
+                    case PAYLOAD_FOUR: ptok+=4; break;
+                    case PAYLOAD_OFF8: ptok++; ptok+=1; break;
+                    case PAYLOAD_REF: 
+                        ptok++;  //TODO: do table magic...
+                        break;
+                    case PAYLOAD_STR8: 
+                        { U32 len = *ptok++;
+                            ptok += len;
+                            break;
+                        }
+                    default: 
+                        printf("tbl_cln_proc: invalid payload type %d\n",
+                               head_get_ptype(type));
+                        return 1;
                 }
-                //Now execute pcnt to find out the data length
-                dstack_push(ptok);
-                U8* code = head_get_code(pcnt);
-printf("CODE %p\n",code);
-                call_meow(code);
-                U32 params = dstack_pop();
-printf("--%d\n",params);
-            }
-        }
+            } //else tok=0, as in ;
 printf("\n");
-    }
+        } //while (ptok < end)
+printf("\n");
+    } //just
     return 0;
 }
+
+void tbl_cln_report(U8* map,U32 cnt){
+    U32 index;
+    U8** table = (U8**)lay->table_bottom;
+    for(index=0;index<cnt;index++){
+        U8* ptr = table[index];
+        HINDEX h = head_owner(ptr);
+        printf("%p %d\t%.*s\t%d\n",table+index,
+               index,
+               head_get_namelen(h),head_get_name(h),
+               map[index]);
+    }
+}
+
 int table_clean(PTOKEN*p ){
     // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
@@ -206,47 +244,9 @@ int table_clean(PTOKEN*p ){
     memset(map,0,mapsize);
     // and process each header...
     head_seq(tbl_cln_proc,map);
-    return 1;
-     
-    
-    HINDEX h = (HINDEX)lay->head_bottom;
-    while(h < (HINDEX)var->head_ptr){
-U32 l=head_get_namelen(h);
-char*pn = head_get_name(h);
-printf("table_clean: processing %.*s\n",l,pn);
-
-        //head_dump_one(h);
-        TOKEN* ptok = head_get_code(h);
-        TOKEN* end = ptok + head_get_datasize(h);
-        //first token is special: 0 means code may indicate code!
-        if(ptok) { //dirs and such have 0 code pointers...
-            if(*ptok){ //first token may be 0 for code
-    printf(" RANGE: %p %p\n",ptok,end);
-                while(ptok < end){
-                    //Now, walk the bytecodes...
-                    TOKEN** base = table_base(ptok);
-                    TOKEN tok = *ptok++;
-                    if(tok){
-    printf(".");
-                        TOKEN* target = base[tok];
-                        //based on type, process...
-                    } else {
-                        //0 token means return
-                    }
-                    
-                }
-    printf("\n");
-
-            
-            }else {
-printf(" CODE...\n"); 
-    
-            }  
-        }
-        h = head_nextup(h);
-      
-    }
-//printf("table_clean: table %x\n",mapsize);
+  
+    tbl_cln_report(map,mapsize);
+printf("table_clean: table %x\n",mapsize);
     free(map);
     return 1;
 }

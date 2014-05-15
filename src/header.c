@@ -38,8 +38,9 @@ typedef struct sHeader {
         U16    datasize;           // 24
         U16 srclen;                // 26  
         
-        U16 pad1;                  // 28
-        U8 flag;                  // 30
+        U8 pad1;                   // 28
+        U8 entry_flag;              // 29
+        U8 payload_flag;                  // 30
         U8 namelen;                // 31 actual name part of string
         //                         // 
         // a name follows inline
@@ -79,7 +80,8 @@ HINDEX head_new(U8*pcode,HINDEX type,HINDEX dad)
   head->pcode = pcode;
   head->srclen = 0;
   head->namelen = 0;
-  head->flag = 0;
+  head->payload_flag = 0;
+  head->entry_flag = 0;
   //link in
   head->next = dad?dad->child:0;      //dad's first child is our sib
   if(dad)
@@ -397,12 +399,19 @@ char* head_get_source(HINDEX h){
 }
 
 int head_get_ptype(HINDEX h){
-    return h->flag & 0xF;
-}
-void head_set_ptype(HINDEX h,U32 ptype){
-    h->flag = (h->flag & 0xF0) | ptype;
+    return h->payload_flag & 0xF;
 }
 
+void head_set_ptype(HINDEX h,U32 ptype){
+    h->payload_flag = (h->payload_flag & 0xF0) | ptype;
+}
+
+int head_get_blob(HINDEX h){
+    return h->entry_flag & 1;
+}
+void head_set_blob(HINDEX h,U32 ptype){
+    h->entry_flag = (h->entry_flag & 0xFE) | (ptype & 1 ); 
+}
 char* head_name(HINDEX h,U32*size){
     char* ret = h->src;
     if(size) *size = h->namelen;

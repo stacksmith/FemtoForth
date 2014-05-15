@@ -134,6 +134,7 @@ int kernel_load_record(FILE* f){
   head_set_type(h,mytype);        //it was created as DIR originally...
   head_set_ptype(h,paytype);
   head_set_code(h,data-1);       //point at 0 (code) token
+  head_set_blob(h,1); //all code is a blob
   
 //interpret_ql(data);
     return 1;

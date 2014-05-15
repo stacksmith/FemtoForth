@@ -3495,7 +3495,7 @@ Error message and password prompt
 <pre>[[Introduction]]
 </pre>
 </div>
-<div current-tiddler="ToDo" modified="20140515164919921" modifier="stacksmith" title="$:/HistoryList" type="application/json">
+<div current-tiddler="HeaderFlags" modified="20140515221022397" modifier="stacksmith" title="$:/HistoryList" type="application/json">
 <pre>[
     {
         &quot;title&quot;: &quot;$:/ControlPanel&quot;,
@@ -3992,6 +3992,12 @@ Error message and password prompt
     },
     {
         &quot;title&quot;: &quot;ToDo&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'HeaderFlags'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;HeaderFlags&quot;
     }
 ]</pre>
 </div>
@@ -4183,12 +4189,12 @@ Words are referred to either as a fully qualified path such as '''system'core'du
 The system boots as a C application which allocates memory and provides basic language services (which are ideally replaced by native services after boot). The rest of the system consists a binary image, and headers containing name 
 </pre>
 </div>
-<div created="20140515150645454" creator="stacksmith" modified="20140515152340296" modifier="stacksmith" title="HeaderFlags">
+<div created="20140515150645454" creator="stacksmith" modified="20140515221022395" modifier="stacksmith" title="HeaderFlags">
 <pre>It is important to be able to perform external operations on the image -- operations such as reordering the dictionary or cleaning the tabe.  To do so, we should not rely on search dispatch as the headers may be moving around with improper pointers.  The header data should provide us with enough information.
 
 
 |FLAG_BLOB|This entry is not built of tokens - it has binary data|
-
+|3-0|PAYLOAD_TYPE |Common payload patterns |
 
 </pre>
 </div>
