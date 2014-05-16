@@ -273,17 +273,26 @@ int table_clean_proc(TOKEN*ip, TOKEN tok,HINDEX owner,HINDEX type,void* map){
 }
 //-----------------------------------------------------------------------------
 // 
+#include <sys/time.h>
 int table_clean(PTOKEN*p ){
     // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);
     memset(map,0,mapsize);
     // and process each header...
+    struct timeval time_in,time_out;
+    gettimeofday(&time_in,0);
     codestream_seq(table_clean_proc,map);
+    gettimeofday(&time_out,0);
   
-    tbl_cln_report(map,mapsize);
+//    tbl_cln_report(map,mapsize);
 //printf("table_clean: table %x\n",mapsize);
     free(map);
+    
+    if(time_out.tv_usec < time_in.tv_usec)
+        time_out.tv_sec+=1;
+    time_out.tv_usec -= time_in.tv_usec;
+    time_out.tv_sec  -= time_in.tv_sec;
+printf("ELAPSED: %u.%06d\n",time_out.tv_sec,time_out.tv_usec);
     return 1;
- return 1;
 }
