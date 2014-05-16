@@ -60,25 +60,8 @@ cmd_ls(HINDEX dir){
 //printf("ls in %d\n",dir);
   HINDEX h = head_get_child(dir);
   while(h){
-    color(COLOR_RESET); color(FORE_GREEN);
-//    printf("\33[0;32m"); //green
-    int dir = (head_get_child(h) != 0);        //TODO:
-    if(dir) {
-        color(COLOR_BRIGHT); color(FORE_GREEN);
-    }
-    printf("%-10.*s ",head_get_namelen(h),head_get_name(h));
-    // data size
-    color(COLOR_RESET);color(FORE_CYAN);
-    printf("%5.d ",head_get_datasize(h));
-    // type
-    HINDEX type = head_get_type(h);
-    color(COLOR_RESET); color(FORE_WHITE);
-    printf("%-6.*s",head_get_namelen(type),head_get_name(type));
-    //now the comment part
-    U32 comlen; char* com = head_get_comments(h,&comlen);
-    color(COLOR_RESET); color(FORE_YELLOW);
-    printf("%-64.*s\n",comlen,com);
-    h=head_get_next(h);
+      head_ls(h);
+      h=head_get_next(h);
   } 
   color(COLOR_RESET); color(FORE_WHITE);
 }
@@ -403,6 +386,8 @@ int command(char* ptr,U32 cnt){
             if(0==strncmp(ptr,"run",3)) { call_meow(var->run_ptr); return 1;}
 //            if(0==strncmp(ptr,"see",3)) {return cmd_see();}
             if(0==strncmp(ptr,"sys",3)) { return cmd_sys();}
+            if(0==strncmp(ptr,"xxx",3)) { return table_cnt_refs();}
+            
             break;
         case 4:
             if(0==strncmp(ptr,"exit",4)) {exit(0);}
@@ -418,7 +403,8 @@ int command(char* ptr,U32 cnt){
         case 8:
             if(0==strncmp(ptr,"img_save",8)) {return cmd_img_save();}
             if(0==strncmp(ptr,"img_load",8)) {return cmd_img_load();}
-            break;
+            if(0==strncmp(ptr,"listrefs",8)) { return table_cnt_refs();}
+             break;
     }
     return 0;
 }

@@ -22,6 +22,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "global.h"
 #include "header.h"
 #include "data.h"
+#include "color.h"
 
 extern sVar*            var;
 extern sMemLayout*       lay;
@@ -445,6 +446,30 @@ void    head_set_datasize(HINDEX h,U32 datasize){
     h->datasize = datasize;
 }
 
+/*=============================================================================
+  ls   Show a single header, ls style
+=============================================================================*/
+void head_ls(HINDEX h){
+    color(COLOR_RESET); color(FORE_GREEN);
+    //differentiate words with children...
+    int dir = (head_get_child(h) != 0);        
+    if(dir) {
+        color(COLOR_BRIGHT); color(FORE_GREEN);
+    }
+    printf("%-10.*s ",head_get_namelen(h),head_get_name(h));
+    // data size
+    color(COLOR_RESET);color(FORE_CYAN);
+    printf("%5.d ",head_get_datasize(h));
+    // type
+    HINDEX type = head_get_type(h);
+    color(COLOR_RESET); color(FORE_WHITE);
+    printf("%-6.*s",head_get_namelen(type),head_get_name(type));
+    //now the comment part
+    U32 comlen; char* com = head_get_comments(h,&comlen);
+    color(COLOR_RESET); color(FORE_YELLOW);
+    printf("%-64.*s\n",comlen,com);
+}
+
 void head_dump_one(HINDEX h){
     sHeader*p = h;
 //printf("---%d [%s]\n",head_get_namelen(p),head_get_name(p));
@@ -490,3 +515,4 @@ HINDEX head_seq(head_proc func,void* params){
     }
     return 0;
 }
+

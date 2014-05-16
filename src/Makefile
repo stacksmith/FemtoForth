@@ -70,7 +70,7 @@ bindings.o: platform/$(PLATFORM)/bindings.asm
 main.o: main.c global.h header.h data.h src.h lang.h color.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) main.c -o main.o 
 
-header.o: header.c global.h header.h data.h
+header.o: header.c global.h header.h data.h color.h
 	$(CC) -c $(INCLUDE) $(CFLAGS) header.c -o header.o 
 
 data.o: data.c data.h global.h table.h header.h 

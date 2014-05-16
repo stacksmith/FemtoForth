@@ -165,6 +165,8 @@ Error message and password prompt
 
 <li>Draft of 'do ... loop'</li>
 
+<li>Draft of 'HeaderFlags'</li>
+
 <li>FemtoForth</li>
 
 <li>HeaderFlags</li>
@@ -178,6 +180,8 @@ Error message and password prompt
 <li>test</li>
 
 <li>ToDo</li>
+
+<li>Types</li>
 
 </ul>
 </p>
@@ -3495,7 +3499,7 @@ Error message and password prompt
 <pre>[[Introduction]]
 </pre>
 </div>
-<div current-tiddler="HeaderFlags" modified="20140515221022397" modifier="stacksmith" title="$:/HistoryList" type="application/json">
+<div current-tiddler="Types" modified="20140516175424425" modifier="stacksmith" title="$:/HistoryList" type="application/json">
 <pre>[
     {
         &quot;title&quot;: &quot;$:/ControlPanel&quot;,
@@ -3998,6 +4002,15 @@ Error message and password prompt
     },
     {
         &quot;title&quot;: &quot;HeaderFlags&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'HeaderFlags'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'New Tiddler'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Types&quot;
     }
 ]</pre>
 </div>
@@ -4040,7 +4053,7 @@ Error message and password prompt
 <div created="20140512215222795" creator="s" modified="20140512215225635" modifier="stacksmit" title="$:/status/UserName">
 <pre>stacksmith</pre>
 </div>
-<div list="ToDo HeaderFlags Installation Meow-Meow [[Draft of 'do ... loop']] Introduction" title="$:/StoryList">
+<div list="Types ToDo [[Draft of 'HeaderFlags']] Installation Meow-Meow [[Draft of 'do ... loop']] Introduction" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20140513145832702" creator="stacksmith" modified="20140513145833491" modifier="stacksmith" title="$:/temp/NewFieldName">
@@ -4049,8 +4062,8 @@ Error message and password prompt
 <div modified="20140515151042646" modifier="stacksmith" title="$:/temp/NewTagName">
 <pre></pre>
 </div>
-<div created="20140515150629929" creator="stacksmith" modified="20140515150633041" modifier="stacksmith" title="$:/temp/search">
-<pre>HeaderFlags</pre>
+<div created="20140515150629929" creator="stacksmith" modified="20140516174217179" modifier="stacksmith" title="$:/temp/search">
+<pre>Type</pre>
 </div>
 <div modified="20140512215258156" modifier="stacksmith" title="$:/theme">
 <pre>$:/themes/tiddlywiki/snowwhite</pre>
@@ -4171,6 +4184,15 @@ Internally, the do token stacks the following:
 Since the entire loop address is rstacked there is no restriction on the branch reach of the ''loop''.
 </pre>
 </div>
+<div created="20140515150645454" creator="stacksmith" draft.of="HeaderFlags" draft.title="HeaderFlags" modified="20140515221037288" modifier="stacksmith" title="Draft of 'HeaderFlags'">
+<pre>It is important to be able to perform external operations on the image -- operations such as reordering the dictionary or cleaning the tabe.  To do so, we should not rely on search dispatch as the headers may be moving around with improper pointers.  The header data should provide us with enough information.
+
+
+|FLAG_BLOB|This entry is not built of tokens - it has binary data|
+|3-0|PAYLOAD_TYPE |Common payload patterns |
+
+</pre>
+</div>
 <div created="20140513150952570" creator="stacksmith" modified="20140513152539583" modifier="stacksmith" title="FemtoForth">
 <pre>FemtoForth is an environment for developing code on multiple platforms.  Based on a unique infinite bytecode machine called Meow-Meow, FemtoForth is a proof-of-concept system, as well as a basis for further hardware development.
 
@@ -4226,6 +4248,41 @@ Meow-Meow is described in detail in a series of articles at FPGArelated.com:  ht
 </div>
 <div created="20140515164749249" creator="stacksmith" modified="20140515164919919" modifier="stacksmith" title="ToDo">
 <pre>* Table checking REF#  ref does not work.  Tricky - the data is a table reference, but its type and parameters are not relelevant.  Needs special handling.</pre>
+</div>
+<div created="20140516174219592" creator="stacksmith" modified="20140516175424423" modifier="stacksmith" title="Types">
+<pre>FemtoForth does not have runtime types.  There are however several aspects of the language that are reminiscent of types.
+
+Compilation units have a compile-time type.  This type decides how the word is compiled.  Consider a simple definition:
+``
+PROC test { 1 2 + ; }
+``
+Procedure ''test'' is declared as a PROC.  When ''test'' is mentioned inside another definition or on the command line, it is compiled as a procedure call.
+
+A more complicated example is
+``
+5 U32 test 
+``
+A U32 called ''test'' is created and assigned value of 5.  A mention of ''test'' compiles code to fetch the value of this variable.  An expression 
+``
+19 into test
+``
+stores 19 into the variable.  How does ''into'' work?  
+
+Looking into the ''system'TYPE'U32'' directory we see this:
+``
+system\
+   TYPE\
+     U32\
+       compile...
+       define...
+       into...
+``
+''into'' is a smart word - it looks up the type of ''test'', and seeing that it's ''U32'' it calls ''TYPE'U32'into'' to compile code to store a value into test.
+
+It is important to remember that all this happens at compile time, and it is not at all like the runtime dispatch in object-oriented languages.
+
+
+</pre>
 </div>
 
 </div>

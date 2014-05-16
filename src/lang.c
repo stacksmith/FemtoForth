@@ -235,11 +235,12 @@ int lang_ref(){
     //now compile as a tabled variable, to allow for relocation   
     return data_ref_style(h,"system'core'REF");
 }
-int lang_head(){
+int lang_href(){
     U32 cnt; char* ptr = src_word(&cnt);        //next
     HINDEX h = head_find(ptr,cnt,search_list);  //find the subject of operation
     //compile a reference to the actual header (not its data...)
-    data_compile_token(head_find_abs_or_die("system'core'REF")); //
+    data_compile_token(head_find_abs_or_die("system'core'REF")); 
+    //compile the actual head pointer as a reference...
     data_compile_ref((U8*)h);   
     return 1;
 }
@@ -286,9 +287,9 @@ int lang_p(char* ptr,U32 cnt){
              if(0==strncmp(ptr,"ref",3)) { return lang_ref(); }
             break;
         case 4:
+             if(0==strncmp(ptr,"href",4)) { return lang_href(); }
              if(0==strncmp(ptr,"else",4)) { return lang_else(); }
              if(0==strncmp(ptr,"into",4)) { return lang_oper("into",4); }
-             if(0==strncmp(ptr,"head",4)) { return lang_head(); }
              if(0==strncmp(ptr,"loop",4))
                  return lang_compile_with_rstack("system'core'loop",-3);
             break;

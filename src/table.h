@@ -29,6 +29,7 @@ TOKEN** table_base(TOKEN* p);
 int table_clean(PTOKEN* ptable);
 U32 table_count_used(PTOKEN*ptab);
 
+int table_cnt_refs();
 
 
 

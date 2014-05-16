@@ -145,7 +145,7 @@ U32 table_count_used(PTOKEN*ptab){
 
 
 /* ============================================================================
- * table_cleanse
+//  * table_cleanse
  * 
  * When a block of code is deleted, we can't just wipe the table (for a number
  * of reasons - entries may be used by previous code, etc). 
@@ -213,8 +213,8 @@ if(!owner){
             {
   //printf("B %p %p  \n",p1->proc);
                sCodeStreamParams*p1 =(sCodeStreamParams*)p;
-               int ret = p1->proc(ptok-1,tok,owner,type,p1->theParams);
-               if(!ret) return 0; //inner process terminated...
+               int ret = p1->proc(ptok-1,target,owner,type,p1->theParams);
+               if(ret) return ret; //inner process terminated...
  // printf("c %p %02X  \n",ptok,tok);
             }
             switch(head_get_ptype(owner)){
@@ -234,8 +234,8 @@ if(!owner){
                             head_get_ptype(type));
                     return 1;
             } 
-//printf("\n");
         }//else tok=0, as in ;
+//printf("B\n");
     }
     return 0;
 }
@@ -245,7 +245,7 @@ void codestream_seq(codestream_proc func,void* params){
     
 }
 
-int test_proc(TOKEN* ip,TOKEN tok,HINDEX owner,HINDEX type,void* params){
+int test_proc(TOKEN* ip,TOKEN* target,HINDEX owner,HINDEX type,void* params){
  //printf("%p %02X  \n",ip,tok);
  return 0;   
 }
@@ -259,8 +259,9 @@ void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
 }
 //-----------------------------------------------------------------------------
 // procedure to tabulate table usage...
-int table_clean_proc(TOKEN*ip, TOKEN tok,HINDEX owner,HINDEX type,void* map){
+int table_clean_proc(TOKEN*ip, TOKEN*target,HINDEX owner,HINDEX type,void* map){
     TOKEN** base = table_base(ip);
+    TOKEN tok = *ip;
     tbl_cln_add((U8*)map,base,tok);
     //check for ref type and handle its parameter as well..
     if(PAYLOAD_REF == head_get_ptype(owner)){
@@ -285,7 +286,7 @@ int table_clean(PTOKEN*p ){
     codestream_seq(table_clean_proc,map);
     gettimeofday(&time_out,0);
   
-//    tbl_cln_report(map,mapsize);
+    tbl_cln_report(map,mapsize);
 //printf("table_clean: table %x\n",mapsize);
     free(map);
     
@@ -293,6 +294,67 @@ int table_clean(PTOKEN*p ){
         time_out.tv_sec+=1;
     time_out.tv_usec -= time_in.tv_usec;
     time_out.tv_sec  -= time_in.tv_sec;
-printf("ELAPSED: %u.%06d\n",time_out.tv_sec,time_out.tv_usec);
+printf("ELAPSED: %u.%06d\n",(U32)time_out.tv_sec,(U32)time_out.tv_usec);
+    return 1;
+}
+
+/* ============================================================================
+ * table_seq
+
+ Step through every table element, invoking proc
+ */
+PTOKEN* table_seq(table_proc func,void* params){
+    //start at table bottom,TODO: skip unused pointer area indata
+    PTOKEN* p = (PTOKEN*)lay->table_bottom;
+    PTOKEN* ptop = table_base(var->data_ptr)+256;     
+    while(p < ptop){
+        int ret = func(p,params);
+        if(ret) return p;
+        p++;
+    }
+    return 0;
+}
+
+/* ============================================================================
+ * table_cnt_refs(PTOKEN*p)
+ * Walk the tabe and find all references to our target.
+ * */
+
+//-----------------------------------------------------------------------------
+typedef struct sTableCntRefs {
+    TOKEN* target;
+    U32 cnt;
+} sTableCntRefs;
+
+int table_cnt_refs_p(TOKEN*ip, TOKEN* target,HINDEX owner,HINDEX type,void* data){
+    sTableCntRefs* s = (sTableCntRefs*)data;
+    
+//printf("%p %p %p \n",ip,target, s->target);
+    if(target == s->target){
+        s->cnt++;                //tabulate references...
+        // a reference is found... 
+        U32 off;
+        HINDEX container = head_resolve(ip,&off);
+        printf("%04d + ",off);
+        head_ls(container);
+    }
+    return 0; //continue.
+}
+int table_cnt_refs(){
+    //step through the table...
+    sTableCntRefs s = {(TOKEN*)dstack_pop(),0}; //target on datastack.
+    codestream_seq(&table_cnt_refs_p,&s);
+printf("%d reference(s) found\n",s.cnt);
+    return 1;
+}
+
+//-----------------------------------------------------------------------------
+//show all table entries...
+int table_xxx_p(PTOKEN* tabptr,void*params){
+    printf("%p, %p\n",tabptr,*tabptr);
+    return 0;
+}
+int table_xxx(){
+    table_seq(&table_xxx_p,0);
     return 1;
 }
