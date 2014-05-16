@@ -144,3 +144,5 @@ typedef struct sVar {
 } sVar;
 
 typedef int (*head_proc)(HINDEX h, void* params);
+typedef int (*codestream_proc)(TOKEN*ip, TOKEN tok,HINDEX owner,HINDEX type,void* params);
+

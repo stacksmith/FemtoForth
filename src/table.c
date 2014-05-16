@@ -156,79 +156,25 @@ U32 table_count_used(PTOKEN*ptab){
  * 
  */
 
-void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
-    U32 index = ((U32)base - (U32)(lay->table_bottom)) /4 + tok;
-printf("adding index %d\n",index);
-    if(map[index] <255)
-        map[index]++;
-}
 
+/* ============================================================================
+ * codestream_seq
 
+ Step through every header, from the bottom up.
+ For every header, step through every valid bytecode.
+ For every bytecode, call proc
+ 
+ -Skip blobs and non-bytecode storage in data...
+ -Skip 0 tokens indicating implied return;
+ -Skip all in-line parameters of bytecodes
+ */
+// called for every head in sequence
+typedef struct sCodeStreamParams{
+    codestream_proc proc;
+    void* theParams;
+} sCodeStreamParams;
 
-int tbl_cln_proc(HINDEX h,void*p){
-    U8* table = (U8*)p;
-    U32 l       = head_get_namelen(h);
-    char*pn     = head_get_name(h);
-    TOKEN* ptok = head_get_code(h);
-    TOKEN* end  = ptok + head_get_datasize(h);
-    if(!ptok) return 0;   //dirs have 0 code pointers
-    if(head_get_blob(h)) return 0; //blobs not interesting
-    // Process each token against the map
-    {
-        U8* map = (U8*)p;
-printf("SEQ: processing %.*s %p %p \n",l,pn,ptok,end);
-        while(ptok < end){
-            TOKEN** base = table_base(ptok);
-            TOKEN tok = *ptok++;
-printf("%p %02X  ",ptok,tok);
-            if(tok) { //don't count implicit returns
-                // count it!
-                tbl_cln_add(table,base,tok);
-                // now figure out how to skip...
-                U8* target =base[tok];
-                HINDEX owner = head_owner(target);
-                if(!owner){
-                    printf("CANNOT FIND owner for token %d at %p\n",
-                        tok,ptok-1);
-                    return 1;
-                }
-printf(" %.*s ",head_get_namelen(owner),head_get_name(owner));
-             
-                HINDEX type = head_get_type(owner);
-printf("(%.*s) %d",head_get_namelen(type),head_get_name(type),
-    head_get_ptype(owner));
-                switch(head_get_ptype(owner)){
-                    case PAYLOAD_NONE: break;
-                    case PAYLOAD_ONE: ptok++; break;
-                    case PAYLOAD_TWO: ptok+=2; break;
-                    case PAYLOAD_FOUR: ptok+=4; break;
-                    case PAYLOAD_OFF8: ptok+=1; break;
-                    case PAYLOAD_REF: 
-                    {
-                        TOKEN** base = table_base(ptok);
-                        TOKEN tok = *ptok++;
-                        tbl_cln_add(table,base,tok);
-                    }
-                        ptok++;  //TODO: do table magic...
-                        break;
-                    case PAYLOAD_STR8: 
-                        { U32 len = *ptok++;
-                            ptok += len;
-                            break;
-                        }
-                    default: 
-                        printf("tbl_cln_proc: invalid payload type %d\n",
-                               head_get_ptype(type));
-                        return 1;
-                }
-            } //else tok=0, as in ;
-printf("\n");
-        } //while (ptok < end)
-printf("\n");
-    } //just
-    return 0;
-}
-
+//A dump of the map after the count of used table entries...
 void tbl_cln_report(U8* map,U32 cnt){
     U32 index;
     U8** table = (U8**)lay->table_bottom;
@@ -243,16 +189,101 @@ void tbl_cln_report(U8* map,U32 cnt){
     }
 }
 
+int codestream_head_proc(HINDEX h,void*p){
+    TOKEN* ptok = head_get_code(h);
+    TOKEN* end  = ptok + head_get_datasize(h);
+    if(!ptok) return 0;   //dirs have 0 code pointers
+    if(head_get_blob(h)) return 0; //blobs not interesting
+    while(ptok < end){
+        TOKEN** base = table_base(ptok);
+        TOKEN tok = *ptok++;
+        if(tok) { //don't count implicit returns
+//  printf("A %p %02X  \n",ptok,tok);
+     
+            // now figure out how to skip...
+            U8* target =base[tok];
+            HINDEX owner = head_owner(target);
+if(!owner){
+    printf("CANNOT FIND owner for token %d at %p\n",
+        tok,ptok-1);
+    return 1;
+}            
+            HINDEX type = head_get_type(owner);
+            //invoke the procedure on this token
+            {
+  //printf("B %p %p  \n",p1->proc);
+               sCodeStreamParams*p1 =(sCodeStreamParams*)p;
+               int ret = p1->proc(ptok-1,tok,owner,type,p1->theParams);
+               if(!ret) return 0; //inner process terminated...
+ // printf("c %p %02X  \n",ptok,tok);
+            }
+            switch(head_get_ptype(owner)){
+                case PAYLOAD_NONE: break;
+                case PAYLOAD_ONE:  ptok++; break;
+                case PAYLOAD_TWO:  ptok+=2; break;
+                case PAYLOAD_FOUR: ptok+=4; break;
+                case PAYLOAD_OFF8: ptok+=1; break;
+                case PAYLOAD_REF:  ptok++;  break;
+                case PAYLOAD_STR8: 
+                    { U32 len = *ptok++;
+                        ptok += len;
+                        break;
+                    }
+                default: 
+                    printf("codestream_head_proc: invalid payload type %d\n",
+                            head_get_ptype(type));
+                    return 1;
+            } 
+//printf("\n");
+        }//else tok=0, as in ;
+    }
+    return 0;
+}
+void codestream_seq(codestream_proc func,void* params){
+    sCodeStreamParams innerParams = {func,params};
+    head_seq(codestream_head_proc,&innerParams);
+    
+}
+
+int test_proc(TOKEN* ip,TOKEN tok,HINDEX owner,HINDEX type,void* params){
+ //printf("%p %02X  \n",ip,tok);
+ return 0;   
+}
+//-----------------------------------------------------------------------------
+// increment the count for our token in the bytemap
+void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
+    U32 index = ((U32)base - (U32)(lay->table_bottom)) /4 + tok;
+//printf("adding index %d\n",index);
+    if(map[index] <255)
+        map[index]++;
+}
+//-----------------------------------------------------------------------------
+// procedure to tabulate table usage...
+int table_clean_proc(TOKEN*ip, TOKEN tok,HINDEX owner,HINDEX type,void* map){
+    TOKEN** base = table_base(ip);
+    tbl_cln_add((U8*)map,base,tok);
+    //check for ref type and handle its parameter as well..
+    if(PAYLOAD_REF == head_get_ptype(owner)){
+        ip++;
+        TOKEN** base = table_base(ip);
+        TOKEN tok = *ip;
+        tbl_cln_add((U8*)map,base,tok);
+    }
+    return 1;
+}
+//-----------------------------------------------------------------------------
+// 
 int table_clean(PTOKEN*p ){
     // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);
     memset(map,0,mapsize);
     // and process each header...
-    head_seq(tbl_cln_proc,map);
+    codestream_seq(table_clean_proc,map);
   
     tbl_cln_report(map,mapsize);
-printf("table_clean: table %x\n",mapsize);
+//printf("table_clean: table %x\n",mapsize);
     free(map);
     return 1;
+ return 1;
 }
