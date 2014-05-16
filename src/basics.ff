@@ -235,7 +235,7 @@ PROC namelen // (e--n) get the name length
 {   31 + U8'@ ; }
 end
 // TODO: why can't I eliminate the = test?
-PROC locatex // (ptr,cnt,hdir -- h/0)
+PROC locate // (ptr,cnt,hdir -- h/0)
 {
     head'child begin
       if( dup 0= ) drop dbl'drop 0 ; thanx

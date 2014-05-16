@@ -204,6 +204,11 @@ printf("(%.*s) %d",head_get_namelen(type),head_get_name(type),
                     case PAYLOAD_FOUR: ptok+=4; break;
                     case PAYLOAD_OFF8: ptok+=1; break;
                     case PAYLOAD_REF: 
+                    {
+                        TOKEN** base = table_base(ptok);
+                        TOKEN tok = *ptok++;
+                        tbl_cln_add(table,base,tok);
+                    }
                         ptok++;  //TODO: do table magic...
                         break;
                     case PAYLOAD_STR8: 
@@ -230,8 +235,9 @@ void tbl_cln_report(U8* map,U32 cnt){
     for(index=0;index<cnt;index++){
         U8* ptr = table[index];
         HINDEX h = head_owner(ptr);
-        printf("%p %d\t%.*s\t%d\n",table+index,
-               index,
+        printf("%d %p %p \t%.*s\t%d\n",index,
+               table+index,table[index],
+               
                head_get_namelen(h),head_get_name(h),
                map[index]);
     }
