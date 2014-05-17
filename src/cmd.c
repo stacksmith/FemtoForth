@@ -396,14 +396,12 @@ int command(char* ptr,U32 cnt){
             break;
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
-            if(0==strncmp(ptr,"clean",5)) {
-                return table_clean((PTOKEN*) dstack_pop());
-            }
             break;
         case 8:
             if(0==strncmp(ptr,"img_save",8)) {return cmd_img_save();}
             if(0==strncmp(ptr,"img_load",8)) {return cmd_img_load();}
             if(0==strncmp(ptr,"listrefs",8)) { return table_cnt_refs();}
+            if(0==strncmp(ptr,"tabulate",8)) { return table_tabulate((PTOKEN*) dstack_pop());}
              break;
     }
     return 0;

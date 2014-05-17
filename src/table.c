@@ -251,7 +251,7 @@ int test_proc(TOKEN* ip,TOKEN* target,HINDEX owner,HINDEX type,void* params){
 }
 //-----------------------------------------------------------------------------
 // increment the count for our token in the bytemap
-void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
+void table_tabulate_add(U8* map,TOKEN** base,TOKEN tok){
     U32 index = ((U32)base - (U32)(lay->table_bottom)) /4 + tok;
 //printf("adding index %d\n",index);
     if(map[index] <255)
@@ -259,23 +259,23 @@ void tbl_cln_add(U8* map,TOKEN** base,TOKEN tok){
 }
 //-----------------------------------------------------------------------------
 // procedure to tabulate table usage...
-int table_clean_proc(TOKEN*ip, TOKEN*target,HINDEX owner,HINDEX type,void* map){
+int table_tabulate_proc(TOKEN*ip, TOKEN*target,HINDEX owner,HINDEX type,void* map){
     TOKEN** base = table_base(ip);
     TOKEN tok = *ip;
-    tbl_cln_add((U8*)map,base,tok);
+    table_tabulate_add((U8*)map,base,tok);
     //check for ref type and handle its parameter as well..
     if(PAYLOAD_REF == head_get_ptype(owner)){
         ip++;
         TOKEN** base = table_base(ip);
         TOKEN tok = *ip;
-        tbl_cln_add((U8*)map,base,tok);
+        table_tabulate_add((U8*)map,base,tok);
     }
     return 1;
 }
 //-----------------------------------------------------------------------------
 // 
 #include <sys/time.h>
-int table_clean(PTOKEN*p ){
+int table_tabulate(PTOKEN*p ){
     // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);
@@ -283,7 +283,7 @@ int table_clean(PTOKEN*p ){
     // and process each header...
     struct timeval time_in,time_out;
     gettimeofday(&time_in,0);
-    codestream_seq(table_clean_proc,map);
+    codestream_seq(table_tabulate_proc,map);
     gettimeofday(&time_out,0);
   
     tbl_cln_report(map,mapsize);
