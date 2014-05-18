@@ -260,6 +260,7 @@ void table_tabulate_add(U8* map,TOKEN** base,TOKEN tok){
 //-----------------------------------------------------------------------------
 // procedure to tabulate table usage...
 int table_tabulate_proc(TOKEN*ip, TOKEN*target,HINDEX owner,HINDEX type,void* map){
+//printf("%p\n",ip);
     TOKEN** base = table_base(ip);
     TOKEN tok = *ip;
     table_tabulate_add((U8*)map,base,tok);
@@ -270,19 +271,19 @@ int table_tabulate_proc(TOKEN*ip, TOKEN*target,HINDEX owner,HINDEX type,void* ma
         TOKEN tok = *ip;
         table_tabulate_add((U8*)map,base,tok);
     }
-    return 1;
+    return 0;
 }
 //-----------------------------------------------------------------------------
 // 
 #include <sys/time.h>
-int table_tabulate(PTOKEN*p ){
+int table_tabulate( ){
     // prepare a map with a byte count for every table entry
     U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
     U8* map = (U8*)malloc(mapsize);
     memset(map,0,mapsize);
     // and process each header...
-    struct timeval time_in,time_out;
-    gettimeofday(&time_in,0);
+struct timeval time_in,time_out;
+gettimeofday(&time_in,0);
     codestream_seq(table_tabulate_proc,map);
     gettimeofday(&time_out,0);
   
@@ -290,11 +291,44 @@ int table_tabulate(PTOKEN*p ){
 //printf("table_clean: table %x\n",mapsize);
     free(map);
     
-    if(time_out.tv_usec < time_in.tv_usec)
-        time_out.tv_sec+=1;
-    time_out.tv_usec -= time_in.tv_usec;
-    time_out.tv_sec  -= time_in.tv_sec;
+if(time_out.tv_usec < time_in.tv_usec)
+    time_out.tv_sec+=1;
+time_out.tv_usec -= time_in.tv_usec;
+time_out.tv_sec  -= time_in.tv_sec;
 printf("ELAPSED: %u.%06d\n",(U32)time_out.tv_sec,(U32)time_out.tv_usec);
+    return 1;
+}
+/* ============================================================================
+  C L E A N
+  
+  tabulate table usage.  All entries that are not used, set to 0.
+*/
+#include <sys/time.h>
+int table_clean(){
+    // prepare a map with a byte count for every table entry
+    U32 mapsize = (((U32)(table_base(var->data_ptr)+256)) - (U32)(lay->table_bottom))/4;
+    U8* map = (U8*)malloc(mapsize);
+    memset(map,0,mapsize);
+    // and process each header...
+    codestream_seq(table_tabulate_proc,map);
+//tbl_cln_report(map,mapsize);
+    // Step through the map.  Every 0-count represents an unused table
+    //entry that must be set to 0.
+    PTOKEN* ptab = (PTOKEN*)lay->table_bottom;
+    U8* pmap = map;
+    int i;
+    for(i=0;i<mapsize;i++){
+        if(! *pmap) {
+if(!ptab)
+    printf("table_clean: eliminating table entry %p\n",ptab);
+            *ptab=0; 
+        }
+        pmap++;
+        ptab++;
+    }
+//printf("table_clean: table %x\n",mapsize);
+    free(map);
+    
     return 1;
 }
 
@@ -344,8 +378,7 @@ int table_cnt_refs(){
     //step through the table...
     sTableCntRefs s = {(TOKEN*)dstack_pop(),0}; //target on datastack.
     codestream_seq(&table_cnt_refs_p,&s);
-printf("%d reference(s) found\n",s.cnt);
-    return 1;
+    return s.cnt;
 }
 
 //-----------------------------------------------------------------------------
@@ -358,3 +391,8 @@ int table_xxx(){
     table_seq(&table_xxx_p,0);
     return 1;
 }
+
+
+
+
+

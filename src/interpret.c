@@ -373,7 +373,8 @@ int interpret_outer(){
     memset(var->run_ptr,0xFF,(var->data_ptr - var->run_ptr));
 //printf("out: run_table is at %08p\n",var->run_table);
     var->data_ptr = var->run_ptr;               //and reset
-    table_wipe(var->run_table);
+//    table_wipe(var->run_table);
+    table_clean();
     return 1;
    
 }

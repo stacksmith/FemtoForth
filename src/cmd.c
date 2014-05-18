@@ -373,6 +373,34 @@ printf("anus: h is %p\n",h);
     }
 }
 */
+
+int cmd_delete(){
+    U32 cnt; char* ptr = src_word(&cnt);          //next word
+    //find the word...
+    HINDEX h = head_find(ptr,cnt,search_list);
+    if(!h) {
+        src_error("delete: cannot find word\n");
+        return 0;
+    }
+    //check for references...
+    TOKEN* p = head_get_code(h);
+    if(!p){
+        src_error("delete: no data \n"); //TODO: no problem?
+        return 0;
+    }
+    dstack_push(p);
+    U32 refcnt = table_cnt_refs();
+    if(refcnt){
+        char buf[256]; sprintf(buf,"delete: word is referenced %d times\n",refcnt);
+        src_error(buf); //
+        return 0;
+    }
+    // OK, clear data...
+    printf("%p",h);    
+    return 1;
+}
+
+
 //TODO: check error conditions, return...
 int command(char* ptr,U32 cnt){
     switch(cnt){
@@ -397,13 +425,18 @@ int command(char* ptr,U32 cnt){
         case 5:
             if(0==strncmp(ptr,"mkdir",5)) {return cmd_mkdir();}
             break;
+        case 6:
+            if(0==strncmp(ptr,"delete",6)) {return cmd_delete();}
+            break;
         case 8:
             if(0==strncmp(ptr,"img_save",8)) {return cmd_img_save();}
             if(0==strncmp(ptr,"img_load",8)) {return cmd_img_load();}
             if(0==strncmp(ptr,"listrefs",8)) { return table_cnt_refs();}
-            if(0==strncmp(ptr,"tabulate",8)) { return table_tabulate((PTOKEN*) dstack_pop());}
+            if(0==strncmp(ptr,"tabulate",8)) { return table_tabulate();}
+            if(0==strncmp(ptr,"tabclean",8)) { return table_clean();}
              break;
     }
     return 0;
 }
+
 

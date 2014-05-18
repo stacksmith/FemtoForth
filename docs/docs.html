@@ -175,6 +175,8 @@ Error message and password prompt
 
 <li>Introduction</li>
 
+<li>Level 1</li>
+
 <li>Meow-Meow</li>
 
 <li>test</li>
@@ -3499,7 +3501,7 @@ Error message and password prompt
 <pre>[[Introduction]]
 </pre>
 </div>
-<div current-tiddler="Types" modified="20140516175424425" modifier="stacksmith" title="$:/HistoryList" type="application/json">
+<div current-tiddler="Level 1" modified="20140517195413482" modifier="stacksmith" title="$:/HistoryList" type="application/json">
 <pre>[
     {
         &quot;title&quot;: &quot;$:/ControlPanel&quot;,
@@ -4011,6 +4013,18 @@ Error message and password prompt
     },
     {
         &quot;title&quot;: &quot;Types&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'New Tiddler'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Level 1&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Draft of 'Level 1'&quot;
+    },
+    {
+        &quot;title&quot;: &quot;Level 1&quot;
     }
 ]</pre>
 </div>
@@ -4053,7 +4067,7 @@ Error message and password prompt
 <div created="20140512215222795" creator="s" modified="20140512215225635" modifier="stacksmit" title="$:/status/UserName">
 <pre>stacksmith</pre>
 </div>
-<div list="Types ToDo [[Draft of 'HeaderFlags']] Installation Meow-Meow [[Draft of 'do ... loop']] Introduction" title="$:/StoryList">
+<div list="[[Level 1]] Introduction" title="$:/StoryList">
 <pre></pre>
 </div>
 <div created="20140513145832702" creator="stacksmith" modified="20140513145833491" modifier="stacksmith" title="$:/temp/NewFieldName">
@@ -4234,6 +4248,14 @@ This is very much work in progress, and is barely implemented, so don't expect t
 <pre>FemtoForth is an experimental language featuring Meow-Meow, a unique infinite bytecode interpreter that uses a sliding-window algorithm to decode the tokens to full addresses.  The ultimate goal of the project is to create an FPGA-based CPU executing this bytecode directly.
 
 Read more about FemtoForth, the [[Command-Line Environment]], [[language features]], [[Installation]]...
+</pre>
+</div>
+<div created="20140517194918050" creator="stacksmith" modified="20140517195413481" modifier="stacksmith" title="Level 1">
+<pre>Meow-Meow is a fantastically space-efficient environment for solidly compiled code.  A Forth-like environment (one that has no concept of deletion) is entirely feasible.
+
+A dynamic environment is pretty complicated due to the 'spread spectrum' nature of Meow-Meow code.  Each routine refers to the table which is shared with several Kilobytes of other code, making extrication difficult.  It is possible to deterministically recode the tokens one by one, eliminating table or data holes, but it is very tedious.  
+
+So I will stop development at this (non-compacting) point.  It is possible to delete heads and zero-out code without compaction.
 </pre>
 </div>
 <div created="20140513145418723" creator="stacksmith" modified="20140513150921465" modifier="stacksmith" title="Meow-Meow">
