@@ -397,3 +397,37 @@ void dstack_write(U32 val){
 U32 dstack_read(){
     return (var->sp_meow->TOS);
 }
+/* ==========================================================
+   A zoned interpret.  Firstly, compile code 4K away in order
+   to isolate the table.
+*/
+int compile_zone_p(){
+    U32 cnt;
+    char* ptr = src_word(&cnt);
+//printf("OUTER [%.*s]\n",cnt,ptr);
+    if(!command(ptr,cnt)) 
+       if(!interpret_compuntil("]",1)) {
+            src_error("zone compile failed:");
+            *var->src_ptr=0;                         //abandon line!
+            return 0;
+         }
+//printf("OUTER done\n");
+    return 1;
+}
+
+
+int compile_zone(U8* zone){
+//printf("interpret_zone\n");
+    //---------------------------------------
+    //Prepare to clean up our tracks...
+    
+    TOKEN* old_ptr = var->data_ptr;
+    var->data_ptr = zone;
+    PTOKEN* tab = table_base(var->data_ptr);
+    int ret = compile_zone_p();
+    dstack_push((U32)zone);                     //ptr
+    dstack_push(var->data_ptr - zone);          //ptr,cnt
+    var->data_ptr = old_ptr;
+    return 1;
+   
+}
