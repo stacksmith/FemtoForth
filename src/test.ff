@@ -8,3 +8,26 @@ PROC aaa
   ;
 }
 end
+
+
+PROC aaa2
+{
+  1000 0 do loop ;
+}
+end
+PROC aaa1
+{
+  1000 0 do aaa2 loop ;
+}
+end
+
+PROC aaa0
+{
+  sys'gettimeofday
+  500 0 do aaa1 loop
+  sys'gettimeofday
+  dbl'swap  dbl'-
+  swap . . cr
+  ;
+}
+end

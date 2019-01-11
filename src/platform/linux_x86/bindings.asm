@@ -90,23 +90,20 @@ public inner_interpreter
 return:
     pop       esi
 inner_interpreter:
-    xor       edx,edx               ;clear upper 3 bytes for lodsb
-    mov       dl,[esi]              ;al=tok, inc esi
-    inc       esi
+    movzx     edx,byte[esi]              ;al=tok, inc esi
+    add	      esi,1
     shl       edx,2                 ;token*4 (pointers are 4-bytes), set flags...
     jz        return                ;A 0 token that is not first means return
 .inner_loop:
     push      esi                   ;thread in...
     shr       esi,4                 ;Tricky: esi shr 4 then shl 2 for alignment
     mov       esi,[esi*4+edx]       ;and index it with token*4 resulting in CALL
-    xor       edx,edx
-    mov       dl,[esi]              ;al=tok, inc esi
-    inc       esi
+    movzx     edx,byte[esi]              ;al=tok, inc esi
+    add       esi,1
     shl       edx,2                 ;first byte of subroutine 0? Machine language code follows
     jnz       .inner_loop            ;continue threading
     mov       ecx,esi               ;routine address
     pop       esi                   ;no stacking of IP...
     jmp       ecx                   ;call assembly subroutine that follows
 
-    
 
