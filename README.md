@@ -1,7 +1,7 @@
 FemtoForth
 ==========
 
-This is an experimental Forth-like VM using a novel 8-bit token interpreter that uses a sliding-window algorithm to decode  tokens to full addresses.  The technology is described in great detail at http://www.fpgarelated.com/showarticle/44.php.  Succinctly speaking, while classic 8-bit tokens are limited to 256 potential meanings, FemtoForth black has no such limits - for all practical purposes. The ultimate goal of the project is to create an FPGA-based CPU executing this bytecode directly.
+This is an experimental Forth-like VM using a novel 8-bit token interpreter that uses a sliding-window algorithm to decode  tokens to full addresses.  The technology is described in great detail at http://www.fpgarelated.com/showarticle/44.php.  Succinctly speaking, **while classic 8-bit tokens are limited to 256 potential meanings, FemtoForth has no such limits** - for all practical purposes. The ultimate goal of the project is to create an FPGA-based CPU executing this bytecode directly.
 
 This proof-of-concept implementation shows that it is in fact possible to construct a working language using a sliding window interpreter.  This goal has been met, although I got bogged down with the language part and will now take a break (and work with ~~Smalltalk~~ Lisp or something).
 
