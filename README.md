@@ -1,9 +1,9 @@
 FemtoForth
 ==========
 
-This is an experimental language featuring Meow-Meow, a unique 8-bit token interpreter that uses a sliding-window algorithm to decode the tokens to full addresses.  The technology is described in great detail at http://www.fpgarelated.com/showarticle/44.php.  The ultimate goal of the project is to create an FPGA-based CPU executing this bytecode directly.
+This is an experimental Forth-like VM using a novel 8-bit token interpreter that uses a sliding-window algorithm to decode  tokens to full addresses.  The technology is described in great detail at http://www.fpgarelated.com/showarticle/44.php.  Succinctly speaking, while classic 8-bit tokens are limited to 256 potential meanings, FemtoForth black has no such limits - for all practical purposes. The ultimate goal of the project is to create an FPGA-based CPU executing this bytecode directly.
 
-The goal of this project is to prove that it is possible to construct a working language using a sliding window interpreter.  This goal has been met, although I got bogged down with the language part and will now take a break (and work with Smalltalk or something).
+This proof-of-concept implementation shows that it is in fact possible to construct a working language using a sliding window interpreter.  This goal has been met, although I got bogged down with the language part and will now take a break (and work with ~~Smalltalk~~ Lisp or something).
 
 FemtoForth (it is not quite Forth, but is Forth-like in spirit) runs on ARM7 (Android console) and x86 (32-bit) linux.  It is easily portable to many other processors (by writing a new set of kernel routines) and can be used as an embedded development system, a Domain-Specific language, or just a way to mess around with this weird tech.
 
