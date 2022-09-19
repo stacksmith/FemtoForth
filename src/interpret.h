@@ -22,6 +22,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 
 void interpret_init();
 int interpret_compone(char* ptr,U32 cnt);
+int interpret_compuntil(char* delim, U32 delimcnt);
 int interpret_outer();
 int interpret_one();
 

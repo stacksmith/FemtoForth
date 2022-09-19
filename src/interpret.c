@@ -27,14 +27,14 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "lang.h"
 #include "data.h"
 #include "color.h"
-
+extern U32 meow_invoke(void*);
 // interpret.c
 
 #include "cmd.h"
 extern HINDEX search_list[];
 
- sVar* var;
-sMemLayout* lay;
+extern  sVar* var;
+extern sMemLayout* lay;
 
 /* ==========================================================
   Initialize the register contexts...

@@ -22,6 +22,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 //
 void src_init();
 void src_ws();
+int src_is_ws(char c);
 char* src_ws_p(char*p);
 U32 src_cnt();
 U32 src_one();
@@ -33,3 +34,4 @@ char* src_word(U32* pcnt);
 char* src_line();
 
 void src_set(char* buf);
+void src_reset();

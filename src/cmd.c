@@ -21,7 +21,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #include "header.h"
 #include "src.h"
 extern sVar* var ;
-sMemLayout* lay;
+extern sMemLayout* lay;
 
 #include "cmd.h"
 HINDEX search_list[] = {0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0};

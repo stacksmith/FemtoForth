@@ -26,7 +26,7 @@ along with FemtoForth. If not, see <http://www.gnu.org/licenses/>.
 #define SRC_BUF_SIZE 256
 //char* src_buf;
 extern sVar* var;
-sMemLayout* lay;
+extern sMemLayout* lay;
 //char* src_ptr;
 FILE* hfile;  
 U32 lineno;
